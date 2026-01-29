@@ -1,0 +1,203 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:MIC.Desktop.Avalonia.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="600"
+        x:Class="MIC.Desktop.Avalonia.Views.LoginWindow"
+        x:DataType="vm:LoginViewModel"
+        Title="MIC - Login"
+        Width="480" Height="620"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        Background="#0B0C10"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="32">
+
+    <Panel>
+        <!-- Background Gradient -->
+        <Border>
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                    <GradientStop Color="#0B0C10" Offset="0" />
+                    <GradientStop Color="#0D1117" Offset="0.5" />
+                    <GradientStop Color="#161B22" Offset="1" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+
+        <!-- Content -->
+        <StackPanel VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Width="360"
+                    Spacing="24">
+            
+            <!-- Logo and Title -->
+            <StackPanel HorizontalAlignment="Center" Spacing="16">
+                <!-- Logo Icon -->
+                <Border Width="80" Height="80"
+                        CornerRadius="20"
+                        HorizontalAlignment="Center">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                            <GradientStop Color="#00E5FF" Offset="0" />
+                            <GradientStop Color="#BF40FF" Offset="1" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <TextBlock Text="MIC"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               Foreground="White"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Border>
+                
+                <TextBlock Text="Mbarie Intelligence Console"
+                           FontSize="20"
+                           FontWeight="Light"
+                           Foreground="#FFFFFF"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="Enterprise Intelligence Platform"
+                           FontSize="12"
+                           Foreground="#607D8B"
+                           HorizontalAlignment="Center" />
+            </StackPanel>
+
+            <!-- Login Form -->
+            <Border Background="#10FFFFFF"
+                    BorderBrush="#15FFFFFF"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="24">
+                <StackPanel Spacing="20">
+                    
+                    <!-- Error Message -->
+                    <Border IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                            Background="#30FF0055"
+                            BorderBrush="#FF0055"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            Padding="12,8">
+                        <TextBlock Text="{Binding ErrorMessage}"
+                                   Foreground="#FF6B7A"
+                                   FontSize="12"
+                                   TextWrapping="Wrap" />
+                    </Border>
+
+                    <!-- Username -->
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Username"
+                                   FontSize="12"
+                                   Foreground="#607D8B" />
+                        <TextBox Text="{Binding Username}"
+                                 Watermark="Enter your username"
+                                 Background="#15FFFFFF"
+                                 BorderBrush="#20FFFFFF"
+                                 Foreground="#FFFFFF"
+                                 Padding="12,10"
+                                 CornerRadius="6"
+                                 FontSize="14" />
+                    </StackPanel>
+
+                    <!-- Password -->
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Password"
+                                   FontSize="12"
+                                   Foreground="#607D8B" />
+                        <TextBox Text="{Binding Password}"
+                                 PasswordChar="?"
+                                 Watermark="Enter your password"
+                                 Background="#15FFFFFF"
+                                 BorderBrush="#20FFFFFF"
+                                 Foreground="#FFFFFF"
+                                 Padding="12,10"
+                                 CornerRadius="6"
+                                 FontSize="14" />
+                    </StackPanel>
+
+                    <!-- Remember Me -->
+                    <CheckBox IsChecked="{Binding RememberMe}"
+                              Foreground="#B0BEC5">
+                        <TextBlock Text="Keep me signed in" FontSize="13" />
+                    </CheckBox>
+
+                    <!-- Login Button -->
+                    <Button Command="{Binding LoginCommand}"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"
+                            Padding="16,12"
+                            CornerRadius="8"
+                            FontWeight="SemiBold"
+                            FontSize="14">
+                        <Button.Background>
+                            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                                <GradientStop Color="#00E5FF" Offset="0" />
+                                <GradientStop Color="#00B8D4" Offset="1" />
+                            </LinearGradientBrush>
+                        </Button.Background>
+                        <Panel>
+                            <TextBlock Text="Sign In"
+                                       Foreground="#0B0C10"
+                                       IsVisible="{Binding !IsLoading}" />
+                            <StackPanel Orientation="Horizontal"
+                                        Spacing="8"
+                                        IsVisible="{Binding IsLoading}">
+                                <ProgressBar IsIndeterminate="True"
+                                             Width="16" Height="16" />
+                                <TextBlock Text="Signing in..."
+                                           Foreground="#0B0C10" />
+                            </StackPanel>
+                        </Panel>
+                    </Button>
+
+                </StackPanel>
+            </Border>
+
+            <!-- Divider -->
+            <Grid ColumnDefinitions="*,Auto,*">
+                <Border Grid.Column="0" Height="1" Background="#20FFFFFF" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="OR" Foreground="#455A64" FontSize="11" Margin="16,0" />
+                <Border Grid.Column="2" Height="1" Background="#20FFFFFF" VerticalAlignment="Center" />
+            </Grid>
+
+            <!-- Continue as Guest -->
+            <Button Command="{Binding ContinueAsGuestCommand}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    Background="#10FFFFFF"
+                    Foreground="#B0BEC5"
+                    Padding="16,12"
+                    CornerRadius="8"
+                    FontSize="14">
+                <TextBlock Text="Continue as Guest" />
+            </Button>
+
+            <!-- Demo Hint -->
+            <Border Background="#1000E5FF"
+                    BorderBrush="#3000E5FF"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="12">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="?? Demo Mode"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               Foreground="#00E5FF" />
+                    <TextBlock Text="Use any username/password to sign in. Try 'admin' for full access, or 'analyst' for limited access."
+                               FontSize="11"
+                               Foreground="#607D8B"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <!-- Footer -->
+            <TextBlock Text="© 2024 Mbarie Services Ltd."
+                       FontSize="11"
+                       Foreground="#455A64"
+                       HorizontalAlignment="Center"
+                       Margin="0,16,0,0" />
+
+        </StackPanel>
+    </Panel>
+
+</Window>

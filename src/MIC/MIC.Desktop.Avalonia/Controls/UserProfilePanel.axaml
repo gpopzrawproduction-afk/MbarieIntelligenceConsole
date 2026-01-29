@@ -1,0 +1,156 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MIC.Desktop.Avalonia.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="400"
+             x:Class="MIC.Desktop.Avalonia.Controls.UserProfilePanel"
+             x:DataType="vm:UserProfileViewModel">
+
+    <Border Background="#0D1117"
+            BorderBrush="#20FFFFFF"
+            BorderThickness="1"
+            CornerRadius="12"
+            Padding="0"
+            Width="280"
+            BoxShadow="0 8 32 0 #60000000">
+        
+        <StackPanel>
+            <!-- User Info Header -->
+            <Border Background="#15FFFFFF"
+                    Padding="16">
+                <Grid ColumnDefinitions="Auto,*">
+                    <!-- Avatar -->
+                    <Border Grid.Column="0"
+                            Width="48" Height="48"
+                            CornerRadius="24"
+                            Margin="0,0,12,0">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                                <GradientStop Color="#00E5FF" Offset="0" />
+                                <GradientStop Color="#BF40FF" Offset="1" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <TextBlock Text="{Binding UserInitials}"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Border>
+                    
+                    <!-- Name and Email -->
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding DisplayName}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="#FFFFFF" />
+                        <TextBlock Text="{Binding Email}"
+                                   FontSize="11"
+                                   Foreground="#607D8B" />
+                        <Border Background="#20BF40FF"
+                                CornerRadius="4"
+                                Padding="6,2"
+                                Margin="0,4,0,0"
+                                HorizontalAlignment="Left">
+                            <TextBlock Text="{Binding RoleDisplay}"
+                                       FontSize="10"
+                                       Foreground="#BF40FF"
+                                       FontWeight="SemiBold" />
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Menu Items -->
+            <StackPanel Margin="8">
+                <Button Background="Transparent"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="12,10"
+                        CornerRadius="6"
+                        Command="{Binding ViewProfileCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <PathIcon Width="18" Height="18"
+                                  Foreground="#607D8B"
+                                  Data="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" />
+                        <TextBlock Text="View Profile" Foreground="#B0BEC5" FontSize="13" />
+                    </StackPanel>
+                </Button>
+
+                <Button Background="Transparent"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="12,10"
+                        CornerRadius="6"
+                        Command="{Binding PreferencesCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <PathIcon Width="18" Height="18"
+                                  Foreground="#607D8B"
+                                  Data="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
+                        <TextBlock Text="Preferences" Foreground="#B0BEC5" FontSize="13" />
+                    </StackPanel>
+                </Button>
+
+                <Button Background="Transparent"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="12,10"
+                        CornerRadius="6"
+                        Command="{Binding KeyboardShortcutsCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <PathIcon Width="18" Height="18"
+                                  Foreground="#607D8B"
+                                  Data="M19,10H17V8H19M19,13H17V11H19M16,10H14V8H16M16,13H14V11H16M16,17H8V15H16M7,10H5V8H7M7,13H5V11H7M8,11H10V13H8M8,8H10V10H8M11,11H13V13H11M11,8H13V10H11M20,5H4C2.89,5 2,5.89 2,7V17A2,2 0 0,0 4,19H20A2,2 0 0,0 22,17V7C22,5.89 21.1,5 20,5Z" />
+                        <TextBlock Text="Keyboard Shortcuts" Foreground="#B0BEC5" FontSize="13" />
+                    </StackPanel>
+                </Button>
+
+                <Border Height="1" Background="#15FFFFFF" Margin="8,4" />
+
+                <Button Background="Transparent"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="12,10"
+                        CornerRadius="6"
+                        Command="{Binding HelpCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <PathIcon Width="18" Height="18"
+                                  Foreground="#607D8B"
+                                  Data="M11,18H13V16H11V18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A4,4 0 0,0 8,10H10A2,2 0 0,1 12,8A2,2 0 0,1 14,10C14,12 11,11.75 11,15H13C13,12.75 16,12.5 16,10A4,4 0 0,0 12,6Z" />
+                        <TextBlock Text="Help &amp; Support" Foreground="#B0BEC5" FontSize="13" />
+                    </StackPanel>
+                </Button>
+
+                <Border Height="1" Background="#15FFFFFF" Margin="8,4" />
+
+                <Button Background="Transparent"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="12,10"
+                        CornerRadius="6"
+                        Command="{Binding LogoutCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <PathIcon Width="18" Height="18"
+                                  Foreground="#FF6B7A"
+                                  Data="M16,17V14H9V10H16V7L21,12L16,17M14,2A2,2 0 0,1 16,4V6H14V4H5V20H14V18H16V20A2,2 0 0,1 14,22H5A2,2 0 0,1 3,20V4A2,2 0 0,1 5,2H14Z" />
+                        <TextBlock Text="Sign Out" Foreground="#FF6B7A" FontSize="13" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+            <!-- Session Info -->
+            <Border Background="#08FFFFFF"
+                    Padding="12"
+                    Margin="8,0,8,8"
+                    CornerRadius="6">
+                <StackPanel Spacing="2">
+                    <TextBlock Text="{Binding SessionInfo}"
+                               FontSize="10"
+                               Foreground="#455A64" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Border>
+
+</UserControl>

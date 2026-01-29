@@ -1,0 +1,80 @@
+═════════════
+SECTION 3: HIDDEN RUNTIME ISSUES
+═════════
+
+1. NULL REFERENCE POTENTIAL:
+   - Multiple files use .Value on nullable types without checking HasValue first
+   - Files: MIC.Infrastructure.Data/Repositories/EmailRepository.cs (multiple occurrences)
+           MIC.Infrastructure.Data/Repositories/MetricsRepository.cs (startDate.Value, endDate.Value, etc.)
+           MIC.Infrastructure.Data/Repositories/AlertRepository.cs (severity.Value, status.Value, etc.)
+   - Potential null dereference when accessing service provider in DI: 
+     MIC.Desktop.Avalonia/ViewModels/MainWindowViewModel.cs (Program.ServiceProvider?.GetService)
+   - Multiple files have potential null access patterns like:
+     var user = await _userRepository.GetByUsernameAsync(username).ConfigureAwait(false);
+     if (user is null) // Could cause null reference if not handled properly
+
+2. ASYNC/AWAIT ISSUES:
+   - FILE: MIC.Desktop.Avalonia/Views/MainWindow.axaml.cs
+     ISSUE: Contains 'async void HandleAction' method - should return Task
+     RISK: Fire-and-forget exceptions will crash the application
+   - FILE: MIC.Desktop.Avalonia/Program.cs
+     ISSUE: Uses 'Task.Run(async () =>' without awaiting the task
+     RISK: Fire-and-forget pattern that could hide exceptions
+   - FILE: Multiple converter classes in MIC.Desktop.Avalonia/Converters/
+     ISSUE: ConvertBack methods throw NotImplementedException but are called during two-way binding
+     RISK: Will cause runtime crashes when used in two-way binding scenarios
+
+3. EXCEPTION HANDLING GAPS:
+   - FILE: MIC.Core.Intelligence/EmailSyncService.cs
+     ISSUE: Demo data generation uses random access without bounds checking
+     RISK: IndexOutOfRangeException if array lengths don't match expectations
+   - FILE: MIC.Infrastructure.AI/Services/ChatService.cs
+     ISSUE: Contains 'lock (history)' blocks without try-finally for exception safety
+     RISK: Locks may not be released if exceptions occur within the locked section
+   - FILE: MIC.Infrastructure.Identity/AuthenticationService.cs
+     ISSUE: Password hashing logic has potential for unhandled exceptions
+     RISK: Authentication could fail silently or unpredictably
+
+4. MEMORY LEAKS:
+   - FILE: MIC.Desktop.Avalonia/Services/NotificationService.cs
+     ISSUE: ObservableCollection Notifications is never cleared or limited in size
+     RISK: Accumulates notifications indefinitely leading to memory growth
+   - FILE: Multiple ViewModel files with ObservableCollections
+     ISSUE: Subscriptions to Rx streams without proper disposal
+     RISK: Event handlers remain subscribed, preventing garbage collection
+   - FILE: MIC.Desktop.Avalonia/ViewModels/EmailInboxViewModel.cs
+     ISSUE: Two subscriptions to LoadEmailsAsync() without unsubscribe mechanism
+     RISK: Multiple concurrent subscriptions could accumulate
+   - FILE: Singleton services in various Service files
+     ISSUE: Static singleton instances hold references for application lifetime
+     RISK: Objects referenced by singletons won't be garbage collected
+
+5. THREADING ISSUES:
+   - FILE: MIC.Infrastructure.AI/Services/ChatService.cs
+     ISSUE: Uses 'lock' statements in async methods
+     RISK: Can cause deadlocks when combined with async/await
+   - FILE: MIC.Desktop.Avalonia/Program.cs
+     ISSUE: Task.Run creates background thread without proper synchronization
+     RISK: Race conditions with UI thread access
+   - FILE: Various ViewModels
+     ISSUE: Direct UI updates from background threads without proper marshaling
+     RISK: Cross-thread exceptions when updating UI from non-UI threads
+
+6. CONFIGURATION ISSUES:
+   - FILE: MIC.Infrastructure.Data/DependencyInjection.cs
+     ISSUE: Connection string obfuscation regex pattern may not match all providers
+     RISK: Sensitive data could be logged accidentally
+   - FILE: MIC.Infrastructure.AI/Services/SemanticKernelConfig.cs
+     ISSUE: Hardcoded error message about API key requirements
+     RISK: May expose configuration details in production logs
+   - FILE: appsettings.json files
+     ISSUE: Need to verify sensitive configuration isn't hardcoded in files
+     RISK: API keys, connection strings, or other secrets in plain text
+
+Additional Runtime Risks Identified:
+- Unimplemented ConvertBack methods in value converters will cause crashes during two-way binding
+- Multiple potential index out of bounds errors in demo data generation
+- Missing null checks in multiple repository methods
+- Improper async void usage in UI event handlers
+- Static singletons that may cause memory leaks
+- Lock statements in async methods that can cause deadlocks

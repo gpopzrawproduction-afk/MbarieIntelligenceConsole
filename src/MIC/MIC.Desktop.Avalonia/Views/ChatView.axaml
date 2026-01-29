@@ -1,0 +1,219 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MIC.Desktop.Avalonia.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="700"
+             x:Class="MIC.Desktop.Avalonia.Views.ChatView"
+             x:DataType="vm:ChatViewModel"
+             Background="#0B0C10">
+
+    <Grid RowDefinitions="Auto,*,Auto,Auto">
+        
+        <!-- Header -->
+        <Border Grid.Row="0"
+                Background="#0D1117"
+                BorderBrush="#2000E5FF"
+                BorderThickness="0,0,0,1"
+                Padding="16,12">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <!-- AI Avatar -->
+                <Border Grid.Column="0"
+                        Width="40" Height="40"
+                        CornerRadius="12"
+                        BorderBrush="#00E5FF"
+                        BorderThickness="1"
+                        BoxShadow="0 0 16 0 #4000E5FF">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                            <GradientStop Color="#2000E5FF" Offset="0" />
+                            <GradientStop Color="#20BF40FF" Offset="1" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <PathIcon Width="20" Height="20"
+                              Foreground="#00E5FF"
+                              Data="M12,2A2,2 0 0,1 14,4C14,4.74 13.6,5.39 13,5.73V7H14A7,7 0 0,1 21,14H22A1,1 0 0,1 23,15V18A1,1 0 0,1 22,19H21V20A2,2 0 0,1 19,22H5A2,2 0 0,1 3,20V19H2A1,1 0 0,1 1,18V15A1,1 0 0,1 2,14H3A7,7 0 0,1 10,7H11V5.73C10.4,5.39 10,4.74 10,4A2,2 0 0,1 12,2M7.5,13A2.5,2.5 0 0,0 5,15.5A2.5,2.5 0 0,0 7.5,18A2.5,2.5 0 0,0 10,15.5A2.5,2.5 0 0,0 7.5,13M16.5,13A2.5,2.5 0 0,0 14,15.5A2.5,2.5 0 0,0 16.5,18A2.5,2.5 0 0,0 19,15.5A2.5,2.5 0 0,0 16.5,13Z" />
+                </Border>
+                
+                <!-- Title -->
+                <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="AI ASSISTANT"
+                               FontSize="14"
+                               FontWeight="SemiBold"
+                               Foreground="#FFFFFF"
+                               LetterSpacing="1" />
+                    <TextBlock Text="{Binding StatusText}"
+                               FontSize="11"
+                               Foreground="#607D8B" />
+                </StackPanel>
+                
+                <!-- Clear Button -->
+                <Button Grid.Column="2"
+                        Background="Transparent"
+                        Command="{Binding ClearChatCommand}"
+                        ToolTip.Tip="Clear conversation"
+                        Padding="8">
+                    <PathIcon Width="16" Height="16"
+                              Foreground="#607D8B"
+                              Data="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
+                </Button>
+            </Grid>
+        </Border>
+        
+        <!-- Messages Area -->
+        <ScrollViewer Grid.Row="1"
+                      x:Name="MessagesScrollViewer"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Padding="16">
+            <ItemsControl ItemsSource="{Binding Messages}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0,0,0,12">
+                            <!-- User Message -->
+                            <Border IsVisible="{Binding IsUser}"
+                                    Background="#2000E5FF"
+                                    BorderBrush="#4000E5FF"
+                                    BorderThickness="1"
+                                    CornerRadius="12,12,4,12"
+                                    Padding="12"
+                                    HorizontalAlignment="Right"
+                                    MaxWidth="320">
+                                <TextBlock Text="{Binding Content}"
+                                           Foreground="#FFFFFF"
+                                           TextWrapping="Wrap"
+                                           FontSize="13" />
+                            </Border>
+                            
+                            <!-- AI Message -->
+                            <StackPanel IsVisible="{Binding !IsUser}"
+                                        Orientation="Horizontal"
+                                        HorizontalAlignment="Left">
+                                <!-- AI Avatar -->
+                                <Border Width="28" Height="28"
+                                        CornerRadius="8"
+                                        Background="#1500E5FF"
+                                        VerticalAlignment="Top"
+                                        Margin="0,0,8,0">
+                                    <TextBlock Text="M"
+                                               FontSize="14"
+                                               FontWeight="Light"
+                                               Foreground="#00E5FF"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+                                </Border>
+                                
+                                <Border Background="#14FFFFFF"
+                                        BorderBrush="#20FFFFFF"
+                                        BorderThickness="1"
+                                        CornerRadius="4,12,12,12"
+                                        Padding="12"
+                                        MaxWidth="300">
+                                    <TextBlock Text="{Binding Content}"
+                                               Foreground="#E0E0E0"
+                                               TextWrapping="Wrap"
+                                               FontSize="13" />
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+        
+        <!-- Typing Indicator -->
+        <Border Grid.Row="2"
+                IsVisible="{Binding IsAITyping}"
+                Padding="16,8"
+                Background="#0D1117">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <Border Width="24" Height="24"
+                        CornerRadius="6"
+                        Background="#1500E5FF">
+                    <TextBlock Text="M"
+                               FontSize="12"
+                               FontWeight="Light"
+                               Foreground="#00E5FF"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Border>
+                <TextBlock Text="AI is thinking..."
+                           FontSize="12"
+                           Foreground="#607D8B"
+                           FontStyle="Italic"
+                           VerticalAlignment="Center" />
+                <!-- Animated dots would go here -->
+            </StackPanel>
+        </Border>
+        
+        <!-- Suggested Questions -->
+        <Border Grid.Row="2"
+                IsVisible="{Binding ShowSuggestions}"
+                Padding="12,8"
+                Background="#0D1117"
+                BorderBrush="#15FFFFFF"
+                BorderThickness="0,1,0,0">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Disabled">
+                <ItemsControl ItemsSource="{Binding SuggestedQuestions}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="8" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Background="#10FFFFFF"
+                                    BorderBrush="#20FFFFFF"
+                                    BorderThickness="1"
+                                    CornerRadius="16"
+                                    Padding="12,6"
+                                    Command="{Binding $parent[ItemsControl].((vm:ChatViewModel)DataContext).UseSuggestionCommand}"
+                                    CommandParameter="{Binding}">
+                                <TextBlock Text="{Binding}"
+                                           FontSize="11"
+                                           Foreground="#B0BEC5" />
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+        
+        <!-- Input Area -->
+        <Border Grid.Row="3"
+                Background="#0D1117"
+                BorderBrush="#2000E5FF"
+                BorderThickness="0,1,0,0"
+                Padding="12">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBox Grid.Column="0"
+                         Text="{Binding UserInput}"
+                         Watermark="Ask anything about your business data..."
+                         Background="#10FFFFFF"
+                         BorderBrush="#20FFFFFF"
+                         BorderThickness="1"
+                         CornerRadius="20"
+                         Padding="16,10"
+                         Foreground="#FFFFFF"
+                         FontSize="13"
+                         AcceptsReturn="False" />
+                
+                <Button Grid.Column="1"
+                        Command="{Binding SendMessageCommand}"
+                        Background="#00E5FF"
+                        Foreground="#0B0C10"
+                        CornerRadius="20"
+                        Width="40" Height="40"
+                        Margin="8,0,0,0"
+                        IsEnabled="{Binding CanSend}">
+                    <PathIcon Width="18" Height="18"
+                              Foreground="#0B0C10"
+                              Data="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
+                </Button>
+            </Grid>
+        </Border>
+        
+    </Grid>
+
+</UserControl>

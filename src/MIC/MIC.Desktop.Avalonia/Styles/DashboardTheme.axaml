@@ -1,0 +1,128 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Glassmorphism Metric Card Style -->
+    <Style Selector="Border.MetricCard">
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                    <GradientStop Color="#3F51B5" Offset="0"/>
+                    <GradientStop Color="#1E293B" Offset="1"/>
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="BorderBrush" Value="#334155"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="16"/>
+        <Setter Property="Padding" Value="24"/>
+        <Setter Property="BoxShadow" Value="0 8 32 0 #00000050"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.2"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Border.MetricCard:pointerover">
+	    <Setter Property="BorderBrush" Value="#3B82F6"/>
+	</Style>
+    <!-- Large Metric Value -->
+    <Style Selector="TextBlock.MetricValue">
+        <Setter Property="FontSize" Value="56"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="#F8FAFC"/>
+        <Setter Property="Margin" Value="0,16,0,8"/>
+    </Style>
+    <!-- Metric Label -->
+    <Style Selector="TextBlock.MetricLabel">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="#CBD5E1"/>
+        <Setter Property="LetterSpacing" Value="1"/>
+    </Style>
+    <!-- Metric Description -->
+    <Style Selector="TextBlock.MetricDescription">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground" Value="#CBD5E1"/>
+        <Setter Property="Opacity" Value="0.8"/>
+    </Style>
+    <!-- Trend Badge - Positive -->
+    <Style Selector="Border.TrendBadge.Positive">
+        <Setter Property="Background" Value="#10B98120"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="10,5"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Margin" Value="0,12,0,0"/>
+    </Style>
+    <Style Selector="TextBlock.TrendText.Positive">
+        <Setter Property="Foreground" Value="#10B981"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+    <!-- Trend Badge - Negative -->
+    <Style Selector="Border.TrendBadge.Negative">
+        <Setter Property="Background" Value="#EF444420"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="10,5"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Margin" Value="0,12,0,0"/>
+    </Style>
+    <Style Selector="TextBlock.TrendText.Negative">
+        <Setter Property="Foreground" Value="#EF4444"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+    <!-- Dashboard Panel (for Recent Alerts/Predictions) -->
+    <Style Selector="Border.DashboardPanel">
+        <Setter Property="Background" Value="#1E293B"/>
+        <Setter Property="BorderBrush" Value="#334155"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="16"/>
+        <Setter Property="Padding" Value="24"/>
+        <Setter Property="BoxShadow" Value="0 4 16 0 #00000030"/>
+    </Style>
+    <!-- Panel Header -->
+    <Style Selector="TextBlock.PanelHeader">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="#F8FAFC"/>
+    </Style>
+    <!-- Alert Item in Dashboard -->
+    <Style Selector="Border.DashboardAlertItem">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="BorderBrush" Value="#334155"/>
+        <Setter Property="Padding" Value="12,16"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.15"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Border.DashboardAlertItem:pointerover">
+        <Setter Property="Background" Value="#3B82F610"/>
+    </Style>
+    <!-- Live Indicator Pulse Animation -->
+    <Style Selector="Ellipse.LiveDot">
+        <Setter Property="Width" Value="8"/>
+        <Setter Property="Height" Value="8"/>
+        <Setter Property="Fill" Value="#EF4444"/>
+    </Style>
+    <!-- View All Button -->
+    <Style Selector="Button.ViewAllBtn">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="Foreground" Value="#3B82F6"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.15"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Button.ViewAllBtn:pointerover">
+        <Setter Property="Opacity" Value="0.8"/>
+    </Style>
+</Styles>

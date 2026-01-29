@@ -1,0 +1,83 @@
+name: Build & Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+        
+    - name: Restore dependencies
+      run: dotnet restore MIC.slnx
+      
+    - name: Build
+      run: dotnet build MIC.slnx -c Release --no-restore
+      
+    - name: Run unit tests
+      run: dotnet test MIC.Tests.Unit -c Release --no-build --verbosity normal
+      
+    - name: Run integration tests
+      run: dotnet test MIC.Tests.Integration -c Release --no-build --verbosity normal
+      
+    - name: Publish desktop application
+      run: dotnet publish MIC.Desktop.Avalonia -c Release -r win-x64 --self-contained -o ./release/win-x64
+      
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: mic-desktop-build
+        path: ./release/win-x64/
+        retention-days: 7
+        
+    - name: Run tests with coverage
+      run: |
+        dotnet test MIC.Tests.Unit -c Release --collect:"XPlat Code Coverage" --results-directory ./coverage
+        dotnet test MIC.Tests.Integration -c Release --collect:"XPlat Code Coverage" --results-directory ./coverage
+        
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: |
+          **/TestResults/**/*.trx
+          **/TestResults/**/*.xml
+          ./coverage/
+          
+  release:
+    needs: build-and-test
+    runs-on: windows-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+        
+    - name: Download build artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: mic-desktop-build
+        path: ./release
+        
+    - name: Create release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ./release/win-x64/**
+        generate_release_notes: true
+        draft: false
+        prerelease: false

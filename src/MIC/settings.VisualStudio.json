@@ -1,0 +1,7 @@
+/* Visual Studio Settings File */
+{
+  "copilot.general.chat.enablePlanning": true,
+  "copilot.general.chat.autoSelectRefinementMode": true,
+  "copilot.general.chat.enableCopilotCodingAgent": true,
+  "copilot.general.chat.defaultAgent": "Agent"
+}

@@ -1,0 +1,74 @@
+═════════════
+SECTION 5: DATA & DATABASE ISSUES
+═════════════
+
+1. MIGRATION STATUS:
+   - Found 3 migrations in MIC.Infrastructure.Data/Migrations/
+   - 20260123112624_InitialCreate: Applied
+   - 20260124101147_PendingModelChanges: Applied  
+   - 20260126083123_AddUserEntity: Applied
+   - Migration model snapshot: MicDbContextModelSnapshot.cs exists
+   - Status: All migrations appear to be applied, no pending migrations
+
+2. ENTITY ISSUES:
+   - Navigation properties configured: YES for most entities
+   - Foreign keys: Properly configured in configurations
+   - Indexes: Well-defined in EmailMessageConfiguration with multiple performance indexes
+   - Required fields: Properly marked with .IsRequired()
+   - Data annotations vs Fluent API: Consistent use of Fluent API
+   - Entity Issue: EmailMessageConfiguration has inconsistent comment formatting on last two properties
+
+3. REPOSITORY ISSUES:
+   - All CRUD operations implemented: YES for EmailRepository
+   - Async properly used: YES throughout with ConfigureAwait(false)
+   - Error handling: Basic error handling present
+   - Query optimization: Good use of Include(), Where(), OrderBy clauses
+   - Repository Issue: MarkAsReadAsync loads all emails into memory before updating (inefficient for bulk operations)
+
+4. SEED DATA ISSUES:
+   - Is seed data realistic?: MODERATE - contains basic demo data but lacks variety
+   - Enough variety for demo?: NO - limited number of records
+   - Data relationships correct?: YES - relationships properly established
+   - Any hardcoded test data?: YES - hardcoded admin credentials "admin / Admin@123"
+   - Seed data issue: Hardcoded credentials pose security risk in production
+   - Seed data issue: Limited variety in demo emails, assets, and metrics
+
+5. CONNECTION STRING ISSUES:
+   - Configuration in MIC.Infrastructure.Data/DependencyInjection.cs shows proper obfuscation pattern
+   - Pattern "(?i)(Password|Pwd)=[^;]*" looks for password fields to obfuscate
+   - Connection string handling appears secure with regex obfuscation
+   - No hardcoded connection strings found in source code
+
+SPECIFIC DATABASE ISSUES IDENTIFIED:
+
+1. EMAIL MESSAGE ENTITY:
+   - EmailMessageConfiguration.cs has proper indexing strategy
+   - Multiple indexes for performance: MessageId (unique), UserId, EmailAccountId, ReceivedDate, etc.
+   - Composite indexes for common query patterns
+   - Proper conversion of enums to integers
+   - String list conversion for ExtractedKeywords and ActionItems using delimited strings
+
+2. USER ENTITY:
+   - Proper indexing on Username and Email (both unique)
+   - Password hashing implemented with Argon2id in Infrastructure.Identity
+   - Salt stored separately for security
+   - IsActive flag for soft deletion concept
+
+3. MIGRATION CONCERNS:
+   - Migration 20260126083123_AddUserEntity has IsDeleted column type as INTEGER instead of boolean
+   - This inconsistency could cause issues with different database providers
+   - Column type "TEXT" used for ModifiedAt and LastModifiedBy in migration instead of appropriate types
+
+4. PERFORMANCE CONCERNS:
+   - EmailRepository.GetAccountsNeedingSyncAsync loads all accounts into memory then filters
+   - This could be inefficient for SQLite when dealing with many accounts
+   - Better to push filtering to database level where possible
+
+5. DATA INTEGRITY:
+   - Global query filter for soft deletes properly implemented in MicDbContext
+   - BaseEntity modification tracking implemented in SaveChangesAsync
+   - Proper cascade delete configured for EmailMessage->EmailAttachment relationship
+
+6. MISSING ENTITIES:
+   - KnowledgeEntry entity mentioned in DbContext but no corresponding configuration file found
+   - This could cause runtime issues if the entity isn't properly mapped

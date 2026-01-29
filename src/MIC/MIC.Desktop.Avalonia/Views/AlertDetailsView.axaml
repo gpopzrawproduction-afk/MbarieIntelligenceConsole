@@ -1,0 +1,383 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MIC.Desktop.Avalonia.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="800"
+             x:Class="MIC.Desktop.Avalonia.Views.AlertDetailsView"
+             x:DataType="vm:AlertDetailsViewModel"
+             Background="#0B0C10">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Header -->
+        <Border Grid.Row="0"
+                Background="#0D1117"
+                BorderBrush="#20FFFFFF"
+                BorderThickness="0,0,0,1"
+                Padding="24,16">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="{Binding WindowTitle}"
+                               FontSize="24"
+                               FontWeight="Light"
+                               Foreground="#FFFFFF"
+                               LetterSpacing="2" />
+                    <TextBlock Text="{Binding AlertId, StringFormat='ID: {0}'}"
+                               FontSize="11"
+                               Foreground="#607D8B"
+                               Margin="0,4,0,0"
+                               IsVisible="{Binding AlertId, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                    <!-- Status Badge -->
+                    <Border Background="{Binding Status, Converter={x:Static vm:AlertStatusToColorConverter.Instance}, ConverterParameter=Background}"
+                            BorderBrush="{Binding Status, Converter={x:Static vm:AlertStatusToColorConverter.Instance}}"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            Padding="12,6"
+                            IsVisible="{Binding IsNewAlert, Converter={x:Static BoolConverters.Not}}">
+                        <TextBlock Text="{Binding Status}"
+                                   Foreground="{Binding Status, Converter={x:Static vm:AlertStatusToColorConverter.Instance}}"
+                                   FontSize="12"
+                                   FontWeight="Bold"
+                                   LetterSpacing="1" />
+                    </Border>
+                    <!-- Edit Toggle -->
+                    <Button Classes="btn-ghost"
+                            Command="{Binding ToggleEditModeCommand}"
+                            IsVisible="{Binding IsNewAlert, Converter={x:Static BoolConverters.Not}}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <PathIcon Width="14" Height="14"
+                                      Foreground="#B0BEC5"
+                                      Data="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" />
+                            <TextBlock Text="EDIT" IsVisible="{Binding IsViewMode}" />
+                            <TextBlock Text="VIEW" IsVisible="{Binding IsEditMode}" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1" 
+                      HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="24">
+
+                <!-- Error Message -->
+                <Border Background="#20FF0055"
+                        BorderBrush="#FF0055"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16"
+                        Margin="0,0,0,16"
+                        IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               Foreground="#FF0055"
+                               FontSize="13"
+                               TextWrapping="Wrap" />
+                </Border>
+
+                <!-- Loading Overlay -->
+                <Border Background="#14FFFFFF"
+                        CornerRadius="8"
+                        Padding="24"
+                        IsVisible="{Binding IsLoading}">
+                    <StackPanel HorizontalAlignment="Center">
+                        <ProgressBar IsIndeterminate="True"
+                                     Width="200"
+                                     Foreground="#00E5FF" />
+                        <TextBlock Text="Processing..."
+                                   Foreground="#B0BEC5"
+                                   Margin="0,12,0,0"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Alert Information Form -->
+                <Border Classes="glass-card"
+                        Margin="0,0,0,16"
+                        IsVisible="{Binding IsLoading, Converter={x:Static BoolConverters.Not}}">
+                    <StackPanel>
+                        <TextBlock Text="ALERT INFORMATION"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="#607D8B"
+                                   LetterSpacing="2"
+                                   Margin="0,0,0,20" />
+
+                        <!-- Alert Name -->
+                        <StackPanel Margin="0,0,0,16">
+                            <TextBlock Text="Alert Name *"
+                                       FontSize="12"
+                                       Foreground="#B0BEC5"
+                                       Margin="0,0,0,6" />
+                            <TextBox Text="{Binding AlertName}"
+                                     IsReadOnly="{Binding IsViewMode}"
+                                     Watermark="Enter alert name..."
+                                     Background="#10FFFFFF"
+                                     Foreground="#FFFFFF"
+                                     BorderBrush="#20FFFFFF"
+                                     Padding="12,10"
+                                     MaxLength="200" />
+                        </StackPanel>
+
+                        <!-- Description -->
+                        <StackPanel Margin="0,0,0,16">
+                            <TextBlock Text="Description *"
+                                       FontSize="12"
+                                       Foreground="#B0BEC5"
+                                       Margin="0,0,0,6" />
+                            <TextBox Text="{Binding Description}"
+                                     IsReadOnly="{Binding IsViewMode}"
+                                     Watermark="Enter detailed description..."
+                                     Background="#10FFFFFF"
+                                     Foreground="#FFFFFF"
+                                     BorderBrush="#20FFFFFF"
+                                     Padding="12,10"
+                                     AcceptsReturn="True"
+                                     TextWrapping="Wrap"
+                                     Height="100"
+                                     MaxLength="2000" />
+                        </StackPanel>
+
+                        <!-- Source -->
+                        <StackPanel Margin="0,0,0,16">
+                            <TextBlock Text="Source *"
+                                       FontSize="12"
+                                       Foreground="#B0BEC5"
+                                       Margin="0,0,0,6" />
+                            <TextBox Text="{Binding Source}"
+                                     IsReadOnly="{Binding IsViewMode}"
+                                     Watermark="Enter source system..."
+                                     Background="#10FFFFFF"
+                                     Foreground="#FFFFFF"
+                                     BorderBrush="#20FFFFFF"
+                                     Padding="12,10" />
+                        </StackPanel>
+
+                        <!-- Severity -->
+                        <StackPanel Margin="0,0,0,16">
+                            <TextBlock Text="Severity"
+                                       FontSize="12"
+                                       Foreground="#B0BEC5"
+                                       Margin="0,0,0,6" />
+                            <ComboBox ItemsSource="{Binding SeverityOptions}"
+                                      SelectedItem="{Binding Severity}"
+                                      IsEnabled="{Binding IsEditMode}"
+                                      Background="#10FFFFFF"
+                                      Foreground="#FFFFFF"
+                                      BorderBrush="#20FFFFFF"
+                                      MinWidth="200" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Timestamps Section (View Mode) -->
+                <Border Classes="glass-card"
+                        Margin="0,0,0,16"
+                        IsVisible="{Binding IsNewAlert, Converter={x:Static BoolConverters.Not}}">
+                    <StackPanel>
+                        <TextBlock Text="TIMELINE"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="#607D8B"
+                                   LetterSpacing="2"
+                                   Margin="0,0,0,20" />
+
+                        <Grid ColumnDefinitions="*,*,*">
+                            <!-- Triggered -->
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Triggered"
+                                           FontSize="11"
+                                           Foreground="#607D8B"
+                                           LetterSpacing="1" />
+                                <TextBlock Text="{Binding TriggeredAt, StringFormat='{}{0:MMM dd, yyyy HH:mm}'}"
+                                           FontSize="14"
+                                           Foreground="#FFFFFF"
+                                           Margin="0,4,0,0" />
+                            </StackPanel>
+
+                            <!-- Acknowledged -->
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Acknowledged"
+                                           FontSize="11"
+                                           Foreground="#607D8B"
+                                           LetterSpacing="1" />
+                                <TextBlock Text="{Binding AcknowledgedAt, StringFormat='{}{0:MMM dd, yyyy HH:mm}'}"
+                                           FontSize="14"
+                                           Foreground="#FF6B00"
+                                           Margin="0,4,0,0"
+                                           IsVisible="{Binding AcknowledgedAt, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                                <TextBlock Text="—"
+                                           FontSize="14"
+                                           Foreground="#455A64"
+                                           Margin="0,4,0,0"
+                                           IsVisible="{Binding AcknowledgedAt, Converter={x:Static ObjectConverters.IsNull}}" />
+                                <TextBlock Text="{Binding AcknowledgedBy, StringFormat='by {0}'}"
+                                           FontSize="11"
+                                           Foreground="#607D8B"
+                                           IsVisible="{Binding AcknowledgedBy, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                            </StackPanel>
+
+                            <!-- Resolved -->
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Resolved"
+                                           FontSize="11"
+                                           Foreground="#607D8B"
+                                           LetterSpacing="1" />
+                                <TextBlock Text="{Binding ResolvedAt, StringFormat='{}{0:MMM dd, yyyy HH:mm}'}"
+                                           FontSize="14"
+                                           Foreground="#39FF14"
+                                           Margin="0,4,0,0"
+                                           IsVisible="{Binding ResolvedAt, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                                <TextBlock Text="—"
+                                           FontSize="14"
+                                           Foreground="#455A64"
+                                           Margin="0,4,0,0"
+                                           IsVisible="{Binding ResolvedAt, Converter={x:Static ObjectConverters.IsNull}}" />
+                                <TextBlock Text="{Binding ResolvedBy, StringFormat='by {0}'}"
+                                           FontSize="11"
+                                           Foreground="#607D8B"
+                                           IsVisible="{Binding ResolvedBy, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Resolution Section -->
+                <Border Classes="glass-card"
+                        Margin="0,0,0,16"
+                        IsVisible="{Binding IsNewAlert, Converter={x:Static BoolConverters.Not}}">
+                    <StackPanel>
+                        <TextBlock Text="RESOLUTION"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="#607D8B"
+                                   LetterSpacing="2"
+                                   Margin="0,0,0,20" />
+
+                        <!-- Existing Resolution -->
+                        <Border Background="#1039FF14"
+                                BorderBrush="#39FF14"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="16"
+                                IsVisible="{Binding HasResolution}"
+                                Margin="0,0,0,16">
+                            <TextBlock Text="{Binding Resolution}"
+                                       Foreground="#FFFFFF"
+                                       TextWrapping="Wrap" />
+                        </Border>
+
+                        <!-- Resolution Notes Input (when not resolved) -->
+                        <StackPanel IsVisible="{Binding CanResolve}">
+                            <TextBlock Text="Resolution Notes *"
+                                       FontSize="12"
+                                       Foreground="#B0BEC5"
+                                       Margin="0,0,0,6" />
+                            <TextBox Text="{Binding ResolutionNotes}"
+                                     Watermark="Enter resolution notes to resolve this alert..."
+                                     Background="#10FFFFFF"
+                                     Foreground="#FFFFFF"
+                                     BorderBrush="#20FFFFFF"
+                                     Padding="12,10"
+                                     AcceptsReturn="True"
+                                     TextWrapping="Wrap"
+                                     Height="80"
+                                     MaxLength="2000" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Notes Section -->
+                <Border Classes="glass-card"
+                        IsVisible="{Binding IsEditMode}">
+                    <StackPanel>
+                        <TextBlock Text="ADDITIONAL NOTES"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="#607D8B"
+                                   LetterSpacing="2"
+                                   Margin="0,0,0,20" />
+
+                        <TextBox Text="{Binding Notes}"
+                                 Watermark="Add notes or comments..."
+                                 Background="#10FFFFFF"
+                                 Foreground="#FFFFFF"
+                                 BorderBrush="#20FFFFFF"
+                                 Padding="12,10"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 Height="80"
+                                 MaxLength="2000" />
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer Actions -->
+        <Border Grid.Row="2"
+                Background="#0D1117"
+                BorderBrush="#20FFFFFF"
+                BorderThickness="0,1,0,0"
+                Padding="24,16">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                
+                <!-- Left Actions (Status Actions) -->
+                <StackPanel Grid.Column="0" 
+                            Orientation="Horizontal" 
+                            Spacing="12"
+                            IsVisible="{Binding IsNewAlert, Converter={x:Static BoolConverters.Not}}">
+                    <Button Classes="btn-neon"
+                            Command="{Binding AcknowledgeCommand}"
+                            IsVisible="{Binding CanAcknowledge}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <PathIcon Width="14" Height="14"
+                                      Foreground="#00E5FF"
+                                      Data="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+                            <TextBlock Text="ACKNOWLEDGE" FontSize="12" LetterSpacing="1" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="btn-neon"
+                            Command="{Binding ResolveCommand}"
+                            IsVisible="{Binding CanResolve}"
+                            Background="#2039FF14"
+                            Foreground="#39FF14"
+                            BorderBrush="#39FF14">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <PathIcon Width="14" Height="14"
+                                      Foreground="#39FF14"
+                                      Data="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M11,16.5L6.5,12L7.91,10.59L11,13.67L16.59,8.09L18,9.5L11,16.5Z" />
+                            <TextBlock Text="RESOLVE" FontSize="12" LetterSpacing="1" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <!-- Right Actions (Save/Cancel) -->
+                <StackPanel Grid.Column="2" 
+                            Orientation="Horizontal" 
+                            Spacing="12">
+                    <Button Classes="btn-ghost"
+                            Command="{Binding CancelCommand}">
+                        <TextBlock Text="CANCEL" FontSize="12" LetterSpacing="1" />
+                    </Button>
+                    <Button Classes="btn-neon-filled"
+                            Command="{Binding SaveCommand}"
+                            IsVisible="{Binding IsEditMode}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <PathIcon Width="14" Height="14"
+                                      Foreground="#0B0C10"
+                                      Data="M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z" />
+                            <TextBlock Text="SAVE" FontSize="12" FontWeight="Bold" LetterSpacing="1" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+    </Grid>
+
+</UserControl>

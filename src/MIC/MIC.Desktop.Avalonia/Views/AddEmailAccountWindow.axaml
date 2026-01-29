@@ -1,0 +1,35 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="MIC.Desktop.Avalonia.Views.AddEmailAccountWindow"
+        x:DataType="viewModels:AddEmailAccountViewModel"
+        xmlns:viewModels="clr-namespace:MIC.Desktop.Avalonia.ViewModels"
+        Title="Add Email Account"
+        Width="500" Height="400"
+        WindowStartupLocation="CenterOwner">
+    
+    <StackPanel Margin="20" Spacing="15">
+        <TextBlock Text="Add Email Account" FontSize="20" FontWeight="Bold"/>
+        
+        <TextBlock Text="Email Address:"/>
+        <TextBox Text="{Binding EmailAddress}" Watermark="your.email@company.com"/>
+        
+        <TextBlock Text="Provider:"/>
+        <ComboBox SelectedItem="{Binding SelectedProvider}" 
+                  ItemsSource="{Binding Providers}"/>
+        
+        <TextBlock Text="Display Name:"/>
+        <TextBox Text="{Binding DisplayName}" Watermark="Work Email"/>
+        
+        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button Content="Connect Account" 
+                    Command="{Binding AuthorizeCommand}"
+                    IsEnabled="{Binding CanAuthorize}"/>
+            <Button Content="Cancel" 
+                    Command="{Binding CancelCommand}"/>
+        </StackPanel>
+        
+        <TextBlock Text="{Binding StatusMessage}" 
+                   IsVisible="{Binding HasStatusMessage}"
+                   TextWrapping="Wrap"/>
+    </StackPanel>
+</Window>

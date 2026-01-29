@@ -1,0 +1,381 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MIC.Desktop.Avalonia.ViewModels"
+             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="900"
+             x:Class="MIC.Desktop.Avalonia.Views.MetricsDashboardView"
+             x:DataType="vm:MetricsDashboardViewModel"
+             Background="#0B0C10">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+
+        <!-- Page Header -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="32,24,32,0">
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="METRICS DASHBOARD" 
+                           FontSize="32"
+                           FontWeight="Thin"
+                           Foreground="#FFFFFF"
+                           LetterSpacing="4" />
+                <TextBlock Text="Real-time business performance monitoring"
+                           FontSize="14"
+                           Foreground="#607D8B"
+                           Margin="0,8,0,0" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <!-- Days Filter -->
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="PERIOD"
+                               FontSize="10"
+                               FontWeight="SemiBold"
+                               Foreground="#607D8B"
+                               LetterSpacing="1"
+                               VerticalAlignment="Center" />
+                    <ComboBox ItemsSource="{Binding DaysOptions}"
+                              SelectedItem="{Binding SelectedDays}"
+                              Background="#10FFFFFF"
+                              Foreground="#FFFFFF"
+                              MinWidth="80">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding StringFormat='{}{0} days'}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+                
+                <!-- Refresh Button -->
+                <Button Classes="btn-neon"
+                        Command="{Binding RefreshCommand}"
+                        ToolTip.Tip="Refresh data">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <PathIcon Width="16" Height="16"
+                                  Foreground="#00E5FF"
+                                  Data="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" />
+                        <TextBlock Text="REFRESH" FontSize="12" LetterSpacing="1" />
+                    </StackPanel>
+                </Button>
+
+                <!-- Export Button -->
+                <Button Classes="btn-neon"
+                        Command="{Binding ExportCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <PathIcon Width="16" Height="16"
+                                  Foreground="#00E5FF"
+                                  Data="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M13.5,16V19H10.5V16H8L12,12L16,16H13.5M13,9V3.5L18.5,9H13Z" />
+                        <TextBlock Text="EXPORT" FontSize="12" LetterSpacing="1" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- KPI Cards Row -->
+        <ScrollViewer Grid.Row="1" 
+                      HorizontalScrollBarVisibility="Auto" 
+                      VerticalScrollBarVisibility="Disabled"
+                      Margin="32,24,32,0">
+            <ItemsControl ItemsSource="{Binding KpiCards}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="16" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="#14FFFFFF"
+                                BorderBrush="#20FFFFFF"
+                                BorderThickness="1"
+                                CornerRadius="12"
+                                Padding="20"
+                                Width="220">
+                            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                <!-- Title -->
+                                <TextBlock Grid.Row="0"
+                                           Text="{Binding Title}"
+                                           FontSize="11"
+                                           FontWeight="SemiBold"
+                                           Foreground="#607D8B"
+                                           LetterSpacing="1" />
+                                
+                                <!-- Value -->
+                                <TextBlock Grid.Row="1"
+                                           Text="{Binding Value}"
+                                           FontSize="28"
+                                           FontWeight="Light"
+                                           Foreground="#FFFFFF"
+                                           Margin="0,8,0,0" />
+                                
+                                <!-- Target -->
+                                <TextBlock Grid.Row="2"
+                                           Text="{Binding Target}"
+                                           FontSize="11"
+                                           Foreground="#455A64"
+                                           Margin="0,4,0,0" />
+                                
+                                <!-- Change -->
+                                <StackPanel Grid.Row="3" 
+                                            Orientation="Horizontal" 
+                                            Spacing="6"
+                                            Margin="0,12,0,0">
+                                    <TextBlock Text="{Binding TrendIcon}"
+                                               FontSize="12"
+                                               Foreground="{Binding Color}" />
+                                    <TextBlock Text="{Binding Change}"
+                                               FontSize="12"
+                                               FontWeight="SemiBold"
+                                               Foreground="{Binding Color}" />
+                                    <Border Background="{Binding Color, StringFormat='{}{0}20'}"
+                                            CornerRadius="4"
+                                            Padding="6,2"
+                                            Margin="8,0,0,0">
+                                        <TextBlock Text="{Binding Status}"
+                                                   FontSize="10"
+                                                   FontWeight="Bold"
+                                                   Foreground="{Binding Color}"
+                                                   LetterSpacing="0.5" />
+                                    </Border>
+                                </StackPanel>
+                                
+                                <!-- Progress Bar -->
+                                <Grid Grid.Row="4" Margin="0,12,0,0">
+                                    <Border Background="#10FFFFFF"
+                                            CornerRadius="4"
+                                            Height="6" />
+                                    <Border Background="{Binding Color}"
+                                            CornerRadius="4"
+                                            Height="6"
+                                            HorizontalAlignment="Left"
+                                            Width="{Binding Progress, Converter={x:Static vm:ProgressToWidthConverter.Instance}}" />
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Charts Area -->
+        <Grid Grid.Row="2" Margin="32,24" RowDefinitions="*,*" ColumnDefinitions="*,*">
+            
+            <!-- Revenue Trend Chart -->
+            <Border Grid.Row="0" Grid.Column="0"
+                    Background="#14FFFFFF"
+                    BorderBrush="#20FFFFFF"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="20"
+                    Margin="0,0,12,12">
+                <Grid RowDefinitions="Auto,*">
+                    <StackPanel Grid.Row="0">
+                        <TextBlock Text="REVENUE TREND"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="#607D8B"
+                                   LetterSpacing="2" />
+                        <TextBlock Text="Financial Performance Over Time"
+                                   FontSize="11"
+                                   Foreground="#455A64"
+                                   Margin="0,4,0,0" />
+                    </StackPanel>
+                    <lvc:CartesianChart Grid.Row="1"
+                                        Series="{Binding RevenueSeries}"
+                                        XAxes="{Binding RevenueXAxes}"
+                                        YAxes="{Binding RevenueYAxes}"
+                                        Margin="0,16,0,0"
+                                        TooltipPosition="Top"
+                                        ZoomMode="X" />
+                </Grid>
+            </Border>
+
+            <!-- Efficiency & Satisfaction Chart -->
+            <Border Grid.Row="0" Grid.Column="1"
+                    Background="#14FFFFFF"
+                    BorderBrush="#20FFFFFF"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="20"
+                    Margin="12,0,0,12">
+                <Grid RowDefinitions="Auto,*">
+                    <StackPanel Grid.Row="0">
+                        <TextBlock Text="EFFICIENCY &amp; SATISFACTION"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="#607D8B"
+                                   LetterSpacing="2" />
+                        <TextBlock Text="Operational Metrics Over Time"
+                                   FontSize="11"
+                                   Foreground="#455A64"
+                                   Margin="0,4,0,0" />
+                    </StackPanel>
+                    <lvc:CartesianChart Grid.Row="1"
+                                        Series="{Binding EfficiencySeries}"
+                                        XAxes="{Binding EfficiencyXAxes}"
+                                        YAxes="{Binding EfficiencyYAxes}"
+                                        Margin="0,16,0,0"
+                                        TooltipPosition="Top"
+                                        ZoomMode="X" />
+                </Grid>
+            </Border>
+
+            <!-- Category Comparison -->
+            <Border Grid.Row="1" Grid.Column="0"
+                    Background="#14FFFFFF"
+                    BorderBrush="#20FFFFFF"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="20"
+                    Margin="0,12,12,0">
+                <Grid RowDefinitions="Auto,*">
+                    <StackPanel Grid.Row="0">
+                        <TextBlock Text="CATEGORY COMPARISON"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="#607D8B"
+                                   LetterSpacing="2" />
+                        <TextBlock Text="Current vs Target Performance"
+                                   FontSize="11"
+                                   Foreground="#455A64"
+                                   Margin="0,4,0,0" />
+                    </StackPanel>
+                    <lvc:CartesianChart Grid.Row="1"
+                                        Series="{Binding CategorySeries}"
+                                        XAxes="{Binding CategoryXAxes}"
+                                        YAxes="{Binding CategoryYAxes}"
+                                        Margin="0,16,0,0"
+                                        TooltipPosition="Top" />
+                </Grid>
+            </Border>
+
+            <!-- Performance Gauges -->
+            <Border Grid.Row="1" Grid.Column="1"
+                    Background="#14FFFFFF"
+                    BorderBrush="#20FFFFFF"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="20"
+                    Margin="12,12,0,0">
+                <Grid RowDefinitions="Auto,*">
+                    <StackPanel Grid.Row="0">
+                        <TextBlock Text="SYSTEM HEALTH"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="#607D8B"
+                                   LetterSpacing="2" />
+                        <TextBlock Text="Real-time Performance Indicators"
+                                   FontSize="11"
+                                   Foreground="#455A64"
+                                   Margin="0,4,0,0" />
+                    </StackPanel>
+                    
+                    <Grid Grid.Row="1" ColumnDefinitions="*,*,*" Margin="0,24,0,0">
+                        <!-- Uptime Gauge -->
+                        <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                            <Border Width="100" Height="100"
+                                    CornerRadius="50"
+                                    BorderBrush="#39FF14"
+                                    BorderThickness="4"
+                                    BoxShadow="0 0 20 0 #4039FF14">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding UptimeValue, StringFormat='{}{0:F1}%'}"
+                                               FontSize="20"
+                                               FontWeight="Light"
+                                               Foreground="#39FF14"
+                                               HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                            <TextBlock Text="UPTIME"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="#607D8B"
+                                       LetterSpacing="1"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,12,0,0" />
+                        </StackPanel>
+
+                        <!-- Response Time Gauge -->
+                        <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                            <Border Width="100" Height="100"
+                                    CornerRadius="50"
+                                    BorderBrush="#00E5FF"
+                                    BorderThickness="4"
+                                    BoxShadow="0 0 20 0 #4000E5FF">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding ResponseTimeValue, StringFormat='{}{0:F0}ms'}"
+                                               FontSize="20"
+                                               FontWeight="Light"
+                                               Foreground="#00E5FF"
+                                               HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                            <TextBlock Text="RESPONSE"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="#607D8B"
+                                       LetterSpacing="1"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,12,0,0" />
+                        </StackPanel>
+
+                        <!-- Error Rate Gauge -->
+                        <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                            <Border Width="100" Height="100"
+                                    CornerRadius="50"
+                                    BorderBrush="#FF6B00"
+                                    BorderThickness="4"
+                                    BoxShadow="0 0 20 0 #40FF6B00">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding ErrorRateValue, StringFormat='{}{0:F2}%'}"
+                                               FontSize="20"
+                                               FontWeight="Light"
+                                               Foreground="#FF6B00"
+                                               HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                            <TextBlock Text="ERROR RATE"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="#607D8B"
+                                       LetterSpacing="1"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,12,0,0" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="3"
+                Background="#0D1117"
+                BorderBrush="#15FFFFFF"
+                BorderThickness="0,1,0,0"
+                Padding="32,8">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <!-- Loading indicator -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                    <ProgressBar IsIndeterminate="True"
+                                 Width="100"
+                                 Foreground="#00E5FF"
+                                 IsVisible="{Binding IsLoading}" />
+                </StackPanel>
+                
+                <TextBlock Grid.Column="1"
+                           Text="{Binding StatusMessage}"
+                           Foreground="#607D8B"
+                           FontSize="12"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+                
+                <TextBlock Grid.Column="2"
+                           Text="Auto-refresh: 30s"
+                           Foreground="#455A64"
+                           FontSize="11"
+                           VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+
+    </Grid>
+
+</UserControl>

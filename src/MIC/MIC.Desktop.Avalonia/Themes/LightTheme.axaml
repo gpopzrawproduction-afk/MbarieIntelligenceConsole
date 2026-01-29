@@ -1,0 +1,85 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ???????????????????????????????????????????????????????????????????????
+         MBARIE INTELLIGENCE CONSOLE - LIGHT THEME
+         Professional enterprise aesthetic
+         ??????????????????????????????????????????????????????????????????????? -->
+
+    <!-- Primary Colors -->
+    <Color x:Key="ThemePrimaryColor">#1a237e</Color>
+    <Color x:Key="ThemePrimaryDarkColor">#0d1444</Color>
+    <Color x:Key="ThemePrimaryLightColor">#3949ab</Color>
+    
+    <!-- Accent Colors -->
+    <Color x:Key="ThemeAccentColor">#0288d1</Color>
+    <Color x:Key="ThemeAccentGoldColor">#ff8f00</Color>
+    <Color x:Key="ThemeAccentMagentaColor">#7b1fa2</Color>
+    <Color x:Key="ThemeAccentGreenColor">#2e7d32</Color>
+    
+    <!-- Semantic Colors -->
+    <Color x:Key="ThemeSuccessColor">#2e7d32</Color>
+    <Color x:Key="ThemeWarningColor">#ef6c00</Color>
+    <Color x:Key="ThemeErrorColor">#c62828</Color>
+    <Color x:Key="ThemeInfoColor">#0288d1</Color>
+    
+    <!-- Text Colors -->
+    <Color x:Key="ThemeTextPrimaryColor">#1a1a1a</Color>
+    <Color x:Key="ThemeTextSecondaryColor">#5f6368</Color>
+    <Color x:Key="ThemeTextTertiaryColor">#80868b</Color>
+    <Color x:Key="ThemeTextDisabledColor">#9aa0a6</Color>
+    
+    <!-- Surface Colors -->
+    <Color x:Key="ThemeSurfaceColor">#FFFFFF</Color>
+    <Color x:Key="ThemeSurfaceBorderColor">#e0e0e0</Color>
+    <Color x:Key="ThemeDividerColor">#e0e0e0</Color>
+    
+    <!-- Background Colors -->
+    <Color x:Key="ThemeBackgroundColor">#f5f5f5</Color>
+    <Color x:Key="ThemeBackgroundElevatedColor">#FFFFFF</Color>
+    
+    <!-- Brushes -->
+    <SolidColorBrush x:Key="ThemePrimaryBrush" Color="{StaticResource ThemePrimaryColor}" />
+    <SolidColorBrush x:Key="ThemePrimaryDarkBrush" Color="{StaticResource ThemePrimaryDarkColor}" />
+    <SolidColorBrush x:Key="ThemePrimaryLightBrush" Color="{StaticResource ThemePrimaryLightColor}" />
+    
+    <SolidColorBrush x:Key="ThemeAccentBrush" Color="{StaticResource ThemeAccentColor}" />
+    <SolidColorBrush x:Key="ThemeAccentGoldBrush" Color="{StaticResource ThemeAccentGoldColor}" />
+    <SolidColorBrush x:Key="ThemeAccentMagentaBrush" Color="{StaticResource ThemeAccentMagentaColor}" />
+    <SolidColorBrush x:Key="ThemeAccentGreenBrush" Color="{StaticResource ThemeAccentGreenColor}" />
+    
+    <SolidColorBrush x:Key="ThemeSuccessBrush" Color="{StaticResource ThemeSuccessColor}" />
+    <SolidColorBrush x:Key="ThemeWarningBrush" Color="{StaticResource ThemeWarningColor}" />
+    <SolidColorBrush x:Key="ThemeErrorBrush" Color="{StaticResource ThemeErrorColor}" />
+    <SolidColorBrush x:Key="ThemeInfoBrush" Color="{StaticResource ThemeInfoColor}" />
+    
+    <SolidColorBrush x:Key="ThemeTextPrimaryBrush" Color="{StaticResource ThemeTextPrimaryColor}" />
+    <SolidColorBrush x:Key="ThemeTextSecondaryBrush" Color="{StaticResource ThemeTextSecondaryColor}" />
+    <SolidColorBrush x:Key="ThemeTextTertiaryBrush" Color="{StaticResource ThemeTextTertiaryColor}" />
+    <SolidColorBrush x:Key="ThemeTextDisabledBrush" Color="{StaticResource ThemeTextDisabledColor}" />
+    
+    <SolidColorBrush x:Key="ThemeSurfaceBrush" Color="{StaticResource ThemeSurfaceColor}" />
+    <SolidColorBrush x:Key="ThemeSurfaceBorderBrush" Color="{StaticResource ThemeSurfaceBorderColor}" />
+    <SolidColorBrush x:Key="ThemeDividerBrush" Color="{StaticResource ThemeDividerColor}" />
+    
+    <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="{StaticResource ThemeBackgroundColor}" />
+    <SolidColorBrush x:Key="ThemeBackgroundElevatedBrush" Color="{StaticResource ThemeBackgroundElevatedColor}" />
+    
+    <!-- Gradient Brushes -->
+    <LinearGradientBrush x:Key="ThemeAccentGradientBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#201a237e" Offset="0" />
+        <GradientStop Color="#101a237e" Offset="1" />
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush x:Key="ThemeHeaderGradientBrush" StartPoint="0%,0%" EndPoint="0%,100%">
+        <GradientStop Color="#FFFFFF" Offset="0" />
+        <GradientStop Color="#f5f5f5" Offset="1" />
+    </LinearGradientBrush>
+    
+    <!-- Glow Colors (for BoxShadow) - Subtle in light mode -->
+    <Color x:Key="ThemeGlowCyanColor">#200288d1</Color>
+    <Color x:Key="ThemeGlowGreenColor">#202e7d32</Color>
+    <Color x:Key="ThemeGlowRedColor">#20c62828</Color>
+    <Color x:Key="ThemeGlowGoldColor">#20ff8f00</Color>
+    
+</ResourceDictionary>

@@ -1,0 +1,329 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MIC.Desktop.Avalonia.ViewModels"
+             mc:Ignorable="d"
+             x:Class="MIC.Desktop.Avalonia.Views.DashboardView"
+             x:DataType="vm:DashboardViewModel"
+             Background="#0F172A">
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="32" Spacing="24">
+
+            <!-- Header: title, subtitle, last updated, LIVE, refresh -->
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="CEO Dashboard"
+                               FontSize="28"
+                               FontWeight="SemiBold"
+                               Foreground="#F8FAFC" />
+                    <TextBlock Text="Executive overview of key metrics and activities"
+                               FontSize="13"
+                               Foreground="#CBD5E1" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            Spacing="16"
+                            VerticalAlignment="Center">
+                    <TextBlock Text="{Binding LastUpdatedText}"
+                               FontSize="12"
+                               Foreground="#CBD5E1" />
+
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <Ellipse Width="8" Height="8" Fill="#10B981" />
+                        <TextBlock Text="LIVE"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="#10B981" />
+                    </StackPanel>
+
+                    <Button Content="Refresh"
+                            Command="{Binding RefreshCommand}"
+                            Width="96"
+                            Height="30"
+                            Background="#1D4ED8"
+                            Foreground="#F8FAFC"
+                            CornerRadius="6" />
+                </StackPanel>
+            </Grid>
+
+            <!-- Key Metrics Cards Row -->
+            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="20">
+                <!-- Total Emails Card -->
+                <Border Classes="MetricCard" Background="#1E293B" BorderBrush="#334155" BorderThickness="1" CornerRadius="12" Padding="20">
+                    <StackPanel>
+                        <Grid ColumnDefinitions="Auto,*" HorizontalAlignment="Left" Margin="0,0,0,12">
+                            <Border Background="#00E5FF33" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0">
+                                <TextBlock Text="✉️" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#00E5FF" />
+                            </Border>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="Total Emails" FontSize="12" Foreground="#94A3B8" />
+                            </StackPanel>
+                        </Grid>
+                        
+                        <TextBlock Text="{Binding TotalEmails, TargetNullValue='0'}" 
+                                   FontSize="28" 
+                                   FontWeight="Bold" 
+                                   Foreground="#F8FAFC" 
+                                   HorizontalAlignment="Left" 
+                                   Margin="0,0,0,4" />
+                        
+                        <Grid HorizontalAlignment="Left">
+                            <TextBlock Text="↑ 12%" FontSize="12" Foreground="#10B981" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Unread Emails Card -->
+                <Border Grid.Column="1" Classes="MetricCard" Background="#1E293B" BorderBrush="#334155" BorderThickness="1" CornerRadius="12" Padding="20">
+                    <StackPanel>
+                        <Grid ColumnDefinitions="Auto,*" HorizontalAlignment="Left" Margin="0,0,0,12">
+                            <Border Background="#FF6B00" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0">
+                                <TextBlock Text="📧" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FF6B00" />
+                            </Border>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="Unread Emails" FontSize="12" Foreground="#94A3B8" />
+                            </StackPanel>
+                        </Grid>
+                        
+                        <TextBlock Text="{Binding UnreadCount, TargetNullValue='0'}" 
+                                   FontSize="28" 
+                                   FontWeight="Bold" 
+                                   Foreground="#F8FAFC" 
+                                   HorizontalAlignment="Left" 
+                                   Margin="0,0,0,4" />
+                        
+                        <TextBlock Text="{Binding UnreadCount, TargetNullValue='0', StringFormat='{}{0} unread'}" 
+                                   FontSize="12" 
+                                   Foreground="#FF6B00" 
+                                   HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Border>
+
+                <!-- High Priority Items Card -->
+                <Border Grid.Column="2" Classes="MetricCard" Background="#1E293B" BorderBrush="#334155" BorderThickness="1" CornerRadius="12" Padding="20">
+                    <StackPanel>
+                        <Grid ColumnDefinitions="Auto,*" HorizontalAlignment="Left" Margin="0,0,0,12">
+                            <Border Background="#EF444433" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0">
+                                <TextBlock Text="⚠️" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#EF4444" />
+                            </Border>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="High Priority" FontSize="12" Foreground="#94A3B8" />
+                            </StackPanel>
+                        </Grid>
+                        
+                        <TextBlock Text="{Binding HighPriorityCount, TargetNullValue='0'}" 
+                                   FontSize="28" 
+                                   FontWeight="Bold" 
+                                   Foreground="#F8FAFC" 
+                                   HorizontalAlignment="Left" 
+                                   Margin="0,0,0,4" />
+                        
+                        <TextBlock Text="{Binding HighPriorityCount, TargetNullValue='0', StringFormat='{}{0} urgent'}" 
+                                   FontSize="12" 
+                                   Foreground="#EF4444" 
+                                   HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Requires Response Card -->
+                <Border Grid.Column="3" Classes="MetricCard" Background="#1E293B" BorderBrush="#334155" BorderThickness="1" CornerRadius="12" Padding="20">
+                    <StackPanel>
+                        <Grid ColumnDefinitions="Auto,*" HorizontalAlignment="Left" Margin="0,0,0,12">
+                            <Border Background="#3B82F633" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0">
+                                <TextBlock Text="💬" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#3B82F6" />
+                            </Border>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="Requires Response" FontSize="12" Foreground="#94A3B8" />
+                            </StackPanel>
+                        </Grid>
+                        
+                        <TextBlock Text="{Binding RequiresResponseCount, TargetNullValue='0'}" 
+                                   FontSize="28" 
+                                   FontWeight="Bold" 
+                                   Foreground="#F8FAFC" 
+                                   HorizontalAlignment="Left" 
+                                   Margin="0,0,0,4" />
+                        
+                        <TextBlock Text="{Binding RequiresResponseCount, TargetNullValue='0', StringFormat='{}{0} pending'}" 
+                                   FontSize="12" 
+                                   Foreground="#3B82F6" 
+                                   HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Recent Activity Section -->
+            <Grid ColumnDefinitions="2*,3*" ColumnSpacing="20">
+                <!-- Recent Activity Panel -->
+                <Border Classes="DashboardPanel" Background="#1E293B" BorderBrush="#334155" BorderThickness="1" CornerRadius="12" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Recent Activity" Classes="PanelHeader" FontSize="16" FontWeight="SemiBold" Foreground="#F8FAFC" Margin="0,0,0,16" />
+                        
+                        <StackPanel Spacing="12">
+                            <!-- Last 5 emails received -->
+                            <StackPanel>
+                                <TextBlock Text="Latest Emails" FontSize="14" FontWeight="SemiBold" Foreground="#E2E8F0" Margin="0,0,0,8" />
+                                <ItemsControl ItemsSource="{Binding RecentEmails}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:DashboardEmailViewModel">
+                                            <Border Background="#0F172A" CornerRadius="8" Padding="12" Margin="0,0,0,8">
+                                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                                    <Border Grid.Column="0" 
+                                                            Background="{Binding PriorityColor, TargetNullValue='#64748B'}" 
+                                                            CornerRadius="6" 
+                                                            Padding="6,2" 
+                                                            VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding PriorityIcon, TargetNullValue='✉️'}" 
+                                                                   FontSize="10" 
+                                                                   Foreground="White" 
+                                                                   HorizontalAlignment="Center" 
+                                                                   VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <StackPanel Grid.Column="1" Spacing="2">
+                                                        <TextBlock Text="{Binding Subject, TargetNullValue='No subject'}"
+                                                                   FontSize="13"
+                                                                   FontWeight="SemiBold"
+                                                                   Foreground="#F8FAFC" />
+                                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                                            <TextBlock Text="{Binding Sender, TargetNullValue='Unknown sender'}"
+                                                                       FontSize="12"
+                                                                       Foreground="#94A3B8" />
+                                                            <TextBlock Text="•" FontSize="12" Foreground="#64748B" />
+                                                            <TextBlock Text="{Binding TimeAgo, TargetNullValue='Just now'}"
+                                                                       FontSize="12"
+                                                                       Foreground="#94A3B8" />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                            
+                            <!-- Recent Alerts -->
+                            <StackPanel Margin="0,16,0,0">
+                                <TextBlock Text="Recent Alerts" FontSize="14" FontWeight="SemiBold" Foreground="#E2E8F0" Margin="0,0,0,8" />
+                                <ItemsControl ItemsSource="{Binding RecentAlerts}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:DashboardAlertViewModel">
+                                            <Border Background="#0F172A" CornerRadius="8" Padding="12" Margin="0,0,0,8">
+                                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                                    <Border Grid.Column="0" 
+                                                            Background="{Binding SeverityColor, TargetNullValue='#64748B'}" 
+                                                            CornerRadius="6" 
+                                                            Padding="6,2" 
+                                                            VerticalAlignment="Center">
+                                                        <TextBlock Text="🚨" 
+                                                                   FontSize="10" 
+                                                                   Foreground="White" 
+                                                                   HorizontalAlignment="Center" 
+                                                                   VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <StackPanel Grid.Column="1" Spacing="2">
+                                                        <TextBlock Text="{Binding Title, TargetNullValue='Alert'}"
+                                                                   FontSize="13"
+                                                                   FontWeight="SemiBold"
+                                                                   Foreground="#F8FAFC" />
+                                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                                            <TextBlock Text="{Binding Source, TargetNullValue='System'}"
+                                                                       FontSize="12"
+                                                                       Foreground="#94A3B8" />
+                                                            <TextBlock Text="•" FontSize="12" Foreground="#64748B" />
+                                                            <TextBlock Text="{Binding TimeAgo, TargetNullValue='Just now'}"
+                                                                       FontSize="12"
+                                                                       Foreground="#94A3B8" />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- AI Insights and Quick Actions Panel -->
+                <Border Grid.Column="1" Classes="DashboardPanel" Background="#1E293B" BorderBrush="#334155" BorderThickness="1" CornerRadius="12" Padding="20">
+                    <StackPanel Spacing="20">
+                        <!-- AI Insights Summary -->
+                        <StackPanel>
+                            <TextBlock Text="AI Insights" Classes="PanelHeader" FontSize="16" FontWeight="SemiBold" Foreground="#F8FAFC" Margin="0,0,0,16" />
+                            
+                            <Border Background="#0F172A" CornerRadius="8" Padding="16">
+                                <StackPanel Spacing="8">
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                        <Border Grid.Column="0" Background="#00E5FF33" Width="32" Height="32" CornerRadius="16">
+                                            <TextBlock Text="🤖" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#00E5FF" />
+                                        </Border>
+                                        <TextBlock Grid.Column="1" 
+                                                   Text="{Binding AIInsightsSummary, TargetNullValue='No insights available. AI is analyzing your data to provide executive summaries and recommendations.'}"
+                                                   FontSize="13"
+                                                   Foreground="#CBD5E1"
+                                                   TextWrapping="Wrap" />
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Quick Actions -->
+                        <StackPanel>
+                            <TextBlock Text="Quick Actions" FontSize="16" FontWeight="SemiBold" Foreground="#F8FAFC" Margin="0,0,0,16" />
+                            
+                            <StackPanel Spacing="12">
+                                <Button HorizontalAlignment="Stretch"
+                                        Height="48"
+                                        Background="#2000E5FF"
+                                        Foreground="#00E5FF"
+                                        BorderBrush="#00E5FF"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Command="{Binding CheckInboxCommand}">
+                                    <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
+                                        <TextBlock Text="📥" FontSize="16" VerticalAlignment="Center" />
+                                        <TextBlock Text="Check Inbox" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                                
+                                <Button HorizontalAlignment="Stretch"
+                                        Height="48"
+                                        Background="#20EF4444"
+                                        Foreground="#EF4444"
+                                        BorderBrush="#EF4444"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Command="{Binding ViewUrgentItemsCommand}">
+                                    <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
+                                        <TextBlock Text="⚠️" FontSize="16" VerticalAlignment="Center" />
+                                        <TextBlock Text="View Urgent Items" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                                
+                                <Button HorizontalAlignment="Stretch"
+                                        Height="48"
+                                        Background="#203B82F6"
+                                        Foreground="#3B82F6"
+                                        BorderBrush="#3B82F6"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Command="{Binding AIChatCommand}">
+                                    <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
+                                        <TextBlock Text="💬" FontSize="16" VerticalAlignment="Center" />
+                                        <TextBlock Text="AI Chat" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>

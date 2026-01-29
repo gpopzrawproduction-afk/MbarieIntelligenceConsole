@@ -1,0 +1,192 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="600"
+        x:Class="MIC.Desktop.Avalonia.Views.AboutWindow"
+        Title="About Mbarie Intelligence Console"
+        Width="500" Height="600"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        Background="#0B0C10">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        
+        <!-- Header with Logo -->
+        <Border Grid.Row="0" 
+                Background="#0D1117"
+                Padding="32"
+                BorderBrush="#2000E5FF"
+                BorderThickness="0,0,0,1">
+            <StackPanel HorizontalAlignment="Center" Spacing="16">
+                
+                <!-- Logo -->
+                <Border Width="100" Height="100"
+                        CornerRadius="20"
+                        BorderBrush="#00E5FF"
+                        BorderThickness="2"
+                        BoxShadow="0 0 40 0 #4000E5FF"
+                        HorizontalAlignment="Center">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                            <GradientStop Color="#3000E5FF" Offset="0" />
+                            <GradientStop Color="#1500E5FF" Offset="1" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <TextBlock Text="M"
+                               FontSize="52"
+                               FontWeight="Thin"
+                               Foreground="#00E5FF"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Border>
+                
+                <!-- Application Name -->
+                <StackPanel HorizontalAlignment="Center" Spacing="4">
+                    <TextBlock Text="MBARIE"
+                               FontSize="24"
+                               FontWeight="Light"
+                               Foreground="#FFFFFF"
+                               LetterSpacing="6"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text="Intelligence Console"
+                               FontSize="14"
+                               Foreground="#607D8B"
+                               LetterSpacing="2"
+                               HorizontalAlignment="Center" />
+                </StackPanel>
+                
+                <!-- Version -->
+                <Border Background="#2000E5FF"
+                        CornerRadius="12"
+                        Padding="16,6">
+                    <TextBlock x:Name="VersionText"
+                               Text="Version 1.0.0"
+                               FontSize="12"
+                               Foreground="#00E5FF"
+                               FontWeight="Medium"
+                               LetterSpacing="1" />
+                </Border>
+                
+            </StackPanel>
+        </Border>
+        
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1" 
+                      Padding="32,24"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="24">
+                
+                <!-- Description -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="ABOUT"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               Foreground="#455A64"
+                               LetterSpacing="2" />
+                    <TextBlock Text="Mbarie Intelligence Console is an enterprise-grade decision intelligence platform that transforms complex operational data into actionable insights through AI-powered analytics, real-time monitoring, and predictive forecasting."
+                               FontSize="13"
+                               Foreground="#B0BEC5"
+                               TextWrapping="Wrap"
+                               LineHeight="22" />
+                </StackPanel>
+                
+                <!-- Divider -->
+                <Border Height="1" Background="#15FFFFFF" />
+                
+                <!-- Features -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="KEY FEATURES"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               Foreground="#455A64"
+                               LetterSpacing="2" />
+                    <StackPanel Spacing="8">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <TextBlock Text="?" Foreground="#00E5FF" FontSize="10" />
+                            <TextBlock Text="Real-time Alert Management" Foreground="#B0BEC5" FontSize="13" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <TextBlock Text="?" Foreground="#39FF14" FontSize="10" />
+                            <TextBlock Text="Interactive Metrics Dashboard" Foreground="#B0BEC5" FontSize="13" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <TextBlock Text="?" Foreground="#BF40FF" FontSize="10" />
+                            <TextBlock Text="AI-Powered Predictions" Foreground="#B0BEC5" FontSize="13" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <TextBlock Text="?" Foreground="#FFC107" FontSize="10" />
+                            <TextBlock Text="Decision Support System" Foreground="#B0BEC5" FontSize="13" />
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+                
+                <!-- Divider -->
+                <Border Height="1" Background="#15FFFFFF" />
+                
+                <!-- Credits -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="CREDITS"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               Foreground="#455A64"
+                               LetterSpacing="2" />
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Built with Avalonia UI" Foreground="#607D8B" FontSize="12" />
+                        <TextBlock Text="Charts powered by LiveCharts2" Foreground="#607D8B" FontSize="12" />
+                        <TextBlock Text="Icons from Material Design" Foreground="#607D8B" FontSize="12" />
+                    </StackPanel>
+                </StackPanel>
+                
+                <!-- Divider -->
+                <Border Height="1" Background="#15FFFFFF" />
+                
+                <!-- License -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="LICENSE"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               Foreground="#455A64"
+                               LetterSpacing="2" />
+                    <TextBlock Text="This software is proprietary and confidential. Unauthorized copying, transfer, or use of this software is strictly prohibited."
+                               FontSize="12"
+                               Foreground="#607D8B"
+                               TextWrapping="Wrap"
+                               LineHeight="20" />
+                </StackPanel>
+                
+            </StackPanel>
+        </ScrollViewer>
+        
+        <!-- Footer -->
+        <Border Grid.Row="2"
+                Background="#0D1117"
+                Padding="32,16"
+                BorderBrush="#15FFFFFF"
+                BorderThickness="0,1,0,0">
+            <Grid ColumnDefinitions="*,Auto">
+                <!-- Copyright -->
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock Text="© 2024 Mbarie Services Ltd."
+                               FontSize="11"
+                               Foreground="#607D8B" />
+                    <TextBlock Text="All rights reserved."
+                               FontSize="10"
+                               Foreground="#455A64" />
+                </StackPanel>
+                
+                <!-- Close Button -->
+                <Button Grid.Column="1"
+                        Content="Close"
+                        Background="#2000E5FF"
+                        Foreground="#00E5FF"
+                        Padding="24,10"
+                        CornerRadius="8"
+                        FontWeight="Medium"
+                        Click="OnCloseClick" />
+            </Grid>
+        </Border>
+        
+    </Grid>
+
+</Window>

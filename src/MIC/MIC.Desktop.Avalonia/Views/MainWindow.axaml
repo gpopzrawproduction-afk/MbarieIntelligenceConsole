@@ -1,0 +1,449 @@
+<Window xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:MIC.Desktop.Avalonia.ViewModels"
+    xmlns:views="using:MIC.Desktop.Avalonia.Views"
+    xmlns:controls="using:MIC.Desktop.Avalonia.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="900"
+    x:Class="MIC.Desktop.Avalonia.Views.MainWindow"
+    x:DataType="vm:MainWindowViewModel"
+    Icon="/Assets/avalonia-logo.ico"
+    Title="Mbarie Intelligence Console"
+    Width="1400" Height="900"
+    MinWidth="1200" MinHeight="700"
+    WindowStartupLocation="CenterScreen"
+    Background="#0B0C10"
+    KeyDown="OnKeyDown">
+
+<Design.DataContext>
+    <vm:MainWindowViewModel/>
+</Design.DataContext>
+
+<!-- Main Layout with Overlays -->
+<Panel>
+        
+<Grid RowDefinitions="60,*,36">
+        
+    <!-- ???????????????????????????????????????????????????????????????????????
+         TOP NAVIGATION BAR - Holographic Header
+         ??????????????????????????????????????????????????????????????????????? -->
+        <Border Grid.Row="0" 
+                Background="#0D1117"
+                BorderBrush="#2000E5FF"
+                BorderThickness="0,0,0,1">
+            <Grid ColumnDefinitions="Auto,*,Auto" Margin="20,0">
+                
+                <!-- Left: Logo and Brand -->
+                <StackPanel Grid.Column="0" 
+                            Orientation="Horizontal" 
+                            Spacing="16"
+                            VerticalAlignment="Center">
+                    <!-- Holographic Logo -->
+                    <Border Width="42" Height="42"
+                            CornerRadius="10"
+                            BorderBrush="#00E5FF"
+                            BorderThickness="1"
+                            BoxShadow="0 0 20 0 #4000E5FF">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                                <GradientStop Color="#2000E5FF" Offset="0" />
+                                <GradientStop Color="#1000E5FF" Offset="1" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <TextBlock Text="M"
+                                   FontSize="22"
+                                   FontWeight="Thin"
+                                   Foreground="#00E5FF"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="MBARIE"
+                                   FontSize="18"
+                                   FontWeight="Light"
+                                   Foreground="#FFFFFF"
+                                   LetterSpacing="6" />
+                        <TextBlock Text="Intelligence Console"
+                                   FontSize="10"
+                                   Foreground="#607D8B"
+                                   LetterSpacing="2"
+                                   Margin="0,-2,0,0" />
+                    </StackPanel>
+                </StackPanel>
+                
+                <!-- Center: Search -->
+                <Border Grid.Column="1"
+                        Background="#10FFFFFF"
+                        BorderBrush="#20FFFFFF"
+                        BorderThickness="1"
+                        CornerRadius="24"
+                        Padding="16,0"
+                        Margin="80,0"
+                        MaxWidth="500"
+                        Height="40"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <PathIcon Grid.Column="0"
+                                  Width="16" Height="16"
+                                  Foreground="#607D8B"
+                                  Data="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"
+                                  Margin="0,0,12,0" />
+                        <TextBox Grid.Column="1"
+                                 Watermark="Search alerts, metrics, predictions..."
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Foreground="#FFFFFF"
+                                 FontSize="13"
+                                 VerticalAlignment="Center" />
+                    </Grid>
+                </Border>
+                
+                <!-- Right: User Menu and Notifications -->
+                <StackPanel Grid.Column="2"
+                            Orientation="Horizontal"
+                            Spacing="12"
+                            VerticalAlignment="Center">
+                    
+                    <!-- Notifications -->
+                    <Button Background="Transparent"
+                            Padding="10"
+                            CornerRadius="12"
+                            Command="{Binding NotificationsCommand}">
+                        <Grid>
+                            <PathIcon Width="20" Height="20"
+                                      Foreground="#B0BEC5"
+                                      Data="M12,22A2,2 0 0,1 10,20H14A2,2 0 0,1 12,22M18,16V11C18,7.93 16.36,5.36 13.5,4.68V4A1.5,1.5 0 0,0 12,2.5A1.5,1.5 0 0,0 10.5,4V4.68C7.63,5.36 6,7.92 6,11V16L4,18V19H20V18L18,16Z" />
+                            <Border Background="#FF0055"
+                                    CornerRadius="8"
+                                    Width="18" Height="18"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Margin="0,-6,-6,0"
+                                    BoxShadow="0 0 8 0 #80FF0055"
+                                    IsVisible="{Binding UnreadNotificationCount}">
+                                <TextBlock Text="{Binding UnreadNotificationCount}"
+                                           FontSize="10"
+                                           FontWeight="Bold"
+                                           Foreground="White"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Border>
+                        </Grid>
+                    </Button>
+                    
+                    <!-- User Avatar and Menu -->
+                    <Button Background="Transparent"
+                            Padding="6"
+                            CornerRadius="12"
+                            Command="{Binding UserMenuCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Border Width="36" Height="36"
+                                    CornerRadius="10"
+                                    BorderBrush="#00E5FF"
+                                    BorderThickness="1"
+                                    BoxShadow="0 0 12 0 #3000E5FF">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                                        <GradientStop Color="#2000E5FF" Offset="0" />
+                                        <GradientStop Color="#10BF40FF" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <TextBlock Text="{Binding UserInitials}"
+                                           FontSize="13"
+                                           FontWeight="Medium"
+                                           Foreground="#00E5FF"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Border>
+                            <StackPanel Spacing="0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding UserName}"
+                                           FontSize="12"
+                                           Foreground="#FFFFFF" />
+                                <TextBlock Text="{Binding UserRole}"
+                                           FontSize="10"
+                                           Foreground="#607D8B" />
+                            </StackPanel>
+                            <PathIcon Width="12" Height="12"
+                                      Foreground="#607D8B"
+                                      Data="M7,10L12,15L17,10H7Z" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                
+            </Grid>
+        </Border>
+        
+        <!-- ???????????????????????????????????????????????????????????????????????
+             MAIN CONTENT AREA
+             ??????????????????????????????????????????????????????????????????????? -->
+        <Grid Grid.Row="1" ColumnDefinitions="260,*">
+            
+            <!-- Left Sidebar Navigation -->
+            <Border Grid.Column="0"
+                    Background="#0D1117"
+                    BorderBrush="#15FFFFFF"
+                    BorderThickness="0,0,1,0">
+                <StackPanel>
+                    
+                    <!-- Navigation Menu -->
+                    <TextBlock Text="NAVIGATION"
+                               FontSize="10"
+                               FontWeight="SemiBold"
+                               Foreground="#455A64"
+                               Margin="20,24,20,16"
+                               LetterSpacing="2" />
+                    
+                    <!-- Dashboard -->
+                    <Button Classes="nav-item-active"
+                            Command="{Binding NavigateToDashboardCommand}"
+                            HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal" Spacing="14">
+                            <PathIcon Width="20" Height="20"
+                                      Foreground="#00E5FF"
+                                      Data="M13,3V9H21V3M13,21H21V11H13M3,21H11V15H3M3,13H11V3H3V13Z" />
+                            <TextBlock Text="Dashboard" 
+                                       VerticalAlignment="Center"
+                                       FontWeight="Medium" />
+                        </StackPanel>
+                    </Button>
+                    
+                    <!-- Alerts -->
+                    <Button Classes="nav-item"
+                            Command="{Binding NavigateToAlertsCommand}"
+                            HorizontalAlignment="Stretch">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14">
+                                <PathIcon Width="20" Height="20"
+                                          Data="M13,14H11V10H13M13,18H11V16H13M1,21H23L12,2L1,21Z" />
+                                <TextBlock Text="Alerts" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <Border Grid.Column="1"
+                                    Background="#20FF0055"
+                                    BorderBrush="#FF0055"
+                                    BorderThickness="1"
+                                    CornerRadius="10"
+                                    Padding="8,3"
+                                    VerticalAlignment="Center">
+                                <TextBlock Text="12"
+                                           FontSize="11"
+                                           FontWeight="Bold"
+                                           Foreground="#FF0055" />
+                            </Border>
+                        </Grid>
+                    </Button>
+                    
+                    <!-- Metrics -->
+                    <Button Classes="nav-item"
+                            Command="{Binding NavigateToMetricsCommand}"
+                            HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal" Spacing="14">
+                            <PathIcon Width="20" Height="20"
+                                      Data="M22,21H2V3H4V19H6V10H10V19H12V6H16V19H18V14H22V21Z" />
+                            <TextBlock Text="Metrics" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    
+                    <!-- Predictions -->
+                    <Button Classes="nav-item"
+                            Command="{Binding NavigateToPredictionsCommand}"
+                            HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal" Spacing="14">
+                            <PathIcon Width="20" Height="20"
+                                      Data="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z" />
+                            <TextBlock Text="Predictions" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    
+                    <!-- AI Assistant -->
+                    <Button Classes="nav-item"
+                            Command="{Binding NavigateToAIChatCommand}"
+                            HorizontalAlignment="Stretch">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14">
+                                <PathIcon Width="20" Height="20"
+                                          Foreground="#BF40FF"
+                                          Data="M12,2A2,2 0 0,1 14,4C14,4.74 13.6,5.39 13,5.73V7H14A7,7 0 0,1 21,14H22A1,1 0 0,1 23,15V18A1,1 0 0,1 22,19H21V20A2,2 0 0,1 19,22H5A2,2 0 0,1 3,20V19H2A1,1 0 0,1 1,18V15A1,1 0 0,1 2,14H3A7,7 0 0,1 10,7H11V5.73C10.4,5.39 10,4.74 10,4A2,2 0 0,1 12,2M7.5,13A2.5,2.5 0 0,0 5,15.5A2.5,2.5 0 0,0 7.5,18A2.5,2.5 0 0,0 10,15.5A2.5,2.5 0 0,0 7.5,13M16.5,13A2.5,2.5 0 0,0 14,15.5A2.5,2.5 0 0,0 16.5,18A2.5,2.5 0 0,0 19,15.5A2.5,2.5 0 0,0 16.5,13Z" />
+                                <TextBlock Text="AI Assistant" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <Border Grid.Column="1"
+                                    Background="#20BF40FF"
+                                    BorderBrush="#BF40FF"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="6,2"
+                                    VerticalAlignment="Center">
+                                <TextBlock Text="AI"
+                                           FontSize="9"
+                                           FontWeight="Bold"
+                                           Foreground="#BF40FF" />
+                            </Border>
+                        </Grid>
+                    </Button>
+                    
+                    <!-- Email Intelligence -->
+                    <Button Classes="nav-item"
+                            Command="{Binding NavigateToEmailCommand}"
+                            HorizontalAlignment="Stretch">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14">
+                                <PathIcon Width="20" Height="20"
+                                          Foreground="#00E5FF"
+                                          Data="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z" />
+                                <TextBlock Text="Email" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <Border Grid.Column="1"
+                                    Background="#2000E5FF"
+                                    BorderBrush="#00E5FF"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="6,2"
+                                    VerticalAlignment="Center">
+                                <TextBlock Text="NEW"
+                                           FontSize="9"
+                                           FontWeight="Bold"
+                                           Foreground="#00E5FF" />
+                            </Border>
+                        </Grid>
+                    </Button>
+                    
+                    <!-- Divider -->
+                    <Border Height="1" 
+                            Background="#15FFFFFF" 
+                            Margin="20,24" />
+                    
+                    <TextBlock Text="SYSTEM"
+                               FontSize="10"
+                               FontWeight="SemiBold"
+                               Foreground="#455A64"
+                               Margin="20,0,20,16"
+                               LetterSpacing="2" />
+                    
+                    <!-- Settings -->
+                    <Button Classes="nav-item"
+                            Command="{Binding NavigateToSettingsCommand}"
+                            HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal" Spacing="14">
+                            <PathIcon Width="20" Height="20"
+                                      Data="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
+                    <TextBlock Text="Settings" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    
+                </StackPanel>
+            </Border>
+            
+            <!-- Main Content Area -->
+            <Border Grid.Column="1"
+                    Background="#0B0C10">
+                <ContentControl Content="{Binding CurrentView}">
+                <ContentControl.DataTemplates>
+                        <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+                            <views:DashboardView />
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type vm:AlertListViewModel}">
+                            <views:AlertListView />
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type vm:MetricsDashboardViewModel}">
+                            <views:MetricsDashboardView />
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type vm:ChatViewModel}">
+                            <views:ChatView />
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type vm:PredictionsViewModel}">
+                            <views:PredictionsView />
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+                            <views:SettingsView />
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type vm:EmailInboxViewModel}">
+                            <views:EmailInboxView />
+                        </DataTemplate>
+                </ContentControl.DataTemplates>
+                </ContentControl>
+            </Border>
+            
+        </Grid>
+        
+        <!-- ???????????????????????????????????????????????????????????????????????
+             STATUS BAR - Holographic Footer
+             ??????????????????????????????????????????????????????????????????????? -->
+        <Border Grid.Row="2"
+                Background="#0D1117"
+                BorderBrush="#15FFFFFF"
+                BorderThickness="0,1,0,0">
+            <Grid ColumnDefinitions="*,Auto,Auto" Margin="20,0">
+                
+                <!-- Left: Current View -->
+                <StackPanel Grid.Column="0" 
+                            Orientation="Horizontal" 
+                            Spacing="12"
+                            VerticalAlignment="Center">
+                    <TextBlock Text="?"
+                               Foreground="#00E5FF"
+                               FontSize="10" />
+                    <TextBlock Text="{Binding CurrentViewName}"
+                               Foreground="#607D8B"
+                               FontSize="11"
+                               FontWeight="Medium"
+                               LetterSpacing="1" />
+                </StackPanel>
+                
+                <!-- Center: Connection Status -->
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            Spacing="10"
+                            VerticalAlignment="Center"
+                            Margin="0,0,32,0">
+                    <Ellipse Width="8" Height="8"
+                             Fill="#39FF14" />
+                    <TextBlock Text="{Binding ConnectionStatus}"
+                               Foreground="#607D8B"
+                               FontSize="11"
+                               LetterSpacing="1" />
+                </StackPanel>
+                
+                <!-- Center: Keyboard Shortcut Hint -->
+                <StackPanel Grid.Column="1" 
+                            Orientation="Horizontal" 
+                            Spacing="4"
+                            VerticalAlignment="Center"
+                            Margin="20,0"
+                            Opacity="0.6">
+                    <Border Background="#15FFFFFF" CornerRadius="3" Padding="4,2">
+                        <TextBlock Text="Ctrl+K" FontSize="9" Foreground="#607D8B" FontFamily="Consolas" />
+                    </Border>
+                    <TextBlock Text="Command Palette" FontSize="10" Foreground="#455A64" VerticalAlignment="Center" />
+                </StackPanel>
+                
+                <!-- Right: Last Update Time -->
+                <TextBlock Grid.Column="2"
+                           Text="{Binding LastUpdateTime, StringFormat='SYNC: {0}'}"
+                           Foreground="#455A64"
+                           FontSize="11"
+                           LetterSpacing="1"
+                           VerticalAlignment="Center" />
+                
+            </Grid>
+        </Border>
+        
+    </Grid>
+    
+    <!-- ???????????????????????????????????????????????????????????????????????
+         OVERLAY LAYER - Toast Notifications
+         ??????????????????????????????????????????????????????????????????????? -->
+    <controls:ToastContainer HorizontalAlignment="Right"
+                             VerticalAlignment="Top"
+                             Margin="24,80,24,0"
+                             Width="380" />
+    
+    <!-- ???????????????????????????????????????????????????????????????????????
+         OVERLAY LAYER - Command Palette (Ctrl+K)
+         ??????????????????????????????????????????????????????????????????????? -->
+    <controls:CommandPalette x:Name="CommandPaletteControl"
+                             DataContext="{Binding CommandPalette}" />
+    
+    </Panel>
+
+</Window>

@@ -1,0 +1,16 @@
+<Solution>
+  <Project Path="MIC.Core.Application/MIC.Core.Application.csproj" />
+  <Project Path="MIC.Core.Domain/MIC.Core.Domain.csproj" />
+  <Project Path="MIC.Core.Intelligence/MIC.Core.Intelligence.csproj" />
+  <Project Path="MIC.Desktop.Avalonia/MIC.Desktop.Avalonia.csproj" />
+  <Project Path="MIC.Infrastructure.AI/MIC.Infrastructure.AI.csproj" />
+  <Project Path="MIC.Infrastructure.Data/MIC.Infrastructure.Data.csproj" />
+  <Project Path="MIC.Infrastructure.Identity/MIC.Infrastructure.Identity.csproj" />
+  <Project Path="MIC.Infrastructure.Monitoring/MIC.Infrastructure.Monitoring.csproj" />
+  <Project Path="MIC.Services.Analytics/MIC.Services.Analytics.csproj" />
+  <Project Path="MIC.Services.Gateway/MIC.Services.Gateway.csproj" />
+  <Project Path="MIC.Services.Intelligence/MIC.Services.Intelligence.csproj" />
+  <Project Path="MIC.Tests.E2E/MIC.Tests.E2E.csproj" />
+  <Project Path="MIC.Tests.Integration/MIC.Tests.Integration.csproj" />
+  <Project Path="MIC.Tests.Unit/MIC.Tests.Unit.csproj" />
+</Solution>

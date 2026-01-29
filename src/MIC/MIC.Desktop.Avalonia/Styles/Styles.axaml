@@ -1,0 +1,376 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ???????????????????????????????????????????????????????????????????????????
+         MIC HOLOGRAPHIC THEME - Futuristic Dark Console
+         Neon cyan accents, glass-morphic cards, animated effects
+         ??????????????????????????????????????????????????????????????????????????? -->
+
+    <!-- Note: ColorPalette.axaml loaded in App.axaml as ResourceInclude -->
+
+    <!-- ???????????????????????????????????????????????????????????????????????????
+         GLASS-MORPHIC CARD STYLES
+         ??????????????????????????????????????????????????????????????????????????? -->
+    
+    <Style Selector="Border.glass-card">
+        <Setter Property="Background" Value="#14FFFFFF" />
+        <Setter Property="BorderBrush" Value="#30FFFFFF" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Padding" Value="20" />
+        <Setter Property="BoxShadow" Value="0 8 32 0 #2000E5FF" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" />
+                <BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.2" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="Border.glass-card:pointerover">
+        <Setter Property="RenderTransform" Value="translateY(-4px)" />
+        <Setter Property="BoxShadow" Value="0 12 40 0 #4000E5FF" />
+        <Setter Property="BorderBrush" Value="#5000E5FF" />
+    </Style>
+
+    <Style Selector="Border.glass-card-cyan">
+        <Setter Property="Background" Value="#1500E5FF" />
+        <Setter Property="BorderBrush" Value="#4000E5FF" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Padding" Value="20" />
+        <Setter Property="BoxShadow" Value="0 8 32 0 #3000E5FF" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" />
+                <BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.2" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="Border.glass-card-cyan:pointerover">
+        <Setter Property="RenderTransform" Value="translateY(-4px)" />
+        <Setter Property="BoxShadow" Value="0 16 48 0 #5000E5FF" />
+        <Setter Property="BorderBrush" Value="#8000E5FF" />
+    </Style>
+
+    <Style Selector="Border.glass-card-magenta">
+        <Setter Property="Background" Value="#15FF0055" />
+        <Setter Property="BorderBrush" Value="#40FF0055" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Padding" Value="20" />
+        <Setter Property="BoxShadow" Value="0 8 32 0 #30FF0055" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" />
+                <BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.2" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="Border.glass-card-magenta:pointerover">
+        <Setter Property="RenderTransform" Value="translateY(-4px)" />
+        <Setter Property="BoxShadow" Value="0 16 48 0 #50FF0055" />
+        <Setter Property="BorderBrush" Value="#80FF0055" />
+    </Style>
+
+    <Style Selector="Border.glass-card-lime">
+        <Setter Property="Background" Value="#1539FF14" />
+        <Setter Property="BorderBrush" Value="#4039FF14" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Padding" Value="20" />
+        <Setter Property="BoxShadow" Value="0 8 32 0 #3039FF14" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" />
+                <BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.2" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="Border.glass-card-lime:pointerover">
+        <Setter Property="RenderTransform" Value="translateY(-4px)" />
+        <Setter Property="BoxShadow" Value="0 16 48 0 #5039FF14" />
+        <Setter Property="BorderBrush" Value="#8039FF14" />
+    </Style>
+
+    <Style Selector="Border.glass-card-purple">
+        <Setter Property="Background" Value="#15BF40FF" />
+        <Setter Property="BorderBrush" Value="#40BF40FF" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Padding" Value="20" />
+        <Setter Property="BoxShadow" Value="0 8 32 0 #30BF40FF" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" />
+                <BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.2" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="Border.glass-card-purple:pointerover">
+        <Setter Property="RenderTransform" Value="translateY(-4px)" />
+        <Setter Property="BoxShadow" Value="0 16 48 0 #50BF40FF" />
+        <Setter Property="BorderBrush" Value="#80BF40FF" />
+    </Style>
+
+    <!-- ???????????????????????????????????????????????????????????????????????????
+         BUTTON STYLES
+         ??????????????????????????????????????????????????????????????????????????? -->
+
+    <Style Selector="Button.btn-neon">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="#00E5FF" />
+        <Setter Property="BorderBrush" Value="#00E5FF" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="16,10" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.2" />
+                <BrushTransition Property="Foreground" Duration="0:0:0.2" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="Button.btn-neon:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#2000E5FF" />
+    </Style>
+
+    <Style Selector="Button.btn-neon-filled">
+        <Setter Property="Background" Value="#00E5FF" />
+        <Setter Property="Foreground" Value="#0B0C10" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="16,10" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+
+    <Style Selector="Button.btn-neon-filled:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#33EEFF" />
+    </Style>
+
+    <Style Selector="Button.btn-danger">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="#FF0055" />
+        <Setter Property="BorderBrush" Value="#FF0055" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="16,10" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+
+    <Style Selector="Button.btn-danger:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#20FF0055" />
+    </Style>
+
+    <Style Selector="Button.btn-ghost">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="#B0BEC5" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+
+    <Style Selector="Button.btn-ghost:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#20FFFFFF" />
+        <Setter Property="TextBlock.Foreground" Value="#FFFFFF" />
+    </Style>
+
+    <!-- ???????????????????????????????????????????????????????????????????????????
+         NAVIGATION STYLES
+         ??????????????????????????????????????????????????????????????????????????? -->
+
+    <Style Selector="Button.nav-item">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="#607D8B" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="Padding" Value="16,12" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.15" />
+                <BrushTransition Property="Foreground" Duration="0:0:0.15" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="Button.nav-item:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#15FFFFFF" />
+        <Setter Property="TextBlock.Foreground" Value="#B0BEC5" />
+    </Style>
+
+    <Style Selector="Button.nav-item-active">
+        <Setter Property="Background" Value="#2000E5FF" />
+        <Setter Property="Foreground" Value="#00E5FF" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="Padding" Value="16,12" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="BorderThickness" Value="3,0,0,0" />
+        <Setter Property="BorderBrush" Value="#00E5FF" />
+    </Style>
+
+    <!-- ???????????????????????????????????????????????????????????????????????????
+         TEXT STYLES
+         ??????????????????????????????????????????????????????????????????????????? -->
+
+    <Style Selector="TextBlock.h1">
+        <Setter Property="FontSize" Value="32" />
+        <Setter Property="FontWeight" Value="Light" />
+        <Setter Property="Foreground" Value="#FFFFFF" />
+        <Setter Property="LetterSpacing" Value="1" />
+    </Style>
+
+    <Style Selector="TextBlock.h2">
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="FontWeight" Value="Light" />
+        <Setter Property="Foreground" Value="#FFFFFF" />
+    </Style>
+
+    <Style Selector="TextBlock.h3">
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Foreground" Value="#FFFFFF" />
+    </Style>
+
+    <Style Selector="TextBlock.subtitle">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="#607D8B" />
+    </Style>
+
+    <Style Selector="TextBlock.stat-value">
+        <Setter Property="FontSize" Value="56" />
+        <Setter Property="FontWeight" Value="Thin" />
+        <Setter Property="Foreground" Value="#FFFFFF" />
+        <Setter Property="LetterSpacing" Value="-2" />
+    </Style>
+
+    <Style Selector="TextBlock.stat-value-cyan">
+        <Setter Property="FontSize" Value="56" />
+        <Setter Property="FontWeight" Value="Thin" />
+        <Setter Property="Foreground" Value="#00E5FF" />
+        <Setter Property="LetterSpacing" Value="-2" />
+    </Style>
+
+    <Style Selector="TextBlock.stat-value-magenta">
+        <Setter Property="FontSize" Value="56" />
+        <Setter Property="FontWeight" Value="Thin" />
+        <Setter Property="Foreground" Value="#FF0055" />
+        <Setter Property="LetterSpacing" Value="-2" />
+    </Style>
+
+    <Style Selector="TextBlock.stat-value-lime">
+        <Setter Property="FontSize" Value="56" />
+        <Setter Property="FontWeight" Value="Thin" />
+        <Setter Property="Foreground" Value="#39FF14" />
+        <Setter Property="LetterSpacing" Value="-2" />
+    </Style>
+
+    <Style Selector="TextBlock.stat-value-purple">
+        <Setter Property="FontSize" Value="56" />
+        <Setter Property="FontWeight" Value="Thin" />
+        <Setter Property="Foreground" Value="#BF40FF" />
+        <Setter Property="LetterSpacing" Value="-2" />
+    </Style>
+
+    <Style Selector="TextBlock.stat-label">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="#607D8B" />
+        <Setter Property="LetterSpacing" Value="2" />
+    </Style>
+
+    <Style Selector="TextBlock.stat-trend-up">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="#39FF14" />
+    </Style>
+
+    <Style Selector="TextBlock.stat-trend-down">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="#FF0055" />
+    </Style>
+
+    <Style Selector="TextBlock.neon-glow">
+        <Setter Property="Foreground" Value="#00E5FF" />
+    </Style>
+
+    <!-- ???????????????????????????????????????????????????????????????????????????
+         INPUT STYLES
+         ??????????????????????????????????????????????????????????????????????????? -->
+
+    <Style Selector="TextBox.search-holo">
+        <Setter Property="Background" Value="#10FFFFFF" />
+        <Setter Property="BorderBrush" Value="#30FFFFFF" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="24" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="Foreground" Value="#FFFFFF" />
+        <Setter Property="CaretBrush" Value="#00E5FF" />
+    </Style>
+
+    <Style Selector="TextBox.search-holo:focus">
+        <Setter Property="BorderBrush" Value="#00E5FF" />
+        <Setter Property="Background" Value="#15FFFFFF" />
+    </Style>
+
+    <!-- ???????????????????????????????????????????????????????????????????????????
+         BADGE STYLES
+         ??????????????????????????????????????????????????????????????????????????? -->
+
+    <Style Selector="Border.badge-cyan">
+        <Setter Property="Background" Value="#2000E5FF" />
+        <Setter Property="BorderBrush" Value="#00E5FF" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="8,4" />
+    </Style>
+
+    <Style Selector="Border.badge-magenta">
+        <Setter Property="Background" Value="#20FF0055" />
+        <Setter Property="BorderBrush" Value="#FF0055" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="8,4" />
+    </Style>
+
+    <Style Selector="Border.badge-lime">
+        <Setter Property="Background" Value="#2039FF14" />
+        <Setter Property="BorderBrush" Value="#39FF14" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="8,4" />
+    </Style>
+
+    <!-- ???????????????????????????????????????????????????????????????????????????
+         PROGRESS BAR STYLE
+         ??????????????????????????????????????????????????????????????????????????? -->
+
+    <Style Selector="ProgressBar.holo-progress">
+        <Setter Property="Background" Value="#20FFFFFF" />
+        <Setter Property="Foreground" Value="#00E5FF" />
+        <Setter Property="Height" Value="6" />
+        <Setter Property="CornerRadius" Value="3" />
+    </Style>
+
+    <!-- ???????????????????????????????????????????????????????????????????????????
+         SCROLLBAR STYLES
+         ??????????????????????????????????????????????????????????????????????????? -->
+
+    <Style Selector="ScrollViewer">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+</Styles>
+

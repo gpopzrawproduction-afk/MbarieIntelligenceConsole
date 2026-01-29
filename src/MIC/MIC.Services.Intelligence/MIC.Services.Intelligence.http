@@ -1,0 +1,6 @@
+@MIC.Services.Intelligence_HostAddress = http://localhost:5022
+
+GET {{MIC.Services.Intelligence_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,128 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="350"
+        x:Class="MIC.Desktop.Avalonia.Views.SplashWindow"
+        Title="Mbarie Intelligence Console"
+        Width="500" Height="350"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        SystemDecorations="None"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent">
+
+    <Border Background="#F0000000"
+            CornerRadius="16"
+            BorderBrush="#2000E5FF"
+            BorderThickness="1"
+            BoxShadow="0 8 32 0 #80000000">
+        
+        <Grid RowDefinitions="*,Auto,Auto,Auto,*">
+            
+            <!-- Animated Background Glow -->
+            <Border Grid.Row="0" Grid.RowSpan="5"
+                    CornerRadius="16"
+                    Opacity="0.5"
+                    IsHitTestVisible="False">
+                <Border.Background>
+                    <RadialGradientBrush Center="0.5,0.3" RadiusX="0.8" RadiusY="0.6">
+                        <GradientStop Color="#2000E5FF" Offset="0" />
+                        <GradientStop Color="#00000000" Offset="1" />
+                    </RadialGradientBrush>
+                </Border.Background>
+            </Border>
+
+            <!-- Logo Section -->
+            <StackPanel Grid.Row="1" 
+                        HorizontalAlignment="Center"
+                        Spacing="16">
+                
+                <!-- Animated Logo Container -->
+                <Border x:Name="LogoContainer"
+                        Width="80" Height="80"
+                        CornerRadius="16"
+                        BorderBrush="#00E5FF"
+                        BorderThickness="2"
+                        BoxShadow="0 0 40 0 #6000E5FF"
+                        HorizontalAlignment="Center">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                            <GradientStop Color="#3000E5FF" Offset="0" />
+                            <GradientStop Color="#1500E5FF" Offset="1" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    
+                    <!-- M Logo -->
+                    <TextBlock Text="M"
+                               FontSize="42"
+                               FontWeight="Thin"
+                               Foreground="#00E5FF"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Border>
+                
+                <!-- Brand Name -->
+                <StackPanel HorizontalAlignment="Center" Spacing="4">
+                    <TextBlock Text="MBARIE"
+                               FontSize="28"
+                               FontWeight="Light"
+                               Foreground="#FFFFFF"
+                               LetterSpacing="8"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text="INTELLIGENCE CONSOLE"
+                               FontSize="12"
+                               Foreground="#607D8B"
+                               LetterSpacing="4"
+                               HorizontalAlignment="Center" />
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Loading Animation -->
+            <StackPanel Grid.Row="2" 
+                        HorizontalAlignment="Center"
+                        Margin="0,32,0,0"
+                        Spacing="12">
+                
+                <!-- Loading Bar -->
+                <Border Background="#10FFFFFF"
+                        CornerRadius="4"
+                        Width="200"
+                        Height="4">
+                    <Border x:Name="LoadingBar"
+                            Background="#00E5FF"
+                            CornerRadius="4"
+                            HorizontalAlignment="Left"
+                            Width="0"
+                            BoxShadow="0 0 12 0 #8000E5FF" />
+                </Border>
+                
+                <!-- Status Text -->
+                <TextBlock x:Name="StatusText"
+                           Text="Initializing..."
+                           FontSize="11"
+                           Foreground="#607D8B"
+                           LetterSpacing="1"
+                           HorizontalAlignment="Center" />
+            </StackPanel>
+
+            <!-- Version and Copyright -->
+            <StackPanel Grid.Row="3"
+                        HorizontalAlignment="Center"
+                        Margin="0,24,0,0"
+                        Spacing="4">
+                <TextBlock x:Name="VersionText"
+                           Text="Version 1.0.0"
+                           FontSize="10"
+                           Foreground="#455A64"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="© 2024 Mbarie Services Ltd. All rights reserved."
+                           FontSize="9"
+                           Foreground="#37474F"
+                           HorizontalAlignment="Center" />
+            </StackPanel>
+
+        </Grid>
+    </Border>
+
+</Window>

@@ -1,0 +1,116 @@
+═════════
+SECTION 13: CRITICAL ISSUES REQUIRING IMMEDIATE FIX
+═════════════
+
+SHOWSTOPPERS (Must fix before demo):
+
+1. [CRITICAL SECURITY] Hardcoded admin credentials in DbInitializer
+   FILE: MIC.Infrastructure.Data/Persistence/DbInitializer.cs
+   LINE: ~198-206 (admin / Admin@123 credentials)
+   ISSUE: Demo credentials pose immediate security risk during presentation
+   RISK: Credentials could be exposed during live demo
+
+2. [CRITICAL RUNTIME] NotImplementedException in all ValueConverter classes
+   FILE: MIC.Desktop.Avalonia/Converters/AlertConverters.cs
+   LINE: Multiple ConvertBack methods throw NotImplementedException
+   ISSUE: Will cause crashes during two-way binding scenarios
+   RISK: Application crash during demo if user interacts with bindings
+
+3. [CRITICAL RUNTIME] Same issue in BoolConverters
+   FILE: MIC.Desktop.Avalonia/Converters/BoolConverters.cs
+   LINE: Multiple ConvertBack methods throw NotImplementedException
+   ISSUE: Will cause crashes during two-way binding scenarios
+   RISK: Application crash during demo
+
+4. [CRITICAL RUNTIME] Same issue in MetricConverters
+   FILE: MIC.Desktop.Avalonia/Converters/MetricConverters.cs
+   LINE: ConvertBack method throws NotImplementedException
+   ISSUE: Will cause crashes during two-way binding scenarios
+   RISK: Application crash during demo
+
+5. [CRITICAL FUNCTIONALITY] AI features require configuration to work
+   FILE: MIC.Infrastructure.AI/Services/ChatService.cs
+   LINE: ~52-54 (API key validation)
+   ISSUE: AI chat will not function without proper API configuration
+   RISK: Demo fails to showcase AI capabilities
+
+HIGH PRIORITY (Should fix before demo):
+
+6. [SECURITY] Weak password requirements in authentication
+   FILE: MIC.Infrastructure.Identity/AuthenticationService.cs
+   ISSUE: Only basic validation, no strength requirements
+   RISK: Security vulnerability in production
+
+7. [RUNTIME] Email sync is simulated rather than real implementation
+   FILE: MIC.Core.Intelligence/EmailSyncService.cs
+   ISSUE: Uses mock data instead of actual email provider integration
+   RISK: Demo shows fake data instead of real functionality
+
+8. [PERFORMANCE] Complex XAML effects may impact rendering
+   FILE: MIC.Desktop.Avalonia/Views/MainWindow.axaml
+   ISSUE: Multiple BoxShadow effects throughout UI
+   RISK: Poor performance during demo
+
+9. [MEMORY] Unlimited notification accumulation
+   FILE: MIC.Desktop.Avalonia/Services/NotificationService.cs
+   ISSUE: ObservableCollection never cleared, grows indefinitely
+   RISK: Memory issues during extended demo
+
+10. [ARCHITECTURE] Async void in UI event handlers
+    FILE: MIC.Desktop.Avalonia/Views/MainWindow.axaml.cs
+    ISSUE: async void HandleAction method
+    RISK: Unhandled exceptions can crash application
+
+MEDIUM PRIORITY (Fix if time permits):
+
+11. [DATA] GetAccountsNeedingSyncAsync loads all accounts into memory
+    FILE: MIC.Infrastructure.Data/Repositories/EmailRepository.cs
+    ISSUE: Inefficient for SQLite with many accounts
+    RISK: Performance degradation with larger datasets
+
+12. [MEMORY] Chat conversation history not expired
+    FILE: MIC.Infrastructure.AI/Services/ChatService.cs
+    ISSUE: Conversations stored permanently without cleanup
+    RISK: Memory growth over time
+
+13. [CONFIGURATION] JWT token expiration too long
+    FILE: MIC.Infrastructure.Identity/JwtTokenService.cs
+    ISSUE: 8-hour token lifetime may be excessive
+    RISK: Security concern in production
+
+14. [ERROR HANDLING] Reflection usage in MetricDataGenerator
+    FILE: MIC.Infrastructure.Data/Services/MetricDataGenerator.cs
+    ISSUE: Uses reflection to set private properties
+    RISK: Performance impact and potential errors
+
+15. [INPUT VALIDATION] Basic email validation only
+    FILE: MIC.Infrastructure.Identity/AuthenticationService.cs
+    ISSUE: Only checks for '@' symbol in email validation
+    RISK: Could accept invalid email addresses
+
+LOW PRIORITY (Technical debt for later):
+
+16. [MAINTAINABILITY] Placeholder "Class1.cs" files
+    FILE: MIC.Infrastructure.AI/Class1.cs, MIC.Infrastructure.Data/Class1.cs
+    ISSUE: Empty placeholder files with generic names
+    RISK: Code quality and confusion for maintainers
+
+17. [TESTING] No meaningful tests implemented
+    FILE: All test projects (MIC.Tests.*)
+    ISSUE: Only stub test files with no actual tests
+    RISK: No quality assurance for future changes
+
+18. [DOCUMENTATION] Limited inline documentation
+    FILE: Various files throughout solution
+    ISSUE: Insufficient comments for complex logic
+    RISK: Maintenance difficulty
+
+19. [CONFIGURATION] Missing environment-specific configs
+    FILE: appsettings.*.json files
+    ISSUE: No clear production deployment guidance
+    RISK: Deployment challenges
+
+20. [PERFORMANCE] No data virtualization for large lists
+    FILE: Various ViewModel files with ObservableCollections
+    ISSUE: No virtualization for potentially large datasets
+    RISK: Performance with large data volumes

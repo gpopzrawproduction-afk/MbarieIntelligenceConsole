@@ -1,0 +1,418 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MIC.Desktop.Avalonia.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="800"
+             x:Class="MIC.Desktop.Avalonia.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel"
+             Background="#0B0C10">
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="32" Spacing="24">
+            
+            <!-- Header -->
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="SETTINGS"
+                               FontSize="32"
+                               FontWeight="Thin"
+                               Foreground="#FFFFFF"
+                               LetterSpacing="4" />
+                    <TextBlock Text="Configure your application preferences"
+                               FontSize="14"
+                               Foreground="#607D8B"
+                               Margin="0,8,0,0" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
+                    <Button Command="{Binding ResetCommand}"
+                            Background="#20FFFFFF"
+                            Foreground="#B0BEC5"
+                            Padding="16,10"
+                            CornerRadius="8">
+                        <TextBlock Text="Reset to Defaults" />
+                    </Button>
+                    <Button Command="{Binding SaveCommand}"
+                            Background="#00E5FF"
+                            Foreground="#0B0C10"
+                            Padding="20,10"
+                            CornerRadius="8"
+                            FontWeight="SemiBold">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <PathIcon Width="16" Height="16"
+                                      Data="M17 3H5C3.89 3 3 3.9 3 5V19C3 20.1 3.89 21 5 21H19C20.1 21 21 20.1 21 19V7L17 3M19 19H5V5H16.17L19 7.83V19M12 12C10.34 12 9 13.34 9 15S10.34 18 12 18 15 16.66 15 15 13.66 12 12 12M6 6H15V10H6V6Z" />
+                            <TextBlock Text="Save Changes" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+            
+            <!-- Status Message -->
+            <Border IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                    Background="#2000E5FF"
+                    BorderBrush="#00E5FF"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16,12">
+                <TextBlock Text="{Binding StatusMessage}"
+                           Foreground="#00E5FF"
+                           FontWeight="Medium" />
+            </Border>
+
+            <!-- General Settings Section -->
+            <Border Background="#0D1117"
+                    BorderBrush="#15FFFFFF"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="24">
+                <StackPanel Spacing="20">
+                    <TextBlock Text="GENERAL"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               Foreground="#455A64"
+                               LetterSpacing="2" />
+                    
+                    <!-- Business Name -->
+                    <Grid ColumnDefinitions="200,*">
+                        <TextBlock Grid.Column="0" 
+                                   Text="Business Name"
+                                   Foreground="#B0BEC5"
+                                   VerticalAlignment="Center" />
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding BusinessName}"
+                                 Background="#10FFFFFF"
+                                 BorderBrush="#20FFFFFF"
+                                 Foreground="#FFFFFF"
+                                 Padding="12,10"
+                                 CornerRadius="6" />
+                    </Grid>
+                    
+                    <!-- Dark Mode -->
+                    <Grid ColumnDefinitions="200,*">
+                        <TextBlock Grid.Column="0"
+                                   Text="Dark Mode"
+                                   Foreground="#B0BEC5"
+                                   VerticalAlignment="Center" />
+                        <ToggleSwitch Grid.Column="1"
+                                      IsChecked="{Binding DarkModeEnabled}"
+                                      OnContent="Enabled"
+                                      OffContent="Disabled" />
+                    </Grid>
+                    
+                    <!-- Animations -->
+                    <Grid ColumnDefinitions="200,*">
+                        <TextBlock Grid.Column="0"
+                                   Text="Animations"
+                                   Foreground="#B0BEC5"
+                                   VerticalAlignment="Center" />
+                        <ToggleSwitch Grid.Column="1"
+                                      IsChecked="{Binding AnimationsEnabled}"
+                                      OnContent="Enabled"
+                                      OffContent="Disabled" />
+                    </Grid>
+                    
+                    <!-- Language -->
+                    <Grid ColumnDefinitions="200,*">
+                        <TextBlock Grid.Column="0"
+                                   Text="Language"
+                                   Foreground="#B0BEC5"
+                                   VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1"
+                                  ItemsSource="{Binding AvailableLanguages}"
+                                  SelectedItem="{Binding SelectedLanguage}"
+                                  Background="#10FFFFFF"
+                                  Foreground="#FFFFFF"
+                                  MinWidth="200" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- AI Settings Section -->
+            <Border Background="#0D1117"
+                    BorderBrush="#15FFFFFF"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="24">
+                <StackPanel Spacing="20">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Grid.Column="0"
+                                   Text="AI CONFIGURATION"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="#455A64"
+                                   LetterSpacing="2" />
+                        <Button Grid.Column="1"
+                                Command="{Binding TestAIConnectionCommand}"
+                                Background="#20BF40FF"
+                                Foreground="#BF40FF"
+                                Padding="12,6"
+                                CornerRadius="6">
+                            <TextBlock Text="Test Connection" FontSize="12" />
+                        </Button>
+                    </Grid>
+                    
+                    <!-- AI Provider -->
+                    <Grid ColumnDefinitions="200,*">
+                        <TextBlock Grid.Column="0"
+                                   Text="AI Provider"
+                                   Foreground="#B0BEC5"
+                                   VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1"
+                                  ItemsSource="{Binding AvailableProviders}"
+                                  SelectedItem="{Binding AIProvider}"
+                                  Background="#10FFFFFF"
+                                  Foreground="#FFFFFF"
+                                  MinWidth="200" />
+                    </Grid>
+                    
+                    <!-- AI Model -->
+                    <Grid ColumnDefinitions="200,*">
+                        <TextBlock Grid.Column="0"
+                                   Text="Model"
+                                   Foreground="#B0BEC5"
+                                   VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1"
+                                  ItemsSource="{Binding AvailableModels}"
+                                  SelectedItem="{Binding AIModel}"
+                                  Background="#10FFFFFF"
+                                  Foreground="#FFFFFF"
+                                  MinWidth="200" />
+                    </Grid>
+                    
+                    <!-- Temperature -->
+                    <Grid ColumnDefinitions="200,*,Auto">
+                        <TextBlock Grid.Column="0"
+                                   Text="Temperature"
+                                   Foreground="#B0BEC5"
+                                   VerticalAlignment="Center" />
+                        <Slider Grid.Column="1"
+                                Minimum="0"
+                                Maximum="2"
+                                Value="{Binding AITemperature}"
+                                Margin="0,0,16,0" />
+                        <TextBlock Grid.Column="2"
+                                   Text="{Binding AITemperature, StringFormat={}{0:F1}}"
+                                   Foreground="#00E5FF"
+                                   Width="40"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                    
+                    <!-- Feature Toggles -->
+                    <Grid ColumnDefinitions="200,*">
+                        <TextBlock Grid.Column="0"
+                                   Text="Chat Assistant"
+                                   Foreground="#B0BEC5"
+                                   VerticalAlignment="Center" />
+                        <ToggleSwitch Grid.Column="1"
+                                      IsChecked="{Binding AIChatEnabled}"
+                                      OnContent="Enabled"
+                                      OffContent="Disabled" />
+                    </Grid>
+                    
+                    <Grid ColumnDefinitions="200,*">
+                        <TextBlock Grid.Column="0"
+                                   Text="AI Predictions"
+                                   Foreground="#B0BEC5"
+                                   VerticalAlignment="Center" />
+                        <ToggleSwitch Grid.Column="1"
+                                      IsChecked="{Binding AIPredictionsEnabled}"
+                                      OnContent="Enabled"
+                                      OffContent="Disabled" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Notifications Section -->
+            <Border Background="#0D1117"
+                    BorderBrush="#15FFFFFF"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="24">
+                <StackPanel Spacing="20">
+                    <TextBlock Text="NOTIFICATIONS"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               Foreground="#455A64"
+                               LetterSpacing="2" />
+                    
+                    <Grid ColumnDefinitions="200,*">
+                        <TextBlock Grid.Column="0"
+                                   Text="Enable Notifications"
+                                   Foreground="#B0BEC5"
+                                   VerticalAlignment="Center" />
+                        <ToggleSwitch Grid.Column="1"
+                                      IsChecked="{Binding NotificationsEnabled}"
+                                      OnContent="On"
+                                      OffContent="Off" />
+                    </Grid>
+                    
+                    <Grid ColumnDefinitions="200,*">
+                        <TextBlock Grid.Column="0"
+                                   Text="Sound Effects"
+                                   Foreground="#B0BEC5"
+                                   VerticalAlignment="Center" />
+                        <ToggleSwitch Grid.Column="1"
+                                      IsChecked="{Binding SoundEnabled}"
+                                      OnContent="On"
+                                      OffContent="Off" />
+                    </Grid>
+                    
+                    <Grid ColumnDefinitions="200,*">
+                        <TextBlock Grid.Column="0"
+                                   Text="Critical Alerts Only"
+                                   Foreground="#B0BEC5"
+                                   VerticalAlignment="Center" />
+                        <ToggleSwitch Grid.Column="1"
+                                      IsChecked="{Binding CriticalAlertsOnly}"
+                                      OnContent="Yes"
+                                      OffContent="No" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Data Settings Section -->
+            <Border Background="#0D1117"
+                    BorderBrush="#15FFFFFF"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="24">
+                <StackPanel Spacing="20">
+                    <TextBlock Text="DATA &amp; STORAGE"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               Foreground="#455A64"
+                               LetterSpacing="2" />
+                    
+                    <Grid ColumnDefinitions="200,*">
+                        <TextBlock Grid.Column="0"
+                                   Text="Database Provider"
+                                   Foreground="#B0BEC5"
+                                   VerticalAlignment="Center" />
+                        <ComboBox Grid.Column="1"
+                                  ItemsSource="{Binding AvailableDatabaseProviders}"
+                                  SelectedItem="{Binding DatabaseProvider}"
+                                  Background="#10FFFFFF"
+                                  Foreground="#FFFFFF"
+                                  MinWidth="200" />
+                    </Grid>
+                    
+                    <Grid ColumnDefinitions="200,*">
+                        <TextBlock Grid.Column="0"
+                                   Text="Auto Refresh"
+                                   Foreground="#B0BEC5"
+                                   VerticalAlignment="Center" />
+                        <ToggleSwitch Grid.Column="1"
+                                      IsChecked="{Binding AutoRefreshEnabled}"
+                                      OnContent="Enabled"
+                                      OffContent="Disabled" />
+                    </Grid>
+                    
+                    <Grid ColumnDefinitions="200,*,Auto">
+                        <TextBlock Grid.Column="0"
+                                   Text="Refresh Interval"
+                                   Foreground="#B0BEC5"
+                                   VerticalAlignment="Center" />
+                        <Slider Grid.Column="1"
+                                Minimum="5"
+                                Maximum="120"
+                                Value="{Binding AutoRefreshInterval}"
+                                Margin="0,0,16,0" />
+                        <TextBlock Grid.Column="2"
+                                   Text="{Binding AutoRefreshInterval, StringFormat={}{0}s}"
+                                   Foreground="#00E5FF"
+                                   Width="50"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Export/Import Section -->
+            <Border Background="#0D1117"
+                    BorderBrush="#15FFFFFF"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="24">
+                <Grid ColumnDefinitions="*,Auto,Auto">
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="BACKUP &amp; RESTORE"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="#455A64"
+                                   LetterSpacing="2" />
+                        <TextBlock Text="Export or import your settings configuration"
+                                   Foreground="#607D8B"
+                                   FontSize="12"
+                                   Margin="0,4,0,0" />
+                    </StackPanel>
+                    <Button Grid.Column="1"
+                            Command="{Binding ExportSettingsCommand}"
+                            Background="#10FFFFFF"
+                            Foreground="#B0BEC5"
+                            Padding="16,10"
+                            CornerRadius="6"
+                            Margin="0,0,12,0">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <PathIcon Width="16" Height="16"
+                                      Data="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+                            <TextBlock Text="Export" />
+                        </StackPanel>
+                    </Button>
+                    <Button Grid.Column="2"
+                            Command="{Binding ImportSettingsCommand}"
+                            Background="#10FFFFFF"
+                            Foreground="#B0BEC5"
+                            Padding="16,10"
+                            CornerRadius="6">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <PathIcon Width="16" Height="16"
+                                      Data="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
+                                      RenderTransform="rotate(180deg)" />
+                            <TextBlock Text="Import" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- App Info -->
+            <Border Background="#0D1117"
+                    BorderBrush="#15FFFFFF"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="24">
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Mbarie Intelligence Console"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="#FFFFFF" />
+                        <TextBlock Text="Version 1.0.0 • Build 2024.01"
+                                   Foreground="#607D8B"
+                                   FontSize="12"
+                                   Margin="0,4,0,0" />
+                        <TextBlock Text="© 2024 Mbarie Services Ltd. All rights reserved."
+                                   Foreground="#455A64"
+                                   FontSize="11"
+                                   Margin="0,8,0,0" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <Button Background="#10FFFFFF"
+                                Foreground="#607D8B"
+                                Padding="12,8"
+                                CornerRadius="6">
+                            <TextBlock Text="Documentation" FontSize="12" />
+                        </Button>
+                        <Button Background="#10FFFFFF"
+                                Foreground="#607D8B"
+                                Padding="12,8"
+                                CornerRadius="6">
+                            <TextBlock Text="Check for Updates" FontSize="12" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>

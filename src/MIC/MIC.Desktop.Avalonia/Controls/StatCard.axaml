@@ -1,0 +1,92 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="320" d:DesignHeight="180"
+             x:Class="MIC.Desktop.Avalonia.Controls.StatCard">
+
+    <!-- Holographic Glass Card -->
+    <Border x:Name="CardBorder"
+            CornerRadius="16"
+            Padding="24"
+            Background="#14FFFFFF"
+            BorderBrush="#4000E5FF"
+            BorderThickness="1"
+            BoxShadow="0 8 32 0 #3000E5FF">
+        
+        <Border.Transitions>
+            <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25" Easing="CubicEaseOut" />
+                <BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.25" />
+            </Transitions>
+        </Border.Transitions>
+        
+        <Grid RowDefinitions="Auto,*,Auto">
+            
+            <!-- Header: Icon + Label -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12">
+                <Border x:Name="IconContainer"
+                        Width="40" Height="40"
+                        CornerRadius="10"
+                        Background="#2000E5FF">
+                    <PathIcon x:Name="CardIcon" 
+                              Width="20" Height="20"
+                              Foreground="#00E5FF"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center" />
+                </Border>
+                <TextBlock x:Name="TitleText"
+                           Classes="stat-label"
+                           VerticalAlignment="Center"
+                           FontSize="11"
+                           FontWeight="SemiBold"
+                           Foreground="#607D8B"
+                           LetterSpacing="2" />
+            </StackPanel>
+            
+            <!-- Main Value Display -->
+            <StackPanel Grid.Row="1" 
+                        VerticalAlignment="Center"
+                        Margin="0,12">
+                <TextBlock x:Name="ValueText"
+                           FontSize="56"
+                           FontWeight="Thin"
+                           Foreground="#00E5FF"
+                           LetterSpacing="-2" />
+                <TextBlock x:Name="SubtitleText"
+                           FontSize="13"
+                           Foreground="#607D8B"
+                           Margin="0,4,0,0" />
+            </StackPanel>
+            
+            <!-- Footer: Trend Badge -->
+            <StackPanel Grid.Row="2" 
+                        Orientation="Horizontal" 
+                        Spacing="8"
+                        HorizontalAlignment="Left">
+                <Border x:Name="TrendBadge"
+                        Background="#2039FF14"
+                        BorderBrush="#39FF14"
+                        BorderThickness="1"
+                        CornerRadius="12"
+                        Padding="10,4"
+                        IsVisible="False">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <PathIcon x:Name="TrendIcon" 
+                                  Width="12" Height="12"
+                                  Foreground="#39FF14"
+                                  Data="M7,15L12,10L17,15H7Z" />
+                        <TextBlock x:Name="TrendText"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="#39FF14"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+            
+        </Grid>
+    </Border>
+
+</UserControl>
+
