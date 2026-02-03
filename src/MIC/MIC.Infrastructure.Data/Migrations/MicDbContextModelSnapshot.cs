@@ -17,6 +17,56 @@ namespace MIC.Infrastructure.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.1");
 
+            modelBuilder.Entity("MIC.Core.Application.Common.Interfaces.KnowledgeEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("RelevanceScore")
+                        .HasColumnType("REAL");
+
+                    b.Property<Guid>("SourceId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SourceType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.PrimitiveCollection<string>("Tags")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("SourceId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("KnowledgeEntries");
+                });
+
             modelBuilder.Entity("MIC.Core.Domain.Entities.AssetMonitor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -79,6 +129,87 @@ namespace MIC.Infrastructure.Data.Migrations
                     b.HasIndex("Status");
 
                     b.ToTable("Assets", (string)null);
+                });
+
+            modelBuilder.Entity("MIC.Core.Domain.Entities.ChatHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AIProvider")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Context")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("Cost")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsSuccessful")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Metadata")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ModelUsed")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Query")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Response")
+                        .IsRequired()
+                        .HasMaxLength(8000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SessionId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTimeOffset>("Timestamp")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TokenCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(0);
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SessionId");
+
+                    b.HasIndex("Timestamp");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserId", "Timestamp");
+
+                    b.ToTable("ChatHistories");
                 });
 
             modelBuilder.Entity("MIC.Core.Domain.Entities.DecisionContext", b =>
@@ -199,6 +330,12 @@ namespace MIC.Infrastructure.Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("ImapPort")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ImapServer")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("InitialSyncDays")
                         .HasColumnType("INTEGER");
 
@@ -230,6 +367,9 @@ namespace MIC.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("PasswordEncrypted")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("Provider")
                         .HasColumnType("INTEGER");
 
@@ -239,6 +379,12 @@ namespace MIC.Infrastructure.Data.Migrations
 
                     b.Property<int>("RequiresResponseCount")
                         .HasColumnType("INTEGER");
+
+                    b.Property<int>("SmtpPort")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SmtpServer")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
@@ -262,6 +408,9 @@ namespace MIC.Infrastructure.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("UnreadCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("UseSsl")
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid>("UserId")
@@ -510,6 +659,9 @@ namespace MIC.Infrastructure.Data.Migrations
                     b.Property<bool>("IsRead")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsUrgent")
+                        .HasColumnType("INTEGER");
+
                     b.Property<Guid?>("KnowledgeEntryId")
                         .HasColumnType("TEXT");
 
@@ -523,6 +675,9 @@ namespace MIC.Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("ReceivedDate")
                         .HasColumnType("TEXT");
@@ -580,6 +735,8 @@ namespace MIC.Infrastructure.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.HasIndex("EmailAccountId", "ReceivedDate");
+
+                    b.HasIndex("UserId", "CreatedAt");
 
                     b.HasIndex("UserId", "ReceivedDate");
 
@@ -652,6 +809,8 @@ namespace MIC.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedAt");
+
                     b.HasIndex("Severity");
 
                     b.HasIndex("Source");
@@ -659,6 +818,8 @@ namespace MIC.Infrastructure.Data.Migrations
                     b.HasIndex("Status");
 
                     b.HasIndex("TriggeredAt");
+
+                    b.HasIndex("Severity", "Status");
 
                     b.ToTable("Alerts", (string)null);
                 });
@@ -739,7 +900,7 @@ namespace MIC.Infrastructure.Data.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("DisplayName")
+                    b.Property<string>("Department")
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
@@ -748,11 +909,19 @@ namespace MIC.Infrastructure.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
+                    b.Property<string>("FullName")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("JobPosition")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTimeOffset?>("LastLoginAt")
                         .HasColumnType("timestamp with time zone");
@@ -767,9 +936,17 @@ namespace MIC.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(256)");
 
+                    b.Property<int>("Role")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Salt")
                         .IsRequired()
-                        .HasColumnType("varchar(128)");
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("SeniorityLevel")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -790,6 +967,59 @@ namespace MIC.Infrastructure.Data.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("MIC.Core.Domain.Entities.UserSettings", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTimeOffset>("LastUpdated")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SettingsJson")
+                        .IsRequired()
+                        .HasMaxLength(8000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SettingsVersion")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(1);
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserSettings");
+                });
+
+            modelBuilder.Entity("MIC.Core.Domain.Entities.ChatHistory", b =>
+                {
+                    b.HasOne("MIC.Core.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MIC.Core.Domain.Entities.EmailAttachment", b =>
                 {
                     b.HasOne("MIC.Core.Domain.Entities.EmailMessage", null)
@@ -797,6 +1027,17 @@ namespace MIC.Infrastructure.Data.Migrations
                         .HasForeignKey("EmailMessageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MIC.Core.Domain.Entities.UserSettings", b =>
+                {
+                    b.HasOne("MIC.Core.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MIC.Core.Domain.Entities.EmailMessage", b =>

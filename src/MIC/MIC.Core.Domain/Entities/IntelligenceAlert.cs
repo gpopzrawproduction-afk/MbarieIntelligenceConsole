@@ -133,6 +133,38 @@ public class IntelligenceAlert : BaseEntity
     }
 
     /// <summary>
+    /// Updates the metadata of the alert
+    /// </summary>
+    /// <param name="alertName">Updated alert name</param>
+    /// <param name="description">Updated description</param>
+    /// <param name="severity">Updated severity</param>
+    /// <param name="source">Updated source</param>
+    /// <param name="updatedBy">User performing the update</param>
+    public void UpdateMetadata(
+        string alertName,
+        string description,
+        AlertSeverity severity,
+        string source,
+        string updatedBy)
+    {
+        Guard.Against.NullOrWhiteSpace(alertName, nameof(alertName));
+        Guard.Against.NullOrWhiteSpace(description, nameof(description));
+        Guard.Against.NullOrWhiteSpace(source, nameof(source));
+        Guard.Against.NullOrWhiteSpace(updatedBy, nameof(updatedBy));
+        
+        AlertName = alertName;
+        Description = description;
+        Severity = severity;
+        Source = source;
+        MarkAsModified(updatedBy);
+        
+        AddContextData("LastMetadataUpdate", DateTime.UtcNow);
+        AddContextData("LastMetadataUpdateBy", updatedBy);
+        
+        AddDomainEvent(new AlertMetadataUpdatedEvent(Id, AlertName, updatedBy));
+    }
+
+    /// <summary>
     /// Adds contextual data to the alert
     /// </summary>
     public void AddContextData(string key, object value)
@@ -186,6 +218,14 @@ public record AlertAcknowledgedEvent(Guid AlertId, string AlertName, string Ackn
 /// Domain event raised when an alert is resolved
 /// </summary>
 public record AlertResolvedEvent(Guid AlertId, string AlertName, string ResolvedBy) : IDomainEvent
+{
+    public DateTime OccurredAt { get; } = DateTime.UtcNow;
+}
+
+/// <summary>
+/// Domain event raised when an alert's metadata is updated
+/// </summary>
+public record AlertMetadataUpdatedEvent(Guid AlertId, string AlertName, string UpdatedBy) : IDomainEvent
 {
     public DateTime OccurredAt { get; } = DateTime.UtcNow;
 }

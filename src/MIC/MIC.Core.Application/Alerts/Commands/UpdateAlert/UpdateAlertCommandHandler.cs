@@ -39,6 +39,27 @@ public class UpdateAlertCommandHandler : ICommandHandler<UpdateAlertCommand, Ale
                 description: "Cannot update a deleted alert.");
         }
 
+        // Handle metadata updates if any are provided
+        if (!string.IsNullOrWhiteSpace(request.AlertName) || 
+            !string.IsNullOrWhiteSpace(request.Description) || 
+            !string.IsNullOrWhiteSpace(request.Source) || 
+            request.Severity.HasValue)
+        {
+            if (string.IsNullOrWhiteSpace(request.UpdatedBy))
+            {
+                return Error.Validation(
+                    code: "Alert.UpdateRequiresUser",
+                    description: "A user must be specified when updating alert metadata.");
+            }
+            
+            var alertName = string.IsNullOrWhiteSpace(request.AlertName) ? alert.AlertName : request.AlertName;
+            var description = string.IsNullOrWhiteSpace(request.Description) ? alert.Description : request.Description;
+            var source = string.IsNullOrWhiteSpace(request.Source) ? alert.Source : request.Source;
+            var severity = request.Severity ?? alert.Severity;
+            
+            alert.UpdateMetadata(alertName, description, severity, source, request.UpdatedBy);
+        }
+
         // Handle status transitions
         if (request.NewStatus.HasValue && request.NewStatus.Value != alert.Status)
         {

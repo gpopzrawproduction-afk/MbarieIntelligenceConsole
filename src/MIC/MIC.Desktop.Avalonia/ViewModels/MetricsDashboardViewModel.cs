@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MIC.Core.Application.Metrics.Common;
 using MIC.Core.Application.Metrics.Queries.GetMetrics;
 using MIC.Core.Application.Metrics.Queries.GetMetricTrend;
+using MIC.Desktop.Avalonia.Services;
 using ReactiveUI;
 using SkiaSharp;
 using Timer = System.Timers.Timer;
@@ -30,6 +31,7 @@ public class MetricsDashboardViewModel : ViewModelBase, IDisposable
 {
     private readonly IMediator? _mediator;
     private readonly Timer _refreshTimer;
+    private readonly SemaphoreSlim _loadGate = new(1, 1);
     private bool _isLoading;
     private string _statusMessage = string.Empty;
     private string _selectedCategory = "All";
@@ -62,9 +64,10 @@ public class MetricsDashboardViewModel : ViewModelBase, IDisposable
             });
         };
         _refreshTimer.AutoReset = true;
+        _refreshTimer.Enabled = false;
 
-        // Load initial data
-        _ = LoadDataAsync();
+        // Load initial data (explicitly awaited and serialized)
+        _ = Dispatcher.UIThread.InvokeAsync(LoadDataAsync);
     }
 
     public MetricsDashboardViewModel(IMediator mediator) : this()
@@ -96,7 +99,7 @@ public class MetricsDashboardViewModel : ViewModelBase, IDisposable
         set
         {
             this.RaiseAndSetIfChanged(ref _selectedCategory, value);
-            _ = LoadDataAsync();
+            _ = Dispatcher.UIThread.InvokeAsync(LoadDataAsync);
         }
     }
 
@@ -106,7 +109,7 @@ public class MetricsDashboardViewModel : ViewModelBase, IDisposable
         set
         {
             this.RaiseAndSetIfChanged(ref _selectedDays, value);
-            _ = LoadDataAsync();
+            _ = Dispatcher.UIThread.InvokeAsync(LoadDataAsync);
         }
     }
 
@@ -287,9 +290,16 @@ public class MetricsDashboardViewModel : ViewModelBase, IDisposable
 
     private async Task LoadDataAsync()
     {
+        if (!await _loadGate.WaitAsync(0))
+        {
+            return;
+        }
+
+        try
+        {
         if (_mediator is null)
         {
-            await LoadPlaceholderDataAsync();
+            await LoadPlaceholderDataAsync("Metrics service not available.");
             return;
         }
 
@@ -321,11 +331,16 @@ public class MetricsDashboardViewModel : ViewModelBase, IDisposable
             {
                 StatusMessage = $"Error: {ex.Message}";
             });
-            await LoadPlaceholderDataAsync();
+            await LoadPlaceholderDataAsync("Failed to load metrics.");
         }
         finally
         {
             await Dispatcher.UIThread.InvokeAsync(() => IsLoading = false);
+        }
+        }
+        finally
+        {
+            _loadGate.Release();
         }
     }
 
@@ -524,65 +539,23 @@ public class MetricsDashboardViewModel : ViewModelBase, IDisposable
         targetValues.Add(90);
     }
 
-    private async Task LoadPlaceholderDataAsync()
+    private async Task LoadPlaceholderDataAsync(string message)
     {
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             KpiCards.Clear();
-            
-            KpiCards.Add(new KpiCardViewModel
-            {
-                Title = "Revenue",
-                Value = "$127,450",
-                Target = "Target: $150,000",
-                Change = "+8.3%",
-                TrendIcon = "?",
-                Status = "Warning",
-                Progress = 85,
-                Color = "#FF6B00"
-            });
+            ((ObservableCollection<DateTimePoint>)RevenueSeries[0].Values!).Clear();
+            ((ObservableCollection<DateTimePoint>)RevenueSeries[1].Values!).Clear();
+            ((ObservableCollection<DateTimePoint>)EfficiencySeries[0].Values!).Clear();
+            ((ObservableCollection<DateTimePoint>)EfficiencySeries[1].Values!).Clear();
+            ((ObservableCollection<double>)CategorySeries[0].Values!).Clear();
+            ((ObservableCollection<double>)CategorySeries[1].Values!).Clear();
 
-            KpiCards.Add(new KpiCardViewModel
-            {
-                Title = "Efficiency",
-                Value = "82.5%",
-                Target = "Target: 85%",
-                Change = "+2.1%",
-                TrendIcon = "?",
-                Status = "On Target",
-                Progress = 97,
-                Color = "#39FF14"
-            });
+            UptimeValue = 0;
+            ResponseTimeValue = 0;
+            ErrorRateValue = 0;
 
-            KpiCards.Add(new KpiCardViewModel
-            {
-                Title = "Uptime",
-                Value = "99.7%",
-                Target = "Target: 99.9%",
-                Change = "+0.1%",
-                TrendIcon = "?",
-                Status = "On Target",
-                Progress = 99.8,
-                Color = "#39FF14"
-            });
-
-            KpiCards.Add(new KpiCardViewModel
-            {
-                Title = "Satisfaction",
-                Value = "4.3/5",
-                Target = "Target: 4.5",
-                Change = "+0.2",
-                TrendIcon = "?",
-                Status = "On Target",
-                Progress = 95,
-                Color = "#39FF14"
-            });
-
-            UptimeValue = 99.7;
-            ResponseTimeValue = 142;
-            ErrorRateValue = 0.6;
-
-            StatusMessage = "Showing sample data";
+            StatusMessage = message;
         });
     }
 
@@ -592,9 +565,45 @@ public class MetricsDashboardViewModel : ViewModelBase, IDisposable
 
     private Task ExportToCsvAsync()
     {
-        // TODO: Implement CSV export
-        StatusMessage = "Export feature coming soon...";
-        return Task.CompletedTask;
+        return ExportMetricsAsync();
+    }
+
+    private async Task ExportMetricsAsync()
+    {
+        if (_mediator is null)
+        {
+            StatusMessage = "Metrics service not available.";
+            return;
+        }
+
+        try
+        {
+            StatusMessage = "Exporting metrics...";
+            var query = new GetMetricsQuery
+            {
+                Category = SelectedCategory == "All" ? null : SelectedCategory,
+                StartDate = DateTime.UtcNow.AddDays(-SelectedDays),
+                EndDate = DateTime.UtcNow,
+                LatestOnly = false,
+                Take = 1000
+            };
+
+            var result = await _mediator.Send(query);
+            if (result.IsError)
+            {
+                StatusMessage = "Export failed: unable to load metrics.";
+                return;
+            }
+
+            var filepath = await ExportService.Instance.ExportMetricsToCsvAsync(result.Value);
+            ExportService.Instance.OpenFile(filepath);
+            StatusMessage = $"Exported metrics to {filepath}";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Export failed: {ex.Message}";
+            ErrorHandlingService.Instance.HandleException(ex, "Export Metrics");
+        }
     }
 
     #endregion

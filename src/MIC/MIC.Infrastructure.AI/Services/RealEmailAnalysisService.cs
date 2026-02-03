@@ -21,6 +21,7 @@ public class RealEmailAnalysisService : IEmailAnalysisService
     {
         _configuration = configuration;
         _logger = logger;
+        _modelId = configuration["AI:OpenAI:ModelId"] ?? "gpt-4o";
 
         var provider = configuration["AI:Provider"];
         var apiKey = configuration["AI:OpenAI:ApiKey"] 
@@ -29,7 +30,6 @@ public class RealEmailAnalysisService : IEmailAnalysisService
         if (!string.IsNullOrEmpty(apiKey) && provider == "OpenAI")
         {
             _openAIClient = new OpenAIClient(apiKey);
-            _modelId = configuration["AI:OpenAI:ModelId"] ?? "gpt-4-turbo-preview";
             _isConfigured = true;
             _logger.LogInformation("OpenAI client initialized successfully");
         }

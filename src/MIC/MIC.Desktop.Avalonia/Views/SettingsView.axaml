@@ -8,9 +8,8 @@
              x:DataType="vm:SettingsViewModel"
              Background="#0B0C10">
 
-    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
-                  VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="32" Spacing="24">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="20">
             
             <!-- Header -->
             <Grid ColumnDefinitions="*,Auto">
@@ -29,6 +28,7 @@
                     <Button Command="{Binding ResetCommand}"
                             Background="#20FFFFFF"
                             Foreground="#B0BEC5"
+                            IsEnabled="{Binding !IsBusy}"
                             Padding="16,10"
                             CornerRadius="8">
                         <TextBlock Text="Reset to Defaults" />
@@ -36,6 +36,7 @@
                     <Button Command="{Binding SaveCommand}"
                             Background="#00E5FF"
                             Foreground="#0B0C10"
+                            IsEnabled="{Binding !IsBusy}"
                             Padding="20,10"
                             CornerRadius="8"
                             FontWeight="SemiBold">
@@ -178,6 +179,22 @@
                                   Background="#10FFFFFF"
                                   Foreground="#FFFFFF"
                                   MinWidth="200" />
+                    </Grid>
+
+                    <!-- OpenAI API Key -->
+                    <Grid ColumnDefinitions="200,*">
+                        <TextBlock Grid.Column="0"
+                                   Text="OpenAI API Key"
+                                   Foreground="#B0BEC5"
+                                   VerticalAlignment="Center" />
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding OpenAIApiKey}"
+                                 PasswordChar="â€¢"
+                                 Background="#10FFFFFF"
+                                 BorderBrush="#20FFFFFF"
+                                 Foreground="#FFFFFF"
+                                 Padding="12,10"
+                                 CornerRadius="6" />
                     </Grid>
                     
                     <!-- Temperature -->
@@ -386,11 +403,11 @@
                                    FontSize="16"
                                    FontWeight="SemiBold"
                                    Foreground="#FFFFFF" />
-                        <TextBlock Text="Version 1.0.0 • Build 2024.01"
+                        <TextBlock Text="Version 1.0.0 ï¿½ Build 2024.01"
                                    Foreground="#607D8B"
                                    FontSize="12"
                                    Margin="0,4,0,0" />
-                        <TextBlock Text="© 2024 Mbarie Services Ltd. All rights reserved."
+                        <TextBlock Text="ï¿½ 2024 Mbarie Services Ltd. All rights reserved."
                                    Foreground="#455A64"
                                    FontSize="11"
                                    Margin="0,8,0,0" />

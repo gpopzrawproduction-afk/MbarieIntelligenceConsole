@@ -2,12 +2,15 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using MediatR;
 using ReactiveUI;
 using MIC.Core.Application.Alerts.Queries.GetAllAlerts;
 using MIC.Core.Application.Metrics.Queries.GetMetrics;
+using MIC.Core.Application.Common.Interfaces;
+using Serilog;
 
 namespace MIC.Desktop.Avalonia.ViewModels;
 
@@ -17,6 +20,11 @@ namespace MIC.Desktop.Avalonia.ViewModels;
 public class DashboardViewModel : ViewModelBase
 {
     private readonly IMediator _mediator;
+    private readonly INavigationService _navigationService;
+    private readonly ISessionService _sessionService;
+    private readonly IEmailRepository _emailRepository;
+    private readonly ILogger _logger;
+    private readonly DispatcherTimer _refreshTimer;
     private int _activeAlerts;
     private int _totalMetrics;
     private int _predictions;
@@ -28,10 +36,17 @@ public class DashboardViewModel : ViewModelBase
     private string _lastUpdated;
     private string _aiInsightsSummary = string.Empty;
     private bool _isLoading;
+    private bool _autoRefreshEnabled = true;
+    private int _refreshIntervalSeconds = 30;
+    private string _refreshStatus = string.Empty;
 
-    public DashboardViewModel(IMediator mediator)
+    public DashboardViewModel(IMediator mediator, INavigationService navigationService, ISessionService sessionService, IEmailRepository emailRepository)
     {
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+        _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
+        _sessionService = sessionService ?? throw new ArgumentNullException(nameof(sessionService));
+        _emailRepository = emailRepository ?? throw new ArgumentNullException(nameof(emailRepository));
+        _logger = Log.ForContext<DashboardViewModel>();
         _lastUpdated = DateTime.Now.ToString("HH:mm:ss");
 
         RecentAlerts = new ObservableCollection<DashboardAlertViewModel>();
@@ -42,9 +57,21 @@ public class DashboardViewModel : ViewModelBase
         CheckInboxCommand = ReactiveCommand.Create(CheckInbox);
         ViewUrgentItemsCommand = ReactiveCommand.Create(ViewUrgentItems);
         AIChatCommand = ReactiveCommand.Create(AIChat);
+        ToggleAutoRefreshCommand = ReactiveCommand.Create(ToggleAutoRefresh);
 
-        // Auto-refresh is intentionally started from the view (when attached) to avoid
-        // background-thread reactive pipelines during early app startup.
+        // Setup auto-refresh timer
+        _refreshTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromSeconds(_refreshIntervalSeconds)
+        };
+        _refreshTimer.Tick += async (s, e) => await OnAutoRefreshTick();
+        
+        // Start timer if auto-refresh is enabled
+        if (_autoRefreshEnabled)
+        {
+            _refreshTimer.Start();
+            _logger.Information("Dashboard auto-refresh started - interval: {Interval}s", _refreshIntervalSeconds);
+        }
     }
 
     public int ActiveAlerts
@@ -113,6 +140,33 @@ public class DashboardViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _isLoading, value);
     }
 
+    public bool AutoRefreshEnabled
+    {
+        get => _autoRefreshEnabled;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _autoRefreshEnabled, value);
+            if (value)
+            {
+                _refreshTimer.Start();
+                RefreshStatus = $"Auto-refresh: ON ({_refreshIntervalSeconds}s)";
+                _logger.Information("✅ Dashboard auto-refresh ENABLED");
+            }
+            else
+            {
+                _refreshTimer.Stop();
+                RefreshStatus = "Auto-refresh: OFF";
+                _logger.Information("⏸️  Dashboard auto-refresh DISABLED");
+            }
+        }
+    }
+
+    public string RefreshStatus
+    {
+        get => _refreshStatus;
+        set => this.RaiseAndSetIfChanged(ref _refreshStatus, value);
+    }
+
     public string LastUpdatedText => $"Last updated: {LastUpdated}";
 
     public ObservableCollection<DashboardAlertViewModel> RecentAlerts { get; }
@@ -125,12 +179,41 @@ public class DashboardViewModel : ViewModelBase
     public ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit> CheckInboxCommand { get; }
     public ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit> ViewUrgentItemsCommand { get; }
     public ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit> AIChatCommand { get; }
+    public ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit> ToggleAutoRefreshCommand { get; }
+
+    private async Task OnAutoRefreshTick()
+    {
+        if (!AutoRefreshEnabled || IsLoading)
+            return;
+
+        try
+        {
+            _logger.Debug("🔄 Auto-refresh tick - refreshing dashboard data");
+            RefreshStatus = $"Refreshing... ({DateTime.Now:HH:mm:ss})";
+            await LoadDashboardDataAsync();
+            RefreshStatus = $"Auto-refresh: ON ({_refreshIntervalSeconds}s)";
+        }
+        catch (Exception ex)
+        {
+            _logger.Warning(ex, "⚠️ Auto-refresh failed");
+            RefreshStatus = "Auto-refresh: ERROR";
+        }
+    }
+
+    private void ToggleAutoRefresh()
+    {
+        AutoRefreshEnabled = !AutoRefreshEnabled;
+    }
 
     private async Task LoadDashboardDataAsync()
     {
         try
         {
-            await Dispatcher.UIThread.InvokeAsync(() => IsLoading = true);
+            await Dispatcher.UIThread.InvokeAsync(() => 
+            {
+                IsLoading = true;
+                RefreshStatus = "Loading...";
+            });
 
             var alertsQuery = new GetAllAlertsQuery();
             var alertsResult = await _mediator.Send(alertsQuery).ConfigureAwait(false);
@@ -171,24 +254,29 @@ public class DashboardViewModel : ViewModelBase
                 await Dispatcher.UIThread.InvokeAsync(() => TotalMetrics = metrics.Count);
             }
 
-            // Load mock email data for dashboard
-            await LoadMockEmailDataAsync();
-            
-            // Load mock predictions
-            await LoadMockPredictionsAsync();
+            await LoadEmailDataAsync();
 
-            // Generate AI insights summary
+            // Predictions are not available until a real prediction service is configured
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Predictions = 0;
+                RecentPredictions.Clear();
+            });
+
             await GenerateAIInsightsSummaryAsync();
 
             await Dispatcher.UIThread.InvokeAsync(() => 
             {
                 LastUpdated = DateTime.Now.ToString("HH:mm:ss");
+                RefreshStatus = AutoRefreshEnabled ? $"Auto-refresh: ON ({_refreshIntervalSeconds}s)" : "Auto-refresh: OFF";
             });
+            
+            _logger.Information("✅ Dashboard data refreshed successfully");
         }
         catch (Exception ex)
         {
-            // In production, route this through a logging/telemetry abstraction
-            Console.WriteLine($"Dashboard load error: {ex.Message}");
+            _logger.Error(ex, "❌ Dashboard load error");
+            await Dispatcher.UIThread.InvokeAsync(() => RefreshStatus = "Error refreshing");
         }
         finally
         {
@@ -196,92 +284,51 @@ public class DashboardViewModel : ViewModelBase
         }
     }
 
-    private async Task LoadMockEmailDataAsync()
+    private async Task LoadEmailDataAsync()
     {
+        var userId = _sessionService.GetUser().Id;
+        if (userId == Guid.Empty)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                TotalEmails = 0;
+                UnreadCount = 0;
+                HighPriorityCount = 0;
+                RequiresResponseCount = 0;
+                RecentEmails.Clear();
+            });
+            return;
+        }
+
+        var recentEmails = await _emailRepository.GetEmailsAsync(
+            userId,
+            folder: MIC.Core.Domain.Entities.EmailFolder.Inbox,
+            isUnread: null,
+            skip: 0,
+            take: 5);
+
+        var unreadCount = await _emailRepository.GetUnreadCountAsync(userId);
+        var requiresResponseCount = await _emailRepository.GetRequiresResponseCountAsync(userId);
+
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            // Mock total emails count
-            TotalEmails = 1247;
-            UnreadCount = 23;
-            HighPriorityCount = 5;
-            RequiresResponseCount = 8;
+            TotalEmails = recentEmails.Count;
+            UnreadCount = unreadCount;
+            HighPriorityCount = recentEmails.Count(e => e.AIPriority is MIC.Core.Domain.Entities.EmailPriority.High or MIC.Core.Domain.Entities.EmailPriority.Urgent);
+            RequiresResponseCount = requiresResponseCount;
 
-            // Clear and populate recent emails
             RecentEmails.Clear();
-            var mockEmails = new[]
+            foreach (var email in recentEmails)
             {
-                new DashboardEmailViewModel
+                RecentEmails.Add(new DashboardEmailViewModel
                 {
-                    Subject = "Q4 Financial Report Review Required",
-                    Sender = "CFO@company.com",
-                    TimeAgo = "2 min ago",
-                    PriorityIcon = "⚠️",
-                    PriorityColor = "#EF4444"
-                },
-                new DashboardEmailViewModel
-                {
-                    Subject = "Market Analysis Update - Action Needed",
-                    Sender = "Analyst@company.com",
-                    TimeAgo = "15 min ago",
-                    PriorityIcon = "🚨",
-                    PriorityColor = "#F59E0B"
-                },
-                new DashboardEmailViewModel
-                {
-                    Subject = "Board Meeting Minutes - Follow-up Items",
-                    Sender = "Board.Secretary@company.com",
-                    TimeAgo = "32 min ago",
-                    PriorityIcon = "📝",
-                    PriorityColor = "#3B82F6"
-                },
-                new DashboardEmailViewModel
-                {
-                    Subject = "Competitor Strategy Shift Identified",
-                    Sender = "Intelligence@company.com",
-                    TimeAgo = "1 hour ago",
-                    PriorityIcon = "🔍",
-                    PriorityColor = "#8B5CF6"
-                },
-                new DashboardEmailViewModel
-                {
-                    Subject = "New Investment Opportunity - Review",
-                    Sender = "Investment.Team@company.com",
-                    TimeAgo = "2 hours ago",
-                    PriorityIcon = "💰",
-                    PriorityColor = "#10B981"
-                }
-            };
-
-            foreach (var email in mockEmails)
-            {
-                RecentEmails.Add(email);
+                    Subject = email.Subject,
+                    Sender = email.FromAddress,
+                    TimeAgo = GetRelativeTime(email.ReceivedDate),
+                    PriorityIcon = email.AIPriority is MIC.Core.Domain.Entities.EmailPriority.Urgent ? "🚨" : "⚠️",
+                    PriorityColor = email.AIPriority is MIC.Core.Domain.Entities.EmailPriority.Urgent ? "#EF4444" : "#F59E0B"
+                });
             }
-        });
-    }
-
-    private async Task LoadMockPredictionsAsync()
-    {
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            RecentPredictions.Clear();
-
-            RecentPredictions.Add(new DashboardPredictionViewModel
-            {
-                Title = "Q4 Revenue Forecast",
-                Timestamp = $"Today, {DateTime.Now:HH:mm}",
-                Confidence = 87,
-                TrendText = "Upward",
-                TrendColor = "#10B981"
-            });
-
-            RecentPredictions.Add(new DashboardPredictionViewModel
-            {
-                Title = "Resource Demand Analysis",
-                Timestamp = $"Today, {DateTime.Now.AddMinutes(-15):HH:mm}",
-                Confidence = 92,
-                TrendText = "Stable",
-                TrendColor = "#3B82F6"
-            });
         });
     }
 
@@ -289,39 +336,26 @@ public class DashboardViewModel : ViewModelBase
     {
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            var insights = new[]
-            {
-                "Based on your email patterns, you have 5 high-priority items requiring immediate attention, with 3 needing executive decisions by EOD.",
-                "Market intelligence suggests 2 emerging threats and 1 significant opportunity in your sector. Recommend scheduling strategy session.",
-                "Your response time to critical emails is 23% slower than optimal. Consider delegating routine inquiries to improve efficiency.",
-                "AI detected 3 recurring operational bottlenecks across departments. Detailed report available in Intelligence Hub."
-            };
-
-            Random random = new Random();
-            var selectedInsights = insights.OrderBy(x => random.Next()).Take(2).ToArray();
-            AIInsightsSummary = string.Join("\n\n", selectedInsights);
+            AIInsightsSummary = string.Empty;
         });
     }
 
     private void CheckInbox()
     {
         // Navigate to email inbox view
-        // This would typically involve raising a navigation event
-        Console.WriteLine("Navigating to inbox...");
+        _navigationService.NavigateTo("Email");
     }
 
     private void ViewUrgentItems()
     {
-        // Navigate to urgent items view
-        // This would typically involve raising a navigation event
-        Console.WriteLine("Navigating to urgent items...");
+        // Navigate to urgent items (Alerts) view
+        _navigationService.NavigateTo("Alerts");
     }
 
     private void AIChat()
     {
         // Navigate to AI chat view
-        // This would typically involve raising a navigation event
-        Console.WriteLine("Opening AI chat...");
+        _navigationService.NavigateTo("AI Chat");
     }
 
     private static string GetRelativeTime(DateTime dateTime)

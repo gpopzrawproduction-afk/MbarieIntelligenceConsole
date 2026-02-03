@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="AppTitle" xml:space="preserve">
+    <value>Mbarie Intelligence Console</value>
+  </data>
+  <data name="MenuFile" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="MenuEdit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="MenuView" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="MenuTheme" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="MenuShortcuts" xml:space="preserve">
+    <value>Customize Shortcuts</value>
+  </data>
+  <data name="MenuOnboarding" xml:space="preserve">
+    <value>Onboarding Tour</value>
+  </data>
+  <data name="MenuSearchHelp" xml:space="preserve">
+    <value>Search Help</value>
+  </data>
+  <data name="DialogOnboardingTitle" xml:space="preserve">
+    <value>Welcome to Mbarie Intelligence Console</value>
+  </data>
+  <data name="DialogOnboardingBody" xml:space="preserve">
+    <value>This tour will guide you through the main features.</value>
+  </data>
+  <data name="DialogShortcutsTitle" xml:space="preserve">
+    <value>Customize Keyboard Shortcuts</value>
+  </data>
+  <data name="DialogShortcutsBody" xml:space="preserve">
+    <value>Assign your preferred keys to common actions.</value>
+  </data>
+</root>

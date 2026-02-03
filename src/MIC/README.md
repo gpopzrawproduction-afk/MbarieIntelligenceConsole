@@ -17,27 +17,21 @@ Operational intelligence dashboard for real-time monitoring and AI-powered insig
    cd mbarie-intelligence-console/src/MIC
    ```
 
-2. Configure environment variables:
-   ```bash
-   # Copy the example environment file
-   copy .env.example .env
-   # Edit .env with your actual values
+2. Configure environment variables (PowerShell example):
+   ```powershell
+   $env:MIC_ADMIN_USERNAME = "admin"
+   $env:MIC_ADMIN_PASSWORD = "YourSecurePassword123!"
+   $env:MIC_ADMIN_EMAIL = "admin@mbarieservicesltd.com"
+   $env:MIC_ADMIN_FULLNAME = "System Administrator"
+   $env:MIC_AI__OpenAI__ApiKey = "your-openai-api-key"
    ```
 
-3. Set up user secrets (for development):
-   ```bash
-   dotnet user-secrets init -p .\MIC.Desktop.Avalonia\MIC.Desktop.Avalonia.csproj
-   dotnet user-secrets set "AI:OpenAI:ApiKey" "your-openai-api-key" -p .\MIC.Desktop.Avalonia\MIC.Desktop.Avalonia.csproj
-   ```
-
-4. Run the application:
+3. Run the application:
    ```bash
    dotnet run --project .\MIC.Desktop.Avalonia
    ```
 
-5. Login with default credentials:
-   - Username: `admin`
-   - Password: `Admin@123`
+4. Login with the admin credentials you set via environment variables.
 
 ### Build & Deploy
 
@@ -108,6 +102,12 @@ dotnet test --collect:"XPlat Code Coverage"
 ### Environment Variables
 Key environment variables (see `.env.example` for complete list):
 ```
+# Admin bootstrap (first run only if no users exist)
+MIC_ADMIN_USERNAME=admin
+MIC_ADMIN_PASSWORD=YourSecurePassword123!
+MIC_ADMIN_EMAIL=admin@mbarieservicesltd.com
+MIC_ADMIN_FULLNAME=System Administrator
+
 # AI Configuration
 MIC_AI__OpenAI__ApiKey=your-openai-api-key
 MIC_AI__AzureOpenAI__Endpoint=your-azure-endpoint
@@ -130,7 +130,6 @@ MIC_JwtSettings__SecretKey=your-jwt-secret-key
 - `appsettings.json`: Base configuration (committed)
 - `appsettings.Development.json`: Development overrides (committed)
 - `appsettings.Production.json`: Production overrides (committed)
-- User Secrets: Development-only secrets (not committed)
 
 ## Development
 
@@ -198,8 +197,8 @@ GitHub Actions workflow automates:
 ## Monitoring & Observability
 
 ### Logging
-- Structured logging with Serilog (configuration pending)
-- Console and file output
+- Structured logging with Serilog
+- Console + rolling file logs in `%LocalAppData%\MIC\logs`
 - Log levels configurable per environment
 
 ### Health Checks

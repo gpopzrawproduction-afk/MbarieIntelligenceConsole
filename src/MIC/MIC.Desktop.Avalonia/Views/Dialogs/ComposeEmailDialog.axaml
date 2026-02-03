@@ -1,0 +1,210 @@
+<Window xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="clr-namespace:MIC.Desktop.Avalonia.ViewModels"
+    xmlns:app="clr-namespace:MIC.Core.Application.Common.Interfaces;assembly=MIC.Core.Application"
+    xmlns:domain="clr-namespace:MIC.Core.Domain.Entities;assembly=MIC.Core.Domain"
+    x:Class="MIC.Desktop.Avalonia.Views.Dialogs.ComposeEmailDialog"
+    x:DataType="vm:ComposeEmailViewModel"
+        Title="Compose Email"
+        Width="700" Height="700"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+    
+    <Border Background="#1a1a1a" 
+            BorderBrush="#333333" 
+            BorderThickness="1"
+            CornerRadius="8"
+            Padding="20">
+        
+        <StackPanel Spacing="15">
+            
+            <TextBlock Text="Compose Email" 
+                       FontSize="20" 
+                       FontWeight="Bold"
+                       Foreground="White"
+                       Margin="0,0,0,10"/>
+            
+            <!-- From Account -->
+            <StackPanel>
+                <TextBlock Text="From" 
+                           Foreground="#CCCCCC" 
+                           Margin="0,0,0,5"/>
+                <ComboBox x:Name="AccountComboBox"
+                          ItemsSource="{Binding EmailAccounts}"
+                          SelectedItem="{Binding SelectedAccount}"
+                          Background="#2a2a2a"
+                          Foreground="White">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="domain:EmailAccount">
+                            <TextBlock Text="{Binding EmailAddress}" 
+                                       Foreground="White"
+                                       Margin="5,2"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+            
+            <!-- To -->
+            <StackPanel>
+                <TextBlock Text="To *" 
+                           Foreground="#CCCCCC" 
+                           Margin="0,0,0,5"/>
+                <TextBox Text="{Binding To, Mode=TwoWay}"
+                         Watermark="recipient@example.com, another@example.com"
+                         Background="#2a2a2a"
+                         Foreground="White"/>
+            </StackPanel>
+            
+            <!-- CC -->
+            <StackPanel>
+                <TextBlock Text="CC (Optional)" 
+                           Foreground="#CCCCCC" 
+                           Margin="0,0,0,5"/>
+                <TextBox Text="{Binding Cc, Mode=TwoWay}"
+                         Watermark="cc@example.com"
+                         Background="#2a2a2a"
+                         Foreground="White"/>
+            </StackPanel>
+            
+            <!-- BCC -->
+            <StackPanel>
+                <TextBlock Text="BCC (Optional)" 
+                           Foreground="#CCCCCC" 
+                           Margin="0,0,0,5"/>
+                <TextBox Text="{Binding Bcc, Mode=TwoWay}"
+                         Watermark="bcc@example.com"
+                         Background="#2a2a2a"
+                         Foreground="White"/>
+            </StackPanel>
+            
+            <!-- Subject -->
+            <StackPanel>
+                <TextBlock Text="Subject *" 
+                           Foreground="#CCCCCC" 
+                           Margin="0,0,0,5"/>
+                <TextBox Text="{Binding Subject, Mode=TwoWay}"
+                         Background="#2a2a2a"
+                         Foreground="White"/>
+            </StackPanel>
+            
+            <!-- Body -->
+            <StackPanel>
+                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,5">
+                    <TextBlock Text="Body *" 
+                               Foreground="#CCCCCC"/>
+                    <CheckBox Grid.Column="1"
+                              Content="HTML"
+                              IsChecked="{Binding IsHtml}"
+                              Foreground="#CCCCCC"/>
+                </Grid>
+                <TextBox x:Name="BodyTextBox"
+                         Text="{Binding Body, Mode=TwoWay}"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         MinHeight="250"
+                         Background="#2a2a2a"
+                         Foreground="White"/>
+            </StackPanel>
+            
+            <!-- Attachments -->
+            <StackPanel>
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Text="Attachments" 
+                               Foreground="#CCCCCC" 
+                               VerticalAlignment="Center"/>
+                    <Button Grid.Column="1"
+                            Content="Add Attachment"
+                            Command="{Binding AddAttachmentCommand}"
+                            Width="150"
+                            Background="#2a2a2a"
+                            Foreground="White"/>
+                </Grid>
+                
+                <ItemsControl ItemsSource="{Binding Attachments}"
+                              Margin="0,5,0,0">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="app:EmailAttachment">
+                            <Grid ColumnDefinitions="*,Auto" Margin="0,2">
+                                <TextBlock Text="{Binding FileName}"
+                                           Foreground="#CCCCCC"
+                                           VerticalAlignment="Center"/>
+                                <Button Grid.Column="1"
+                                    Content="Remove"
+                                    Command="{Binding $parent[Window].DataContext.RemoveAttachmentCommand}"
+                                        CommandParameter="{Binding}"
+                                        Width="80"
+                                        Background="#3a3a3a"
+                                        Foreground="White"
+                                        FontSize="12"
+                                        Padding="5,2"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+            
+            <!-- Reply/Forward Options -->
+            <StackPanel x:Name="ReplyForwardPanel" 
+                        IsVisible="{Binding Mode, Converter={StaticResource StringToVisibilityConverter}}"
+                        Spacing="10">
+                <Separator Background="#333333"/>
+                
+                <TextBlock Text="{Binding Mode, StringFormat='{}{0} Options'}"
+                           FontWeight="Bold"
+                           Foreground="White"/>
+                
+                <!-- Reply Options -->
+                <StackPanel x:Name="ReplyOptionsPanel" 
+                            IsVisible="{Binding Mode, Converter={StaticResource StringToVisibilityConverter}, ConverterParameter='reply'}">
+                    <CheckBox Content="Reply to All"
+                              IsChecked="{Binding ReplyToAll}"
+                              Foreground="#CCCCCC"/>
+                </StackPanel>
+                
+                <!-- Forward Options -->
+                <StackPanel x:Name="ForwardOptionsPanel" 
+                            IsVisible="{Binding Mode, Converter={StaticResource StringToVisibilityConverter}, ConverterParameter='forward'}">
+                    <TextBlock Text="Additional Message (Optional)" 
+                               Foreground="#CCCCCC" 
+                               Margin="0,0,0,5"/>
+                    <TextBox Text="{Binding AdditionalMessage, Mode=TwoWay}"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             MinHeight="60"
+                             Background="#2a2a2a"
+                             Foreground="White"/>
+                </StackPanel>
+            </StackPanel>
+            
+            <!-- Error Message -->
+            <TextBlock x:Name="ErrorMessage"
+                       Foreground="#FF6B6B"
+                       Text="{Binding ErrorMessage}"
+                       TextWrapping="Wrap"
+                       IsVisible="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+            
+            <!-- Progress -->
+            <ProgressBar IsIndeterminate="True"
+                         IsVisible="{Binding IsLoading}"
+                         Height="5"/>
+            
+            <!-- Buttons -->
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Right"
+                        Spacing="10"
+                        Margin="0,10,0,0">
+                <Button Content="Cancel"
+                        Width="100"
+                        Command="{Binding CancelCommand}"
+                        Background="#2a2a2a"
+                        Foreground="White"/>
+                <Button Content="Send"
+                        Width="120"
+                        Command="{Binding SendCommand}"
+                        Background="#4CAF50"
+                        Foreground="White"/>
+            </StackPanel>
+            
+        </StackPanel>
+    </Border>
+</Window>

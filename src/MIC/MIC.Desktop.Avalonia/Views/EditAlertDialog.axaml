@@ -1,0 +1,157 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:MIC.Desktop.Avalonia.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="520"
+        x:Class="MIC.Desktop.Avalonia.Views.EditAlertDialog"
+        x:DataType="vm:EditAlertViewModel"
+        Title="Edit Alert"
+        Width="480" Height="520"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        Background="#0D1117">
+
+    <Border Margin="24">
+        <StackPanel Spacing="20">
+            
+            <!-- Header -->
+            <StackPanel Spacing="4">
+                <TextBlock Text="EDIT ALERT"
+                           FontSize="20"
+                           FontWeight="Light"
+                           Foreground="#FFFFFF"
+                           LetterSpacing="2" />
+                <TextBlock Text="Update alert details and status"
+                           FontSize="12"
+                           Foreground="#607D8B" />
+            </StackPanel>
+
+            <!-- Error Message -->
+            <Border IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                    Background="#30FF0055"
+                    BorderBrush="#FF0055"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="12,8">
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="#FF6B7A"
+                           FontSize="12"
+                           TextWrapping="Wrap" />
+            </Border>
+
+            <!-- Form -->
+            <StackPanel Spacing="16">
+                
+                <!-- Alert Name -->
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Alert Name *"
+                               FontSize="12"
+                               Foreground="#607D8B" />
+                    <TextBox Text="{Binding AlertName}"
+                             Watermark="e.g., High CPU Usage Alert"
+                             Background="#15FFFFFF"
+                             BorderBrush="#20FFFFFF"
+                             Foreground="#FFFFFF"
+                             Padding="12,10"
+                             CornerRadius="6" />
+                </StackPanel>
+
+                <!-- Description -->
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Description *"
+                               FontSize="12"
+                               Foreground="#607D8B" />
+                    <TextBox Text="{Binding Description}"
+                             Watermark="Describe the alert condition..."
+                             Background="#15FFFFFF"
+                             BorderBrush="#20FFFFFF"
+                             Foreground="#FFFFFF"
+                             Padding="12,10"
+                             CornerRadius="6"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             Height="80" />
+                </StackPanel>
+
+                <!-- Source -->
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Source *"
+                               FontSize="12"
+                               Foreground="#607D8B" />
+                    <TextBox Text="{Binding Source}"
+                             Watermark="e.g., Server-01, Network Monitor"
+                             Background="#15FFFFFF"
+                             BorderBrush="#20FFFFFF"
+                             Foreground="#FFFFFF"
+                             Padding="12,10"
+                             CornerRadius="6" />
+                </StackPanel>
+
+                <!-- Severity -->
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Severity"
+                               FontSize="12"
+                               Foreground="#607D8B" />
+                    <ComboBox ItemsSource="{Binding Severities}"
+                              SelectedItem="{Binding SelectedSeverity}"
+                              Background="#15FFFFFF"
+                              Foreground="#FFFFFF"
+                              Padding="12,10"
+                              HorizontalAlignment="Stretch" />
+                </StackPanel>
+
+                <!-- Status -->
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Status"
+                               FontSize="12"
+                               Foreground="#607D8B" />
+                    <ComboBox ItemsSource="{Binding Statuses}"
+                              SelectedItem="{Binding SelectedStatus}"
+                              Background="#15FFFFFF"
+                              Foreground="#FFFFFF"
+                              Padding="12,10"
+                              HorizontalAlignment="Stretch" />
+                </StackPanel>
+
+            </StackPanel>
+
+            <!-- Buttons -->
+            <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,12,0,0">
+                <Button Grid.Column="1"
+                        Command="{Binding CancelCommand}"
+                        Content="Cancel"
+                        Background="#20FFFFFF"
+                        Foreground="#B0BEC5"
+                        Padding="24,10"
+                        CornerRadius="6"
+                        Margin="0,0,12,0" />
+                <Button Grid.Column="2"
+                        Command="{Binding UpdateCommand}"
+                        Padding="24,10"
+                        CornerRadius="6"
+                        FontWeight="SemiBold">
+                    <Button.Background>
+                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                            <GradientStop Color="#39FF14" Offset="0" />
+                            <GradientStop Color="#00B8D4" Offset="1" />
+                        </LinearGradientBrush>
+                    </Button.Background>
+                    <Panel>
+                        <TextBlock Text="Update Alert"
+                                   Foreground="#0B0C10"
+                                   IsVisible="{Binding !IsLoading}" />
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="8"
+                                    IsVisible="{Binding IsLoading}">
+                            <ProgressBar IsIndeterminate="True" Width="16" Height="16" />
+                            <TextBlock Text="Updating..." Foreground="#0B0C10" />
+                        </StackPanel>
+                    </Panel>
+                </Button>
+            </Grid>
+
+        </StackPanel>
+    </Border>
+
+</Window>

@@ -5,6 +5,7 @@ using MIC.Core.Application.Authentication;
 using MIC.Core.Application.Common.Interfaces;
 using MIC.Core.Domain.Entities;
 using MIC.Infrastructure.Identity;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Xunit;
 
@@ -16,13 +17,15 @@ public class AuthenticationServiceTests
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IJwtTokenService _jwtTokenService;
+    private readonly ILogger<AuthenticationService> _logger;
 
     public AuthenticationServiceTests()
     {
         _userRepository = Substitute.For<IUserRepository>();
         _passwordHasher = Substitute.For<IPasswordHasher>();
         _jwtTokenService = Substitute.For<IJwtTokenService>();
-        _sut = new AuthenticationService(_userRepository, _passwordHasher, _jwtTokenService);
+        _logger = Substitute.For<ILogger<AuthenticationService>>();
+        _sut = new AuthenticationService(_userRepository, _passwordHasher, _jwtTokenService, _logger);
     }
 
     [Fact]

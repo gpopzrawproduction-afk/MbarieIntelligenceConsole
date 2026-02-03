@@ -4,6 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 using MIC.Core.Application.Alerts.Common;
 using MIC.Core.Application.Metrics.Common;
 
@@ -21,6 +24,7 @@ public class ExportService
 
     public ExportService()
     {
+        QuestPDF.Settings.License = LicenseType.Community;
         _exportDirectory = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
             "MIC Exports");
@@ -70,6 +74,94 @@ public class ExportService
 
         await File.WriteAllTextAsync(filepath, sb.ToString());
         
+        NotificationService.Instance.ShowSuccess($"Exported to {filename}", "Export Complete");
+        return filepath;
+    }
+
+    #endregion
+
+    #region PDF Export
+
+    /// <summary>
+    /// Exports predictions to a PDF file.
+    /// </summary>
+    public async Task<string> ExportPredictionsToPdfAsync(IEnumerable<PredictionExportRow> predictions, string? filename = null)
+    {
+        filename ??= $"predictions_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
+        var filepath = Path.Combine(_exportDirectory, filename);
+
+        var rows = predictions.ToList();
+
+        await Task.Run(() =>
+        {
+            Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Margin(30);
+                    page.Size(PageSizes.A4);
+                    page.DefaultTextStyle(x => x.FontSize(11));
+
+                    page.Header().Text("Mbarie Intelligence Console - Predictions")
+                        .SemiBold().FontSize(16).FontColor(Colors.Blue.Medium);
+
+                    page.Content().Table(table =>
+                    {
+                        table.ColumnsDefinition(columns =>
+                        {
+                            columns.RelativeColumn(3);
+                            columns.RelativeColumn(2);
+                            columns.RelativeColumn(2);
+                            columns.RelativeColumn(2);
+                            columns.RelativeColumn(2);
+                            columns.RelativeColumn(2);
+                        });
+
+                        table.Header(header =>
+                        {
+                            header.Cell().Element(CellStyle).Text("Metric");
+                            header.Cell().Element(CellStyle).Text("Current");
+                            header.Cell().Element(CellStyle).Text("Predicted");
+                            header.Cell().Element(CellStyle).Text("Change %");
+                            header.Cell().Element(CellStyle).Text("Confidence");
+                            header.Cell().Element(CellStyle).Text("Timeframe");
+                        });
+
+                        foreach (var row in rows)
+                        {
+                            table.Cell().Element(RowStyle).Text(row.MetricName);
+                            table.Cell().Element(RowStyle).Text(row.CurrentValue.ToString("N2"));
+                            table.Cell().Element(RowStyle).Text(row.PredictedValue.ToString("N2"));
+                            table.Cell().Element(RowStyle).Text($"{row.ChangePercent:+0.0;-0.0;0.0}%");
+                            table.Cell().Element(RowStyle).Text($"{row.Confidence * 100:F0}%");
+                            table.Cell().Element(RowStyle).Text(row.TimeFrame);
+                        }
+
+                        static IContainer CellStyle(IContainer container)
+                        {
+                            return container.DefaultTextStyle(x => x.SemiBold())
+                                .PaddingVertical(6)
+                                .BorderBottom(1)
+                                .BorderColor(Colors.Grey.Lighten2);
+                        }
+
+                        static IContainer RowStyle(IContainer container)
+                        {
+                            return container.PaddingVertical(4)
+                                .BorderBottom(1)
+                                .BorderColor(Colors.Grey.Lighten4);
+                        }
+                    });
+
+                    page.Footer()
+                        .AlignRight()
+                        .Text($"Generated {DateTime.Now:yyyy-MM-dd HH:mm}")
+                        .FontSize(9)
+                        .FontColor(Colors.Grey.Medium);
+                });
+            }).GeneratePdf(filepath);
+        });
+
         NotificationService.Instance.ShowSuccess($"Exported to {filename}", "Export Complete");
         return filepath;
     }
@@ -202,7 +294,7 @@ public class ExportService
         </table>
 
         <div class='footer'>
-            <p>© {DateTime.Now.Year} Mbarie Intelligence Console. All rights reserved.</p>
+            <p>ï¿½ {DateTime.Now.Year} Mbarie Intelligence Console. All rights reserved.</p>
             <p>This report was automatically generated by MIC v1.0</p>
         </div>
     </div>
@@ -267,3 +359,12 @@ public class ExportService
 
     #endregion
 }
+
+public record PredictionExportRow(
+    string MetricName,
+    double CurrentValue,
+    double PredictedValue,
+    double ChangePercent,
+    double Confidence,
+    string Direction,
+    string TimeFrame);

@@ -1,0 +1,527 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+         xmlns:vm="using:MIC.Desktop.Avalonia.ViewModels"
+         xmlns:conv="using:MIC.Desktop.Avalonia.Converters"
+         mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="900"
+         x:Class="MIC.Desktop.Avalonia.Views.EmailInboxView"
+         x:DataType="vm:EmailInboxViewModel">
+
+<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+<!-- Main Grid with Resizable Columns -->
+<Grid Margin="20">
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="280" MinWidth="200" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" MinWidth="400" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="400" MinWidth="300" />
+    </Grid.ColumnDefinitions>
+        
+        <!-- LEFT SIDEBAR: Folders & Filters -->
+        <Border Grid.Column="0"
+                Background="#0D1117"
+                BorderBrush="#15FFFFFF"
+                BorderThickness="0,0,1,0">
+            <ScrollViewer>
+                <StackPanel Margin="16">
+                    
+                    <!-- Account Info -->
+                    <Border Background="#15FFFFFF"
+                            CornerRadius="8"
+                            Padding="12"
+                            Margin="0,0,0,16">
+                        <StackPanel>
+                            <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,8">
+                                <Border Grid.Column="0"
+                                        Width="40" Height="40"
+                                        CornerRadius="20"
+                                        Background="#2000E5FF"
+                                        Margin="0,0,12,0">
+                                    <TextBlock Text="??"
+                                               FontSize="20"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+                                </Border>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="Email Intelligence"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"
+                                               Foreground="#FFFFFF" />
+                                    <TextBlock Text="AI-Powered Inbox"
+                                               FontSize="11"
+                                               Foreground="#607D8B" />
+                                </StackPanel>
+                            </Grid>
+                            
+                            <!-- Connect Account Buttons -->
+                            <StackPanel Spacing="6">
+                                <Button Command="{Binding AddDirectEmailAccountCommand}"
+                                        Background="#4CAF50"
+                                        Foreground="White"
+                                        HorizontalAlignment="Stretch"
+                                        Padding="12,8"
+                                        CornerRadius="6"
+                                        ToolTip.Tip="Add email account via IMAP/SMTP">
+                                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                        <TextBlock Text="?" FontSize="14" />
+                                        <TextBlock Text="Add Email Account" FontSize="12" FontWeight="SemiBold" />
+                                    </StackPanel>
+                                </Button>
+                                
+                                <Button Command="{Binding AddGmailAccountCommand}"
+                                        Background="#DB4437"
+                                        Foreground="White"
+                                        HorizontalAlignment="Stretch"
+                                        Padding="12,8"
+                                        CornerRadius="6"
+                                        ToolTip.Tip="Quick add Gmail via OAuth">
+                                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                        <TextBlock Text="??" FontSize="14" />
+                                        <TextBlock Text="Gmail" FontSize="12" FontWeight="SemiBold" />
+                                    </StackPanel>
+                                </Button>
+                                
+                                <Button Command="{Binding AddOutlookAccountCommand}"
+                                        Background="#0078D4"
+                                        Foreground="White"
+                                        HorizontalAlignment="Stretch"
+                                        Padding="12,8"
+                                        CornerRadius="6"
+                                        ToolTip.Tip="Quick add Outlook via OAuth">
+                                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                        <TextBlock Text="G" FontSize="14" />
+                                        <TextBlock Text="Outlook" FontSize="12" FontWeight="SemiBold" />
+                                    </StackPanel>
+                                </Button>
+                                
+                                <Button Command="{Binding SyncCommand}"
+                                        Background="#20FFFFFF"
+                                        Foreground="#B0BEC5"
+                                        HorizontalAlignment="Stretch"
+                                        Padding="12,8"
+                                        CornerRadius="6"
+                                        ToolTip.Tip="Sync All Email Accounts">
+                                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                        <TextBlock Text="O" FontSize="14" />
+                                        <TextBlock Text="Sync All" FontSize="12" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Folders -->
+                    <TextBlock Text="FOLDERS"
+                               FontSize="10"
+                               FontWeight="SemiBold"
+                               Foreground="#455A64"
+                               LetterSpacing="2"
+                               Margin="0,0,0,8" />
+                    
+                    <ItemsControl ItemsSource="{Binding Folders}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Background="Transparent"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Padding="12,8"
+                                        Margin="0,2"
+                                        CornerRadius="6">
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="{Binding Icon}" FontSize="16" />
+                                        <TextBlock Text="{Binding Name}" Foreground="#B0BEC5" />
+                                    </StackPanel>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- AI Categories -->
+                    <TextBlock Text="AI CATEGORIES"
+                               FontSize="10"
+                               FontWeight="SemiBold"
+                               Foreground="#455A64"
+                               LetterSpacing="2"
+                               Margin="0,24,0,8" />
+
+                    <ComboBox ItemsSource="{Binding Categories}"
+                              SelectedItem="{Binding SelectedCategory}"
+                              DisplayMemberBinding="{Binding Name}"
+                              HorizontalAlignment="Stretch"
+                              Background="#15FFFFFF"
+                              Foreground="#FFFFFF" />
+
+                    <!-- Priority Filter -->
+                    <TextBlock Text="PRIORITY"
+                               FontSize="10"
+                               FontWeight="SemiBold"
+                               Foreground="#455A64"
+                               LetterSpacing="2"
+                               Margin="0,16,0,8" />
+
+                    <ComboBox ItemsSource="{Binding Priorities}"
+                              SelectedItem="{Binding SelectedPriority}"
+                              DisplayMemberBinding="{Binding Name}"
+                              HorizontalAlignment="Stretch"
+                              Background="#15FFFFFF"
+                              Foreground="#FFFFFF" />
+
+                    <!-- Quick Filters -->
+                    <TextBlock Text="QUICK FILTERS"
+                               FontSize="10"
+                               FontWeight="SemiBold"
+                               Foreground="#455A64"
+                               LetterSpacing="2"
+                               Margin="0,24,0,8" />
+
+                    <CheckBox IsChecked="{Binding ShowUnreadOnly}"
+                              Foreground="#B0BEC5"
+                              Margin="0,4">
+                        <TextBlock Text="Unread only" />
+                    </CheckBox>
+
+                    <CheckBox IsChecked="{Binding ShowRequiresResponseOnly}"
+                              Foreground="#B0BEC5"
+                              Margin="0,4">
+                        <TextBlock Text="Requires response" />
+                    </CheckBox>
+
+                    <!-- Stats -->
+                    <Border Background="#10FFFFFF"
+                            CornerRadius="8"
+                            Padding="12"
+                            Margin="0,24,0,0">
+                        <StackPanel Spacing="8">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Grid.Column="0" Text="Total Emails" Foreground="#607D8B" FontSize="12" />
+                                <TextBlock Grid.Column="1" Text="{Binding TotalEmails}" Foreground="#00E5FF" FontWeight="SemiBold" />
+                            </Grid>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Grid.Column="0" Text="Unread" Foreground="#607D8B" FontSize="12" />
+                                <TextBlock Grid.Column="1" Text="{Binding UnreadCount}" Foreground="#FF6B00" FontWeight="SemiBold" />
+                            </Grid>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Grid.Column="0" Text="Needs Response" Foreground="#607D8B" FontSize="12" />
+                                <TextBlock Grid.Column="1" Text="{Binding RequiresResponseCount}" Foreground="#FF0055" FontWeight="SemiBold" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- GridSplitter between folders and email list -->
+        <GridSplitter Grid.Column="1"
+                      Width="4"
+                      Background="#20FFFFFF"
+                      ResizeDirection="Columns"
+                      HorizontalAlignment="Center" />
+
+        <!-- CENTER: Email List -->
+        <Border Grid.Column="2"
+                Background="#0B0C10">
+            <Grid RowDefinitions="Auto,*">
+                
+                <!-- Search Bar -->
+                <Border Grid.Row="0"
+                        Background="#0D1117"
+                        Padding="16">
+                        <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                            <Border Grid.Column="0"
+                                    Background="#15FFFFFF"
+                                    CornerRadius="8"
+                                    Padding="12,8">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <TextBlock Grid.Column="0" Text="??" Margin="0,0,8,0" VerticalAlignment="Center" />
+                                    <TextBox Grid.Column="1"
+                                             Text="{Binding SearchText}"
+                                             Watermark="Search emails..."
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             Foreground="#FFFFFF" />
+                                </Grid>
+                            </Border>
+                            <Button Grid.Column="1"
+                                    Command="{Binding RefreshCommand}"
+                                    Background="#20FFFFFF"
+                                    Foreground="#B0BEC5"
+                                    Padding="12,8"
+                                    CornerRadius="8"
+                                    Margin="8,0,0,0">
+                                <TextBlock Text="?? Refresh" />
+                            </Button>
+                            <Button Grid.Column="2"
+                                    Command="{Binding ComposeCommand}"
+                                    Background="#4CAF50"
+                                    Foreground="White"
+                                    Padding="12,8"
+                                    CornerRadius="8"
+                                    Margin="8,0,0,0"
+                                    ToolTip.Tip="Compose New Email">
+                                <TextBlock Text="?? Compose" />
+                            </Button>
+                            <Button Grid.Column="3"
+                                    Command="{Binding ExportCommand}"
+                                    Background="#20FFFFFF"
+                                    Foreground="#B0BEC5"
+                                    Padding="12,8"
+                                    CornerRadius="8"
+                                    Margin="8,0,0,0">
+                                <TextBlock Text="?? Export" />
+                            </Button>
+                        </Grid>
+                </Border>
+
+                <!-- Email List -->
+                    <ScrollViewer Grid.Row="1">
+                        <DataGrid ItemsSource="{Binding Emails}"
+                                  SelectedItem="{Binding SelectedEmail}"
+                                  AutoGenerateColumns="False"
+                                  CanUserReorderColumns="True"
+                                  CanUserResizeColumns="True"
+                                  CanUserSortColumns="True"
+                                  GridLinesVisibility="None"
+                                  HeadersVisibility="Column"
+                                  IsReadOnly="True"
+                                  Background="Transparent"
+                                  RowBackground="#1E293B"
+                                  AlternatingRowBackground="#252D3D"
+                                  BorderThickness="0"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch">
+    
+    <DataGrid.Columns>
+        
+        <!-- From Column -->
+        <DataGridTextColumn Header="From" 
+                            Binding="{Binding SenderDisplay}"
+                            Width="2*"
+                            MinWidth="180"
+                            CanUserResize="True">
+            <DataGridTextColumn.ElementStyle>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="#CBD5E1"/>
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="Padding" Value="12,8"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                </Style>
+            </DataGridTextColumn.ElementStyle>
+        </DataGridTextColumn>
+        
+        <!-- Subject Column -->
+        <DataGridTextColumn Header="Subject" 
+                            Binding="{Binding Subject}"
+                            Width="4*"
+                            MinWidth="300"
+                            CanUserResize="True">
+            <DataGridTextColumn.ElementStyle>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="#F8FAFC"/>
+                    <Setter Property="FontWeight" Value="Medium"/>
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="Padding" Value="12,8"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                </Style>
+            </DataGridTextColumn.ElementStyle>
+        </DataGridTextColumn>
+        
+        <!-- Preview/Snippet Column -->
+        <DataGridTextColumn Header="Preview" 
+                            Binding="{Binding BodyPreview}"
+                            Width="3*"
+                            MinWidth="200"
+                            CanUserResize="True">
+            <DataGridTextColumn.ElementStyle>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="#94A3B8"/>
+                    <Setter Property="FontSize" Value="13"/>
+                    <Setter Property="Padding" Value="12,8"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                </Style>
+            </DataGridTextColumn.ElementStyle>
+        </DataGridTextColumn>
+        
+        <!-- Date Column -->
+        <DataGridTextColumn Header="Date" 
+                            Binding="{Binding ReceivedDate, StringFormat='MMM dd, HH:mm'}"
+                            Width="1.5*"
+                            MinWidth="130"
+                            CanUserResize="True">
+            <DataGridTextColumn.ElementStyle>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="#94A3B8"/>
+                    <Setter Property="FontSize" Value="13"/>
+                    <Setter Property="Padding" Value="12,8"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </Style>
+            </DataGridTextColumn.ElementStyle>
+        </DataGridTextColumn>
+        
+        <!-- Attachments Indicator -->
+        <DataGridTemplateColumn Header="??" 
+                                Width="60"
+                                CanUserResize="False">
+            <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding AttachmentCount}"
+                               Foreground="#38BDF8"
+                               FontWeight="Medium"
+                               FontSize="12"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               IsVisible="{Binding HasAttachments}"/>
+                </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        
+    </DataGrid.Columns>
+    
+    <!-- Column Header Style -->
+    <DataGrid.ColumnHeaderStyle>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#1A1F2E"/>
+            <Setter Property="Foreground" Value="#F8FAFC"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="12,12"/>
+            <Setter Property="BorderBrush" Value="#334155"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+    </DataGrid.ColumnHeaderStyle>
+    
+    <!-- Row Styles -->
+    <DataGrid.Styles>
+        <Style Selector="DataGridRow">
+            <Setter Property="Background" Value="#1E293B"/>
+            <Setter Property="MinHeight" Value="52"/>
+        </Style>
+        <Style Selector="DataGridRow:nth-child(2n)">
+            <Setter Property="Background" Value="#252D3D"/>
+        </Style>
+        <Style Selector="DataGridRow:selected /template/ Rectangle#BackgroundRectangle">
+            <Setter Property="Fill" Value="#334155"/>
+        </Style>
+        <Style Selector="DataGridRow:pointerover /template/ Rectangle#BackgroundRectangle">
+            <Setter Property="Fill" Value="#2A3A52"/>
+        </Style>
+        <Style Selector="DataGridCell">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+    </DataGrid.Styles>
+    
+</DataGrid>
+
+            </Grid>
+        </Border>
+
+        <!-- GridSplitter between email list and detail pane -->
+        <GridSplitter Grid.Column="3"
+                      Width="4"
+                      Background="#20FFFFFF"
+                      ResizeDirection="Columns"
+                      HorizontalAlignment="Center" />
+
+        <!-- RIGHT SIDEBAR: Email Detail / AI Insights -->
+        <Border Grid.Column="4"
+                Background="#0D1117"
+                BorderBrush="#15FFFFFF"
+                BorderThickness="1,0,0,0">
+            <ScrollViewer>
+                <StackPanel Margin="20">
+                    
+                    <!-- No Selection State -->
+                    <StackPanel IsVisible="{Binding SelectedEmail, Converter={x:Static ObjectConverters.IsNull}}"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Margin="0,100">
+                        <TextBlock Text="N/A"
+                                   FontSize="48"
+                                   HorizontalAlignment="Center"
+                                   Opacity="0.5" />
+                        <TextBlock Text="Select an email to view"
+                                   FontSize="14"
+                                   Foreground="#607D8B"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,16,0,0" />
+                        <TextBlock Text="AI insights will appear here"
+                                   FontSize="12"
+                                   Foreground="#455A64"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- AI Intelligence Panel -->
+                    <StackPanel IsVisible="{Binding SelectedEmail, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        
+                        <TextBlock Text="AI INTELLIGENCE"
+                                   FontSize="10"
+                                   FontWeight="SemiBold"
+                                   Foreground="#455A64"
+                                   LetterSpacing="2"
+                                   Margin="0,0,0,16" />
+
+                        <!-- AI Summary Card -->
+                        <Border Background="#15FFFFFF"
+                                CornerRadius="8"
+                                Padding="16"
+                                Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="AI Summary"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"
+                                           Foreground="#00E5FF"
+                                           Margin="0,0,0,8" />
+                                <TextBlock Text="{Binding SelectedEmail.AISummary}"
+                                           FontSize="13"
+                                           Foreground="#B0BEC5"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Quick Actions -->
+                        <TextBlock Text="QUICK ACTIONS"
+                                   FontSize="10"
+                                   FontWeight="SemiBold"
+                                   Foreground="#455A64"
+                                   LetterSpacing="2"
+                                   Margin="0,0,0,12" />
+
+                        <StackPanel Spacing="8">
+                            <Button HorizontalAlignment="Stretch"
+                                    Background="#2000E5FF"
+                                    Foreground="#00E5FF"
+                                    Padding="12,10"
+                                    CornerRadius="6">
+                                <TextBlock Text="Draft Reply with AI" />
+                            </Button>
+                            <Button HorizontalAlignment="Stretch"
+                                    Background="#20FFFFFF"
+                                    Foreground="#B0BEC5"
+                                    Padding="12,10"
+                                    CornerRadius="6">
+                                <TextBlock Text="Extract Action Items" />
+                            </Button>
+                            <Button HorizontalAlignment="Stretch"
+                                    Background="#20FFFFFF"
+                                    Foreground="#B0BEC5"
+                                    Padding="12,10"
+                                    CornerRadius="6">
+                                <TextBlock Text="Find Related Emails" />
+                            </Button>
+                        </StackPanel>
+
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+        
+    </Grid>
+    </ScrollViewer>
+</UserControl>

@@ -10,7 +10,7 @@ public abstract class BaseEntity
     /// <summary>
     /// Entity identifier.
     /// </summary>
-    public Guid Id { get; private set; } = Guid.NewGuid();
+    public Guid Id { get; set; } = Guid.NewGuid();
 
     private readonly List<IDomainEvent> _domainEvents = new();
 

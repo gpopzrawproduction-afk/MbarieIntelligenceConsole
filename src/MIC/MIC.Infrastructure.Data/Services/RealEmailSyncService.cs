@@ -41,20 +41,38 @@ public class RealEmailSyncService : IEmailSyncService
         EmailAccount account, 
         CancellationToken ct = default)
     {
-        _logger.LogInformation("Starting sync for account: {Email}", account.EmailAddress);
+        _logger.LogInformation("Starting sync for account: {Email} (Provider: {Provider})", 
+            account.EmailAddress, account.Provider);
 
         try
         {
             using var client = new ImapClient();
             
             // Connect to IMAP server
-            var (host, port) = GetImapSettings(account.Provider);
-            await client.ConnectAsync(host, port, SecureSocketOptions.SslOnConnect, ct);
+            var (host, port) = GetImapSettings(account);
+            var secureSocketOptions = GetSecureSocketOptions(account);
+            await client.ConnectAsync(host, port, secureSocketOptions, ct);
             
-            // Authenticate with OAuth2
-            var accessToken = await GetAccessTokenAsync(account, ct);
-            var oauth2 = new SaslMechanismOAuth2(account.EmailAddress, accessToken);
-            await client.AuthenticateAsync(oauth2, ct);
+            // Authenticate based on provider
+            if (account.Provider == EmailProvider.IMAP)
+            {
+                // For IMAP provider, use password authentication
+                if (string.IsNullOrEmpty(account.PasswordEncrypted))
+                {
+                    throw new InvalidOperationException("Password is required for IMAP provider");
+                }
+                
+                // In production, the password should be decrypted here
+                var password = account.PasswordEncrypted; // Should be decrypted
+                await client.AuthenticateAsync(account.EmailAddress, password, ct);
+            }
+            else
+            {
+                // For OAuth2 providers (Gmail, Outlook)
+                var accessToken = await GetAccessTokenAsync(account, ct);
+                var oauth2 = new SaslMechanismOAuth2(account.EmailAddress, accessToken);
+                await client.AuthenticateAsync(oauth2, ct);
+            }
             
             _logger.LogInformation("Connected to IMAP server for {Email}", account.EmailAddress);
 
@@ -194,13 +212,36 @@ public class RealEmailSyncService : IEmailSyncService
         };
     }
 
-    private (string host, int port) GetImapSettings(EmailProvider provider)
+    private (string host, int port) GetImapSettings(EmailAccount account)
     {
-        return provider switch
+        if (account.Provider == EmailProvider.IMAP)
+        {
+            if (string.IsNullOrEmpty(account.ImapServer))
+            {
+                throw new InvalidOperationException("IMAP server is not configured for this account");
+            }
+            
+            return (account.ImapServer, account.ImapPort > 0 ? account.ImapPort : 993);
+        }
+        
+        // For OAuth providers, use predefined settings
+        return account.Provider switch
         {
             EmailProvider.Gmail => ("imap.gmail.com", 993),
             EmailProvider.Outlook => ("outlook.office365.com", 993),
-            _ => throw new NotSupportedException($"Provider {provider} not supported")
+            EmailProvider.Exchange => throw new NotSupportedException("Exchange provider not yet implemented"),
+            _ => throw new NotSupportedException($"Provider {account.Provider} not supported")
         };
+    }
+
+    private SecureSocketOptions GetSecureSocketOptions(EmailAccount account)
+    {
+        if (account.Provider == EmailProvider.IMAP)
+        {
+            return account.UseSsl ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.None;
+        }
+        
+        // OAuth providers always use SSL
+        return SecureSocketOptions.SslOnConnect;
     }
 }

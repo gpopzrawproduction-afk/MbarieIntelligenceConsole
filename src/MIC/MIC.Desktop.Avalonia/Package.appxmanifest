@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">
+<Identity Name="MbarieServicesLtd.MbarieIntelligenceConsole"
+            Publisher="CN=Haroon Ahmed Amin"
+            Version="1.0.0.0"/>
+  <Properties>
+    <DisplayName>Mbarie Intelligence Console</DisplayName>
+    <PublisherDisplayName>Mbarie Services Ltd</PublisherDisplayName>
+    <Logo>Assets\app-icon.png</Logo>
+  </Properties>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22000.0"/>
+  </Dependencies>
+  <Applications>
+    <Application Id="MbarieIntelligenceConsole" Executable="MIC.Desktop.Avalonia.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements DisplayName="Mbarie Intelligence Console"
+                          Description="Business Intelligence Application"
+                          BackgroundColor="transparent"
+                          Square150x150Logo="Assets\app-icon-150.png"
+                          Square44x44Logo="Assets\app-icon-44.png"/>
+    </Application>
+  </Applications>
+</Package>

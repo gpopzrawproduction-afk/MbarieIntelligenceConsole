@@ -109,7 +109,7 @@ public class CommandPaletteViewModel : ViewModelBase
             Name = "Go to Dashboard",
             Description = "View the main dashboard",
             Shortcut = "Ctrl+1",
-            Icon = "??",
+            Icon = "mail",
             Action = () => OnNavigate?.Invoke("Dashboard")
         });
         AllCommands.Add(new CommandItem
@@ -118,7 +118,7 @@ public class CommandPaletteViewModel : ViewModelBase
             Name = "Go to Alerts",
             Description = "View and manage alerts",
             Shortcut = "Ctrl+2",
-            Icon = "??",
+            Icon = "bell",
             Action = () => OnNavigate?.Invoke("Alerts")
         });
         AllCommands.Add(new CommandItem
@@ -127,7 +127,7 @@ public class CommandPaletteViewModel : ViewModelBase
             Name = "Go to Metrics",
             Description = "View business metrics",
             Shortcut = "Ctrl+3",
-            Icon = "??",
+            Icon = "user",
             Action = () => OnNavigate?.Invoke("Metrics")
         });
         AllCommands.Add(new CommandItem
@@ -136,7 +136,7 @@ public class CommandPaletteViewModel : ViewModelBase
             Name = "Go to Predictions",
             Description = "AI-powered predictions",
             Shortcut = "Ctrl+4",
-            Icon = "??",
+            Icon = "archive",
             Action = () => OnNavigate?.Invoke("Predictions")
         });
         AllCommands.Add(new CommandItem
@@ -145,7 +145,7 @@ public class CommandPaletteViewModel : ViewModelBase
             Name = "Open AI Chat",
             Description = "Chat with AI assistant",
             Shortcut = "Ctrl+5",
-            Icon = "??",
+            Icon = "flag",
             Action = () => OnNavigate?.Invoke("AI Chat")
         });
         AllCommands.Add(new CommandItem
@@ -154,7 +154,7 @@ public class CommandPaletteViewModel : ViewModelBase
             Name = "Open Settings",
             Description = "Configure application settings",
             Shortcut = "Ctrl+,",
-            Icon = "??",
+            Icon = "trash",
             Action = () => OnNavigate?.Invoke("Settings")
         });
 
@@ -174,7 +174,7 @@ public class CommandPaletteViewModel : ViewModelBase
             Name = "Refresh Data",
             Description = "Refresh all data from sources",
             Shortcut = "F5",
-            Icon = "??",
+            Icon = "markread",
             Action = () => OnAction?.Invoke("Refresh")
         });
         AllCommands.Add(new CommandItem
@@ -183,7 +183,7 @@ public class CommandPaletteViewModel : ViewModelBase
             Name = "Export Report",
             Description = "Export current view as PDF",
             Shortcut = "Ctrl+E",
-            Icon = "??",
+            Icon = "mail",
             Action = () => OnAction?.Invoke("Export")
         });
         AllCommands.Add(new CommandItem
@@ -192,7 +192,7 @@ public class CommandPaletteViewModel : ViewModelBase
             Name = "Search Everywhere",
             Description = "Search across all data",
             Shortcut = "Ctrl+Shift+F",
-            Icon = "??",
+            Icon = "bell",
             Action = () => OnAction?.Invoke("Search")
         });
 
@@ -202,7 +202,7 @@ public class CommandPaletteViewModel : ViewModelBase
             Category = "AI",
             Name = "Ask AI a Question",
             Description = "Open AI chat and ask anything",
-            Icon = "??",
+            Icon = "user",
             Action = () => OnNavigate?.Invoke("AI Chat")
         });
         AllCommands.Add(new CommandItem
@@ -210,7 +210,7 @@ public class CommandPaletteViewModel : ViewModelBase
             Category = "AI",
             Name = "Generate Predictions",
             Description = "Run AI prediction analysis",
-            Icon = "??",
+            Icon = "archive",
             Action = () => OnAction?.Invoke("GeneratePredictions")
         });
         AllCommands.Add(new CommandItem
@@ -218,7 +218,7 @@ public class CommandPaletteViewModel : ViewModelBase
             Category = "AI",
             Name = "Analyze Alerts",
             Description = "AI analysis of current alerts",
-            Icon = "??",
+            Icon = "flag",
             Action = () => OnAction?.Invoke("AnalyzeAlerts")
         });
 
@@ -229,7 +229,7 @@ public class CommandPaletteViewModel : ViewModelBase
             Name = "Toggle Dark Mode",
             Description = "Switch between light and dark theme",
             Shortcut = "Ctrl+T",
-            Icon = "??",
+            Icon = "trash",
             Action = () => OnAction?.Invoke("ToggleTheme")
         });
         AllCommands.Add(new CommandItem
@@ -238,7 +238,7 @@ public class CommandPaletteViewModel : ViewModelBase
             Name = "Show Keyboard Shortcuts",
             Description = "View all keyboard shortcuts",
             Shortcut = "Ctrl+?",
-            Icon = "??",
+            Icon = "markread",
             Action = () => OnAction?.Invoke("ShowShortcuts")
         });
         AllCommands.Add(new CommandItem

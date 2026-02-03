@@ -46,6 +46,18 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
 			.HasMaxLength(100)
 			.HasColumnType("varchar(100)");
 
+		builder.Property(u => u.JobPosition)
+			.HasMaxLength(100)
+			.HasColumnType("varchar(100)");
+
+		builder.Property(u => u.Department)
+			.HasMaxLength(100)
+			.HasColumnType("varchar(100)");
+
+		builder.Property(u => u.SeniorityLevel)
+			.HasMaxLength(50)
+			.HasColumnType("varchar(50)");
+
 		// NEW: Role is required
 		builder.Property(u => u.Role)
 			.IsRequired();

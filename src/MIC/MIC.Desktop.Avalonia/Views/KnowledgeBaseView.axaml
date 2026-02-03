@@ -1,0 +1,183 @@
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MIC.Desktop.Avalonia.ViewModels"
+             mc:Ignorable="d"
+             x:Class="MIC.Desktop.Avalonia.Views.KnowledgeBaseView"
+             x:DataType="vm:KnowledgeBaseViewModel"
+             Background="#0F172A">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="24">
+            <StackPanel Spacing="16">
+                <!-- Header -->
+                <TextBlock Text="Knowledge Base"
+                           FontSize="28"
+                           FontWeight="SemiBold"
+                           Foreground="#F8FAFC" />
+                
+                <TextBlock Text="Central hub for indexed insights from emails, attachments, and alerts"
+                           FontSize="13"
+                           Foreground="#CBD5E1" />
+
+                <!-- Main Content Card -->
+                <Border Background="#1E293B"
+                        CornerRadius="12"
+                        Padding="20"
+                        BorderBrush="#334155"
+                        BorderThickness="1">
+                    <StackPanel Spacing="16">
+                        
+                        <!-- Upload Section -->
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Button Content="Upload Documents"
+                                    Width="180"
+                                    Height="36"
+                                    Command="{Binding UploadDocumentsCommand}"
+                                    Background="#3B82F6"
+                                    Foreground="White"
+                                    CornerRadius="8"
+                                    FontWeight="Medium" />
+                            
+                            <TextBlock Text="Up to 50 files, 150MB each"
+                                       FontSize="12"
+                                       Foreground="#64748B"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+
+                        <!-- Search Box -->
+                        <TextBox Watermark="Search knowledge base..."
+                                 Text="{Binding SearchText, Mode=TwoWay}"
+                                 Height="36"
+                                 CornerRadius="8"
+                                 FontSize="14"
+                                 Background="#0F172A"
+                                 Foreground="#F8FAFC"
+                                 BorderBrush="#334155"
+                                 BorderThickness="1" />
+
+                        <!-- Success Message -->
+                        <Border Background="#064E3B"
+                                CornerRadius="8"
+                                Padding="12"
+                                BorderBrush="#10B981"
+                                BorderThickness="1"
+                                IsVisible="{Binding !!SuccessMessage}">
+                            <TextBlock Text="{Binding SuccessMessage}"
+                                       Foreground="#22C55E"
+                                       FontSize="13"
+                                       TextWrapping="Wrap" />
+                        </Border>
+
+                        <!-- Error Message -->
+                        <Border Background="#450A0A"
+                                CornerRadius="8"
+                                Padding="12"
+                                BorderBrush="#EF4444"
+                                BorderThickness="1"
+                                IsVisible="{Binding !!ErrorMessage}">
+                            <TextBlock Text="{Binding ErrorMessage}"
+                                       Foreground="#EF4444"
+                                       FontSize="13"
+                                       TextWrapping="Wrap" />
+                        </Border>
+
+                        <!-- Loading Indicator -->
+                        <Border Background="#1E293B"
+                                CornerRadius="8"
+                                Padding="16"
+                                IsVisible="{Binding IsLoading}">
+                            <StackPanel Spacing="8" HorizontalAlignment="Center">
+                                <ProgressBar IsIndeterminate="True"
+                                             Width="200"
+                                             Height="4"
+                                             Foreground="#3B82F6" />
+                                <TextBlock Text="Uploading documents..."
+                                           FontSize="13"
+                                           Foreground="#94A3B8"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Documents List -->
+                        <ScrollViewer MaxHeight="500"
+                                      VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding Entries}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:KnowledgeEntryViewModel">
+                                        <Border Background="#0F172A"
+                                                CornerRadius="12"
+                                                Padding="16"
+                                                Margin="0,0,0,12"
+                                                BorderBrush="#334155"
+                                                BorderThickness="1">
+                                            <StackPanel Spacing="8">
+                                                <!-- Title -->
+                                                <TextBlock Text="{Binding Title}"
+                                                           FontSize="16"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="#F8FAFC"
+                                                           TextWrapping="Wrap" />
+                                                
+                                                <!-- Content Preview -->
+                                                <TextBlock Text="{Binding Content}"
+                                                           FontSize="13"
+                                                           Foreground="#CBD5E1"
+                                                           TextWrapping="Wrap"
+                                                           MaxLines="3"
+                                                           TextTrimming="CharacterEllipsis" />
+                                                
+                                                <!-- Metadata -->
+                                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                                    <TextBlock Text="{Binding Tags}"
+                                                               FontSize="12"
+                                                               Foreground="#38BDF8" />
+                                                    
+                                                    <TextBlock Text="•"
+                                                               FontSize="12"
+                                                               Foreground="#475569" />
+                                                    
+                                                    <TextBlock Text="{Binding CreatedAt, StringFormat='Created {0:MMM dd, yyyy HH:mm}'}"
+                                                               FontSize="12"
+                                                               Foreground="#94A3B8" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+
+                        <!-- Empty State -->
+                        <Border Background="#1E293B"
+                                CornerRadius="12"
+                                Padding="40"
+                                IsVisible="{Binding !Entries.Count}">
+                            <StackPanel Spacing="12" HorizontalAlignment="Center">
+                                <TextBlock Text="📚"
+                                           FontSize="48"
+                                           HorizontalAlignment="Center" />
+                                
+                                <TextBlock Text="No documents yet"
+                                           FontSize="16"
+                                           FontWeight="SemiBold"
+                                           Foreground="#F8FAFC"
+                                           HorizontalAlignment="Center" />
+                                
+                                <TextBlock Text="Upload documents to build your knowledge base"
+                                           FontSize="13"
+                                           Foreground="#64748B"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+
+</UserControl>

@@ -1,0 +1,202 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:MIC.Desktop.Avalonia.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="700"
+        x:Class="MIC.Desktop.Avalonia.Views.Dialogs.FirstTimeSetupDialog"
+        x:DataType="vm:FirstTimeSetupDialogViewModel"
+        Title="Welcome to Mbarie Intelligence Console"
+        Width="800" Height="700"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        Background="#0A0A0F">
+    
+    <Window.Styles>
+        <Style Selector="TextBlock.title">
+            <Setter Property="FontSize" Value="32"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#FFB84D"/>
+        </Style>
+        <Style Selector="TextBlock.subtitle">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Foreground" Value="#CBD5E1"/>
+        </Style>
+        <Style Selector="TextBlock.section-title">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#FFB84D"/>
+        </Style>
+        <Style Selector="CheckBox">
+            <Setter Property="Foreground" Value="#F8FAFC"/>
+        </Style>
+    </Window.Styles>
+    
+    <Border CornerRadius="16"
+            BoxShadow="0 25 50 -12 rgba(255, 184, 77, 0.25)">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                <GradientStop Color="#0A0A0F" Offset="0"/>
+                <GradientStop Color="#1A1520" Offset="1"/>
+            </LinearGradientBrush>
+        </Border.Background>
+        
+        <Grid Margin="40" RowDefinitions="Auto,*,Auto">
+            
+            <!-- Header -->
+            <StackPanel Grid.Row="0" Spacing="12" HorizontalAlignment="Center">
+                <Border Background="#FFB84D" 
+                        Width="80" Height="80" 
+                        CornerRadius="40"
+                        HorizontalAlignment="Center">
+                    <TextBlock Text="M" 
+                               FontSize="48" 
+                               FontWeight="Bold"
+                               Foreground="#0A0A0F"
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center"/>
+                </Border>
+                <TextBlock Text="Welcome!" Classes="title" HorizontalAlignment="Center"/>
+                <TextBlock Text="Let's configure your intelligence console" 
+                           Classes="subtitle" 
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+            
+            <!-- Configuration Steps -->
+            <ScrollViewer Grid.Row="1" Margin="0,30,0,0">
+                <StackPanel Spacing="24">
+                    
+                    <!-- Step 1: Email Configuration -->
+                    <Border Background="#1E293B" 
+                            CornerRadius="12" 
+                            Padding="24"
+                            BorderBrush="#FFB84D"
+                            BorderThickness="1">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="?? Email Intelligence Setup" 
+                                       Classes="section-title"/>
+                            
+                            <TextBlock Text="Configure how far back to analyze your emails:"
+                                       Foreground="#94A3B8"/>
+                            
+                            <ComboBox SelectedIndex="{Binding EmailHistoryMonthsIndex}"
+                                      Width="300"
+                                      HorizontalAlignment="Left">
+                                <ComboBoxItem Content="Last 1 month"/>
+                                <ComboBoxItem Content="Last 3 months"/>
+                                <ComboBoxItem Content="Last 6 months"/>
+                                <ComboBoxItem Content="Last 12 months"/>
+                                <ComboBoxItem Content="All history (may take longer)"/>
+                            </ComboBox>
+                            
+                            <CheckBox Content="Download attachments for AI analysis"
+                                      IsChecked="{Binding DownloadAttachments}"/>
+                            
+                            <CheckBox Content="Include Sent folder"
+                                      IsChecked="{Binding IncludeSentFolder}"/>
+                            
+                            <TextBlock Text="? Larger history ranges may take 5-10 minutes for initial sync"
+                                       FontSize="12"
+                                       Foreground="#FF8C42"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- Step 2: AI Configuration -->
+                    <Border Background="#1E293B" 
+                            CornerRadius="12" 
+                            Padding="24"
+                            BorderBrush="#FFB84D"
+                            BorderThickness="1">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="AI Predictive Engine" 
+                                       Classes="section-title"/>
+                            
+                            <TextBlock Text="Configure AI analysis capabilities:"
+                                       Foreground="#94A3B8"/>
+                            
+                            <CheckBox Content="Enable predictive analytics (future outcome forecasting)"
+                                      IsChecked="{Binding EnablePredictiveAnalytics}"/>
+                            
+                            <CheckBox Content="Enable sentiment analysis on emails"
+                                      IsChecked="{Binding EnableSentimentAnalysis}"/>
+                            
+                            <CheckBox Content="Auto-categorize emails and alerts"
+                                      IsChecked="{Binding EnableAutoCategorization}"/>
+                            
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Prediction time horizon:"
+                                           Foreground="#94A3B8"/>
+                                <ComboBox SelectedIndex="{Binding PredictionHorizonIndex}"
+                                          Width="300"
+                                          HorizontalAlignment="Left">
+                                    <ComboBoxItem Content="7 days ahead"/>
+                                    <ComboBoxItem Content="30 days ahead"/>
+                                    <ComboBoxItem Content="90 days ahead"/>
+                                    <ComboBoxItem Content="6 months ahead"/>
+                                    <ComboBoxItem Content="12 months ahead"/>
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- Step 3: Notification Preferences -->
+                    <Border Background="#1E293B" 
+                            CornerRadius="12" 
+                            Padding="24"
+                            BorderBrush="#FFB84D"
+                            BorderThickness="1">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="Notification Preferences" 
+                                       Classes="section-title"/>
+                            
+                            <CheckBox Content="Desktop notifications for critical alerts"
+                                      IsChecked="{Binding EnableDesktopNotifications}"/>
+                            
+                            <CheckBox Content="Email digest (daily summary)"
+                                      IsChecked="{Binding EnableEmailDigest}"/>
+                            
+                            <CheckBox Content="Proactive insights and recommendations"
+                                      IsChecked="{Binding EnableProactiveInsights}"/>
+                        </StackPanel>
+                    </Border>
+                    
+                </StackPanel>
+            </ScrollViewer>
+            
+            <!-- Action Buttons -->
+            <StackPanel Grid.Row="2" 
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Right"
+                        Spacing="12"
+                        Margin="0,20,0,0">
+                <Button Content="Skip for Now"
+                        Command="{Binding SkipCommand}"
+                        Width="140"
+                        Height="44"
+                        Background="#334155"
+                        Foreground="White"
+                        CornerRadius="8"/>
+                <Border BoxShadow="0 10 15 -3 rgba(255, 184, 77, 0.5)"
+                        CornerRadius="8">
+                    <Button Content="Continue ?"
+                            Command="{Binding ContinueCommand}"
+                            Width="140"
+                            Height="44"
+                            Foreground="#0A0A0F"
+                            FontWeight="SemiBold"
+                            CornerRadius="8">
+                        <Button.Background>
+                            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                                <GradientStop Color="#FFB84D" Offset="0"/>
+                                <GradientStop Color="#FF8C42" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                </Border>
+            </StackPanel>
+            
+        </Grid>
+    </Border>
+</Window>
+

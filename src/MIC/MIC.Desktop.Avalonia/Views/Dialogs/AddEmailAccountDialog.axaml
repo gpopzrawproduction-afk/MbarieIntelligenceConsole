@@ -1,0 +1,164 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="MIC.Desktop.Avalonia.Views.Dialogs.AddEmailAccountDialog"
+        Title="Add Email Account"
+        Width="500" Height="650"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+    
+    <Border Background="#1a1a1a" 
+            BorderBrush="#333333" 
+            BorderThickness="1"
+            CornerRadius="8"
+            Padding="20">
+        
+        <StackPanel Spacing="15">
+            
+            <TextBlock Text="Add Email Account" 
+                       FontSize="20" 
+                       FontWeight="Bold"
+                       Foreground="White"
+                       Margin="0,0,0,10"/>
+            
+            <!-- Email Address -->
+            <StackPanel>
+                <TextBlock Text="Email Address *" 
+                           Foreground="#CCCCCC" 
+                           Margin="0,0,0,5"/>
+                <TextBox x:Name="EmailAddressTextBox"
+                         Watermark="your.email@company.com"
+                         Background="#2a2a2a"
+                         Foreground="White"/>
+            </StackPanel>
+            
+            <!-- Password -->
+            <StackPanel>
+                <TextBlock Text="Password *" 
+                           Foreground="#CCCCCC" 
+                           Margin="0,0,0,5"/>
+                <TextBox x:Name="PasswordTextBox"
+                         Watermark="Your email password"
+                         PasswordChar="●"
+                         Background="#2a2a2a"
+                         Foreground="White"/>
+            </StackPanel>
+            
+            <!-- Account Name -->
+            <StackPanel>
+                <TextBlock Text="Account Name (Optional)" 
+                           Foreground="#CCCCCC" 
+                           Margin="0,0,0,5"/>
+                <TextBox x:Name="AccountNameTextBox"
+                         Watermark="e.g., Work Email"
+                         Background="#2a2a2a"
+                         Foreground="White"/>
+            </StackPanel>
+            
+            <Separator Background="#333333" Margin="0,10"/>
+            
+            <TextBlock Text="Server Settings (Advanced)" 
+                       FontSize="14" 
+                       FontWeight="Bold"
+                       Foreground="White"/>
+            
+            <!-- IMAP Server -->
+            <StackPanel>
+                <TextBlock Text="IMAP Server *" 
+                           Foreground="#CCCCCC" 
+                           Margin="0,0,0,5"/>
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBox x:Name="ImapServerTextBox"
+                             Grid.Column="0"
+                             Watermark="mail.yourserver.com"
+                             Background="#2a2a2a"
+                             Foreground="White"/>
+                    <TextBox x:Name="ImapPortTextBox"
+                             Grid.Column="1"
+                             Width="80"
+                             Margin="10,0,0,0"
+                             Text="993"
+                             Watermark="Port"
+                             Background="#2a2a2a"
+                             Foreground="White"/>
+                </Grid>
+            </StackPanel>
+            
+            <!-- SMTP Server -->
+            <StackPanel>
+                <TextBlock Text="SMTP Server *" 
+                           Foreground="#CCCCCC" 
+                           Margin="0,0,0,5"/>
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBox x:Name="SmtpServerTextBox"
+                             Grid.Column="0"
+                             Watermark="mail.yourserver.com"
+                             Background="#2a2a2a"
+                             Foreground="White"/>
+                    <TextBox x:Name="SmtpPortTextBox"
+                             Grid.Column="1"
+                             Width="80"
+                             Margin="10,0,0,0"
+                             Text="465"
+                             Watermark="Port"
+                             Background="#2a2a2a"
+                             Foreground="White"/>
+                </Grid>
+            </StackPanel>
+            
+            <!-- Use SSL -->
+            <CheckBox x:Name="UseSslCheckBox"
+                      Content="Use SSL/TLS (Recommended)"
+                      IsChecked="True"
+                      Foreground="White"/>
+            
+            <!-- Auto-detect Settings Button -->
+            <Button Content="Auto-Detect Settings"
+                    x:Name="AutoDetectButton"
+                    Click="OnAutoDetectClick"
+                    HorizontalAlignment="Stretch"
+                    Background="#2a2a2a"
+                    Foreground="White"
+                    Margin="0,5"/>
+            
+            <!-- Error Message -->
+            <TextBlock x:Name="ErrorMessage"
+                       Foreground="#FF6B6B"
+                       TextWrapping="Wrap"
+                       IsVisible="False"/>
+            
+            <!-- Status Message -->
+            <TextBlock x:Name="StatusMessage"
+                       Foreground="#4CAF50"
+                       TextWrapping="Wrap"
+                       IsVisible="False"/>
+            
+            <!-- Progress -->
+            <ProgressBar x:Name="ProgressBar"
+                         IsIndeterminate="True"
+                         IsVisible="False"/>
+            
+            <!-- Buttons -->
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Right"
+                        Spacing="10"
+                        Margin="0,10,0,0">
+                <Button Content="Test Connection"
+                        Width="130"
+                        Click="OnTestConnectionClick"
+                        Background="#2196F3"
+                        Foreground="White"/>
+                <Button Content="Cancel"
+                        Width="100"
+                        Click="OnCancelClick"
+                        Background="#2a2a2a"
+                        Foreground="White"/>
+                <Button Content="Add Account"
+                        Width="120"
+                        Click="OnAddAccountClick"
+                        Background="#4CAF50"
+                        Foreground="White"/>
+            </StackPanel>
+            
+        </StackPanel>
+    </Border>
+</Window>

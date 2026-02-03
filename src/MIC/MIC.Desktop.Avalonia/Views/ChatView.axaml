@@ -8,7 +8,9 @@
              x:DataType="vm:ChatViewModel"
              Background="#0B0C10">
 
-    <Grid RowDefinitions="Auto,*,Auto,Auto">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <!-- Existing content moved here -->
+            <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="20">
         
         <!-- Header -->
         <Border Grid.Row="0"
@@ -197,7 +199,15 @@
                          Padding="16,10"
                          Foreground="#FFFFFF"
                          FontSize="13"
-                         AcceptsReturn="False" />
+                         AcceptsReturn="False"
+                         TextWrapping="Wrap">
+                    <TextBox.KeyBindings>
+                        <KeyBinding Command="{Binding SendMessageCommand}" 
+                                    Gesture="Enter" />
+                        <KeyBinding Command="{Binding InsertNewLineCommand}" 
+                                    Gesture="Shift+Enter" />
+                    </TextBox.KeyBindings>
+                </TextBox>
                 
                 <Button Grid.Column="1"
                         Command="{Binding SendMessageCommand}"
@@ -215,5 +225,5 @@
         </Border>
         
     </Grid>
-
+        </ScrollViewer>
 </UserControl>

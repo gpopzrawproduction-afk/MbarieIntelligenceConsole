@@ -2,6 +2,8 @@ using System;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
+using Microsoft.Extensions.DependencyInjection;
 using MIC.Desktop.Avalonia.Services;
 using MIC.Desktop.Avalonia.ViewModels;
 
@@ -19,8 +21,16 @@ public partial class MainWindow : Window
             Console.WriteLine("=== MainWindow Constructor Started ===");
             InitializeComponent();
             Console.WriteLine("=== InitializeComponent Completed ===");
-            _viewModel = new MainWindowViewModel();
-            Console.WriteLine("=== MainWindowViewModel Created ===");
+            // Enforce system decorations and resize for production polish
+            SystemDecorations = SystemDecorations.Full;
+            ExtendClientAreaToDecorationsHint = false;
+            CanResize = true;
+            MinWidth = 1200;
+            MinHeight = 800;
+            _viewModel = DataContext as MainWindowViewModel
+                         ?? Program.ServiceProvider?.GetRequiredService<MainWindowViewModel>()
+                         ?? new MainWindowViewModel();
+            Console.WriteLine("=== MainWindowViewModel Resolved ===");
             DataContext = _viewModel;
             Console.WriteLine("=== DataContext Set ===");
 
@@ -38,6 +48,23 @@ public partial class MainWindow : Window
         }
     }
 
+    private void OnMinimizeClick(object? sender, RoutedEventArgs e)
+    {
+        WindowState = WindowState.Minimized;
+    }
+
+    private void OnMaximizeClick(object? sender, RoutedEventArgs e)
+    {
+        WindowState = WindowState == WindowState.Maximized 
+            ? WindowState.Normal 
+            : WindowState.Maximized;
+    }
+
+    private void OnCloseClick(object? sender, RoutedEventArgs e)
+    {
+        Close();
+    }
+
     private void SetupKeyboardShortcuts()
     {
         // Command Palette
@@ -49,22 +76,22 @@ public partial class MainWindow : Window
             switch (viewName)
             {
                 case "Dashboard":
-                    _viewModel.NavigateToDashboardCommand.Execute(null);
+                    _viewModel.NavigateToDashboardCommand.Execute().Subscribe();
                     break;
                 case "Alerts":
-                    _viewModel.NavigateToAlertsCommand.Execute(null);
+                    _viewModel.NavigateToAlertsCommand.Execute().Subscribe();
                     break;
                 case "Metrics":
-                    _viewModel.NavigateToMetricsCommand.Execute(null);
+                    _viewModel.NavigateToMetricsCommand.Execute().Subscribe();
                     break;
                 case "Predictions":
-                    _viewModel.NavigateToPredictionsCommand.Execute(null);
+                    _viewModel.NavigateToPredictionsCommand.Execute().Subscribe();
                     break;
                 case "AI Chat":
-                    _viewModel.NavigateToAIChatCommand.Execute(null);
+                    _viewModel.NavigateToChatCommand.Execute().Subscribe();
                     break;
                 case "Settings":
-                    _viewModel.NavigateToSettingsCommand.Execute(null);
+                    _viewModel.NavigateToSettingsCommand.Execute().Subscribe();
                     break;
             }
         };
@@ -88,22 +115,22 @@ public partial class MainWindow : Window
         switch (viewName)
         {
             case "Dashboard":
-                _viewModel.NavigateToDashboardCommand.Execute(null);
+                _viewModel.NavigateToDashboardCommand.Execute().Subscribe();
                 break;
             case "Alerts":
-                _viewModel.NavigateToAlertsCommand.Execute(null);
+                _viewModel.NavigateToAlertsCommand.Execute().Subscribe();
                 break;
             case "Metrics":
-                _viewModel.NavigateToMetricsCommand.Execute(null);
+                _viewModel.NavigateToMetricsCommand.Execute().Subscribe();
                 break;
             case "Predictions":
-                _viewModel.NavigateToPredictionsCommand.Execute(null);
+                _viewModel.NavigateToPredictionsCommand.Execute().Subscribe();
                 break;
             case "AI Chat":
-                _viewModel.NavigateToAIChatCommand.Execute(null);
+                _viewModel.NavigateToChatCommand.Execute().Subscribe();
                 break;
             case "Settings":
-                _viewModel.NavigateToSettingsCommand.Execute(null);
+                _viewModel.NavigateToSettingsCommand.Execute().Subscribe();
                 break;
         }
     }

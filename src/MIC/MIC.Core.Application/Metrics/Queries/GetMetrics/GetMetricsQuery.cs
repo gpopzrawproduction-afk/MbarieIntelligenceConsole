@@ -36,5 +36,5 @@ public record GetMetricsQuery : IQuery<IReadOnlyList<MetricDto>>
     /// <summary>
     /// If true, only return the latest value for each metric.
     /// </summary>
-    public bool LatestOnly { get; init; } = true;
+    public bool LatestOnly { get; init; } = false;
 }

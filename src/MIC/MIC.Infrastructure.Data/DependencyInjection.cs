@@ -53,8 +53,11 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IEmailRepository, EmailRepository>();
         services.AddScoped<IEmailAccountRepository, EmailAccountRepository>();
+        services.AddScoped<IChatHistoryRepository, ChatHistoryRepository>();
         services.AddScoped<IEmailSyncService, RealEmailSyncService>();
         services.AddScoped<IKnowledgeBaseService, KnowledgeBaseService>();
+        services.AddScoped<ISettingsService, SettingsService>();
+        services.AddScoped<IEmailSenderService, EmailSenderService>();
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
         // Register database configuration and services
@@ -138,9 +141,10 @@ public static class DependencyInjection
 
     private static void ConfigureSqlite(IServiceCollection services, string connectionString)
     {
+        var baseDir = AppContext.BaseDirectory.TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
         var sqliteConn = string.IsNullOrWhiteSpace(connectionString)
-            ? "Data Source=mic_dev.db"
-            : connectionString;
+            ? $"Data Source={System.IO.Path.Combine(baseDir, "mic_dev.db")}" 
+            : connectionString.Replace("%BASE_DIR%", baseDir.Replace("\\", "/"));
 
         services.AddDbContext<MicDbContext>(options =>
         {

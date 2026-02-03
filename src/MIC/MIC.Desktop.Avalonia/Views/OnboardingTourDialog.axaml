@@ -1,0 +1,12 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="MIC.Desktop.Avalonia.Views.OnboardingTourDialog"
+        Title="Onboarding Tour"
+        Width="480" Height="320"
+        WindowStartupLocation="CenterOwner">
+    <StackPanel Margin="24">
+        <TextBlock Text="Welcome to Mbarie Intelligence Console" FontSize="20" FontWeight="Bold" Margin="0,0,0,12"/>
+        <TextBlock Text="This tour will guide you through the main features of the application." FontSize="14" Margin="0,0,0,24" TextWrapping="Wrap"/>
+        <Button Content="OK" HorizontalAlignment="Right" Width="80" IsDefault="True" Click="OnOkClick"/>
+    </StackPanel>
+</Window>

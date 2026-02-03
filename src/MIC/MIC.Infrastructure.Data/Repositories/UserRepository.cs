@@ -12,6 +12,12 @@ namespace MIC.Infrastructure.Data.Repositories;
 /// </summary>
 public sealed class UserRepository : Repository<User>, IUserRepository
 {
+    public async Task<User?> GetTrackedByIdAsync(Guid id)
+    {
+        if (id == Guid.Empty)
+            throw new ArgumentException("Id must be a non-empty GUID.", nameof(id));
+        return await _dbSet.FirstOrDefaultAsync(u => u.Id == id).ConfigureAwait(false);
+    }
     public UserRepository(MicDbContext context)
         : base(context)
     {
@@ -74,7 +80,14 @@ public sealed class UserRepository : Repository<User>, IUserRepository
     {
         ArgumentNullException.ThrowIfNull(user);
 
-        _dbSet.Update(user);
+        // Since GetByUsernameAsync uses AsNoTracking, we need to attach the entity
+        var entry = _context.Entry(user);
+        if (entry.State == EntityState.Detached)
+        {
+            _dbSet.Attach(user);
+            entry.State = EntityState.Modified;
+        }
+        
         await _context.SaveChangesAsync().ConfigureAwait(false);
     }
 
@@ -90,6 +103,21 @@ public sealed class UserRepository : Repository<User>, IUserRepository
         return await _dbSet
             .AsNoTracking()
             .AnyAsync(u => u.Username.ToLower() == normalized)
+            .ConfigureAwait(false);
+    }
+
+    public async Task<bool> EmailExistsAsync(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return false;
+        }
+
+        var normalized = email.Trim().ToLowerInvariant();
+
+        return await _dbSet
+            .AsNoTracking()
+            .AnyAsync(u => u.Email.ToLower() == normalized)
             .ConfigureAwait(false);
     }
 }

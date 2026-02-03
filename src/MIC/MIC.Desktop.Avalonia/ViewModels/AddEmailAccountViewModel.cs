@@ -44,7 +44,6 @@ public class AddEmailAccountViewModel : ViewModelBase
         CancelCommand = ReactiveCommand.Create(Cancel);
         
         this.WhenAnyValue(x => x.EmailAddress)
-            .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(email => ValidateInput());
     }
 

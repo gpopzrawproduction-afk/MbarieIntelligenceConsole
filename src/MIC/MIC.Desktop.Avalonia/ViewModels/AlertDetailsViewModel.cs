@@ -7,6 +7,7 @@ using MIC.Core.Application.Alerts.Commands.UpdateAlert;
 using MIC.Core.Application.Alerts.Common;
 using MIC.Core.Application.Alerts.Queries.GetAlertById;
 using MIC.Core.Domain.Entities;
+using MIC.Desktop.Avalonia.Services;
 using ReactiveUI;
 using Unit = System.Reactive.Unit;
 
@@ -352,7 +353,7 @@ public class AlertDetailsViewModel : ViewModelBase
                 {
                     AlertId = AlertId.Value,
                     NewStatus = Status,
-                    UpdatedBy = "CurrentUser", // TODO: Get actual user
+                    UpdatedBy = UserSessionService.Instance.CurrentUserName,
                     Notes = string.IsNullOrWhiteSpace(Notes) ? null : Notes,
                     ResolutionNotes = Status == AlertStatus.Resolved 
                         ? ResolutionNotes 
@@ -404,7 +405,7 @@ public class AlertDetailsViewModel : ViewModelBase
             {
                 AlertId = AlertId.Value,
                 NewStatus = AlertStatus.Acknowledged,
-                UpdatedBy = "CurrentUser" // TODO: Get actual user
+                UpdatedBy = UserSessionService.Instance.CurrentUserName
             };
 
             var result = await _mediator.Send(command);
@@ -452,7 +453,7 @@ public class AlertDetailsViewModel : ViewModelBase
             {
                 AlertId = AlertId.Value,
                 NewStatus = AlertStatus.Resolved,
-                UpdatedBy = "CurrentUser", // TODO: Get actual user
+                UpdatedBy = UserSessionService.Instance.CurrentUserName,
                 ResolutionNotes = ResolutionNotes
             };
 

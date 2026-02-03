@@ -13,7 +13,7 @@ namespace MIC.Core.Application.Common.Interfaces
         /// </summary>
         /// <param name="attachment">The attachment to index</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        Task IndexAttachmentAsync(EmailAttachment attachment, CancellationToken cancellationToken = default);
+        Task IndexAttachmentAsync(MIC.Core.Domain.Entities.EmailAttachment attachment, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Indexes an email message in the knowledge base

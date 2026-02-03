@@ -9,6 +9,10 @@ namespace MIC.Core.Application.Common.Interfaces;
 /// </summary>
 public interface IUserRepository
 {
+    /// <summary>
+    /// Gets a user by ID with EF Core tracking enabled (for updates).
+    /// </summary>
+    Task<User?> GetTrackedByIdAsync(Guid id);
     Task<User?> GetByUsernameAsync(string username);
 
     Task<User?> GetByEmailAsync(string email);
@@ -20,4 +24,6 @@ public interface IUserRepository
     Task UpdateAsync(User user);
 
     Task<bool> UsernameExistsAsync(string username);
+    
+    Task<bool> EmailExistsAsync(string email);
 }

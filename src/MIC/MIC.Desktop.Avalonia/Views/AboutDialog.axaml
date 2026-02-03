@@ -1,0 +1,17 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:MIC.Desktop.Avalonia.ViewModels"
+        Title="About Mbarie Intelligence Console"
+        Width="400" Height="320"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        x:DataType="vm:AboutDialogViewModel">
+  <StackPanel Margin="24" Spacing="16" HorizontalAlignment="Center" VerticalAlignment="Center">
+    <Image Source="/Assets/avalonia-logo.ico" Width="64" Height="64" HorizontalAlignment="Center"/>
+    <TextBlock Text="Mbarie Intelligence Console" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
+    <TextBlock Text="Version 1.0.0" FontSize="14" Foreground="#607D8B" HorizontalAlignment="Center"/>
+    <TextBlock Text="© 2024 Mbarie Technologies. All rights reserved." FontSize="12" Foreground="#607D8B" HorizontalAlignment="Center"/>
+    <TextBlock TextWrapping="Wrap" FontSize="13" Margin="0,12,0,0" Text="Mbarie Intelligence Console is a unified platform for alerts, metrics, predictions, and more. For support, visit our website or contact support@mbarie.com."/>
+    <Button Content="OK" Width="80" HorizontalAlignment="Center" Margin="0,16,0,0" IsDefault="True" Command="{Binding CloseDialogCommand}"/>
+  </StackPanel>
+</Window>

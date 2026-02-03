@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,6 +41,8 @@ public class CreateAlertViewModel : ViewModelBase
                 !string.IsNullOrWhiteSpace(desc) && 
                 !string.IsNullOrWhiteSpace(source) && 
                 !loading);
+
+        canCreate = canCreate.ObserveOn(RxApp.MainThreadScheduler);
 
         CreateCommand = ReactiveCommand.CreateFromTask(CreateAlertAsync, canCreate);
         CancelCommand = ReactiveCommand.Create(() => OnCancel?.Invoke());

@@ -33,4 +33,24 @@ public record UpdateAlertCommand : ICommand<AlertDto>
     /// Additional notes to add to the alert context.
     /// </summary>
     public string? Notes { get; init; }
+
+    /// <summary>
+    /// Updated alert name (optional).
+    /// </summary>
+    public string? AlertName { get; init; }
+
+    /// <summary>
+    /// Updated alert description (optional).
+    /// </summary>
+    public string? Description { get; init; }
+
+    /// <summary>
+    /// Updated alert source (optional).
+    /// </summary>
+    public string? Source { get; init; }
+
+    /// <summary>
+    /// Updated alert severity (optional).
+    /// </summary>
+    public AlertSeverity? Severity { get; init; }
 }

@@ -9,22 +9,24 @@
              x:DataType="vm:MetricsDashboardViewModel"
              Background="#0B0C10">
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <!-- Existing content moved here -->
+            <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="20">
 
-        <!-- Page Header -->
-        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="32,24,32,0">
-            <StackPanel Grid.Column="0">
-                <TextBlock Text="METRICS DASHBOARD" 
-                           FontSize="32"
-                           FontWeight="Thin"
-                           Foreground="#FFFFFF"
-                           LetterSpacing="4" />
-                <TextBlock Text="Real-time business performance monitoring"
-                           FontSize="14"
-                           Foreground="#607D8B"
-                           Margin="0,8,0,0" />
-            </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+            <!-- Page Header -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="32,24,32,0">
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="METRICS DASHBOARD" 
+                               FontSize="32"
+                               FontWeight="Thin"
+                               Foreground="#FFFFFF"
+                               LetterSpacing="4" />
+                    <TextBlock Text="Real-time business performance monitoring"
+                               FontSize="14"
+                               Foreground="#607D8B"
+                               Margin="0,8,0,0" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                 <!-- Days Filter -->
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <TextBlock Text="PERIOD"
@@ -377,5 +379,6 @@
         </Border>
 
     </Grid>
+        </ScrollViewer>
 
 </UserControl>

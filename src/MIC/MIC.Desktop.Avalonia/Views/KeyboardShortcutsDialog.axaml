@@ -1,0 +1,69 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:MIC.Desktop.Avalonia.ViewModels"
+        Title="Keyboard Shortcuts"
+        Width="520" Height="420"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        x:DataType="vm:KeyboardShortcutsDialogViewModel">
+  <StackPanel Margin="24" Spacing="12">
+    <TextBlock Text="Keyboard Shortcuts" FontSize="20" FontWeight="Bold" Margin="0,0,0,12"/>
+    <ItemsControl>
+      <ItemsControl.Items>
+        <StackPanel Orientation="Horizontal" Spacing="24">
+          <TextBlock Text="New Chat:" Width="180"/>
+          <TextBlock Text="Ctrl+N" FontWeight="Bold"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="24">
+          <TextBlock Text="New Email:" Width="180"/>
+          <TextBlock Text="Ctrl+Shift+N" FontWeight="Bold"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="24">
+          <TextBlock Text="Export:" Width="180"/>
+          <TextBlock Text="Ctrl+E" FontWeight="Bold"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="24">
+          <TextBlock Text="Undo:" Width="180"/>
+          <TextBlock Text="Ctrl+Z" FontWeight="Bold"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="24">
+          <TextBlock Text="Redo:" Width="180"/>
+          <TextBlock Text="Ctrl+Y" FontWeight="Bold"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="24">
+          <TextBlock Text="Cut:" Width="180"/>
+          <TextBlock Text="Ctrl+X" FontWeight="Bold"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="24">
+          <TextBlock Text="Copy:" Width="180"/>
+          <TextBlock Text="Ctrl+C" FontWeight="Bold"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="24">
+          <TextBlock Text="Paste:" Width="180"/>
+          <TextBlock Text="Ctrl+V" FontWeight="Bold"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="24">
+          <TextBlock Text="Select All:" Width="180"/>
+          <TextBlock Text="Ctrl+A" FontWeight="Bold"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="24">
+          <TextBlock Text="Toggle Sidebar:" Width="180"/>
+          <TextBlock Text="Ctrl+B" FontWeight="Bold"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="24">
+          <TextBlock Text="Toggle Fullscreen:" Width="180"/>
+          <TextBlock Text="F11" FontWeight="Bold"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="24">
+          <TextBlock Text="Refresh:" Width="180"/>
+          <TextBlock Text="F5" FontWeight="Bold"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="24">
+          <TextBlock Text="Show Keyboard Shortcuts:" Width="180"/>
+          <TextBlock Text="Ctrl+K, Ctrl+S" FontWeight="Bold"/>
+        </StackPanel>
+      </ItemsControl.Items>
+    </ItemsControl>
+    <Button Content="OK" Width="80" HorizontalAlignment="Center" Margin="0,16,0,0" IsDefault="True" Command="{Binding CloseDialogCommand}"/>
+  </StackPanel>
+</Window>

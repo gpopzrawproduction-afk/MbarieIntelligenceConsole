@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using Serilog;
 
 namespace MIC.Desktop.Avalonia.Services;
 
@@ -168,13 +169,7 @@ public class ErrorHandlingService
 
     private void LogError(ErrorInfo error)
     {
-        // TODO: Implement proper logging (e.g., Serilog, Application Insights)
-        Console.WriteLine($"[{error.Timestamp:HH:mm:ss}] ERROR: {error.Context}");
-        Console.WriteLine($"  Exception: {error.Exception.GetType().Name}: {error.Exception.Message}");
-        if (error.Exception.InnerException != null)
-        {
-            Console.WriteLine($"  Inner: {error.Exception.InnerException.Message}");
-        }
+        Log.Error(error.Exception, "{Context} (Critical: {IsCritical})", error.Context, error.IsCritical);
     }
 }
 

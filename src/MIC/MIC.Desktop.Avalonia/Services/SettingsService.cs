@@ -31,6 +31,11 @@ public class SettingsService
     public UserSettings Settings => _settings;
 
     /// <summary>
+    /// Gets or sets the OpenAI API Key.
+    /// </summary>
+    public string? OpenAIApiKey { get; set; }
+
+    /// <summary>
     /// Event raised when theme changes.
     /// </summary>
     public event EventHandler<ThemeChangedEventArgs>? ThemeChanged;

@@ -67,6 +67,40 @@ public class EmailAccount : BaseEntity
 
     #endregion
 
+    #region IMAP/SMTP Credentials
+
+    /// <summary>
+    /// IMAP server address (for IMAP provider)
+    /// </summary>
+    public string? ImapServer { get; private set; }
+
+    /// <summary>
+    /// IMAP port (default: 993 for SSL)
+    /// </summary>
+    public int ImapPort { get; private set; }
+
+    /// <summary>
+    /// SMTP server address (for IMAP provider)
+    /// </summary>
+    public string? SmtpServer { get; private set; }
+
+    /// <summary>
+    /// SMTP port (default: 465 for SSL)
+    /// </summary>
+    public int SmtpPort { get; private set; }
+
+    /// <summary>
+    /// Use SSL/TLS for connections
+    /// </summary>
+    public bool UseSsl { get; private set; }
+
+    /// <summary>
+    /// Encrypted password (for IMAP provider)
+    /// </summary>
+    public string? PasswordEncrypted { get; private set; }
+
+    #endregion
+
     #region Sync State
 
     /// <summary>
@@ -208,6 +242,40 @@ public class EmailAccount : BaseEntity
         // Clear any previous errors when tokens are refreshed
         LastSyncError = null;
         ConsecutiveFailures = 0;
+    }
+
+    /// <summary>
+    /// Sets IMAP/SMTP credentials for this account.
+    /// </summary>
+    public void SetImapSmtpCredentials(
+        string imapServer, 
+        int imapPort, 
+        string smtpServer, 
+        int smtpPort, 
+        bool useSsl, 
+        string password)
+    {
+        Guard.Against.NullOrWhiteSpace(imapServer, nameof(imapServer));
+        Guard.Against.NullOrWhiteSpace(smtpServer, nameof(smtpServer));
+        Guard.Against.NullOrWhiteSpace(password, nameof(password));
+        Guard.Against.OutOfRange(imapPort, nameof(imapPort), 1, 65535);
+        Guard.Against.OutOfRange(smtpPort, nameof(smtpPort), 1, 65535);
+        
+        ImapServer = imapServer;
+        ImapPort = imapPort;
+        SmtpServer = smtpServer;
+        SmtpPort = smtpPort;
+        UseSsl = useSsl;
+        
+        // In production, this should be encrypted before storing
+        PasswordEncrypted = password;
+        
+        // Clear any previous errors when credentials are updated
+        LastSyncError = null;
+        ConsecutiveFailures = 0;
+        
+        // Ensure provider is set to IMAP
+        Provider = EmailProvider.IMAP;
     }
 
     /// <summary>

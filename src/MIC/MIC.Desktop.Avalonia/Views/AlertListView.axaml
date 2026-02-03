@@ -9,7 +9,9 @@ x:Class="MIC.Desktop.Avalonia.Views.AlertListView"
 x:DataType="vm:AlertListViewModel"
 Background="#0B0C10">
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <!-- Existing content moved here -->
+            <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="20">
 
         <!-- Page Header -->
         <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="32,24,32,0">
@@ -315,4 +317,5 @@ Background="#0B0C10">
 
     </Grid>
 
+    </ScrollViewer>
 </UserControl>

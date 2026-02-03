@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using MIC.Core.Application.Authentication.Common;
+using MIC.Core.Application.Common.Interfaces;
 
 namespace MIC.Desktop.Avalonia.Services;
 
@@ -11,7 +13,7 @@ namespace MIC.Desktop.Avalonia.Services;
 /// User session service for managing application user state.
 /// For a desktop app, this provides local user preferences and identity.
 /// </summary>
-public class UserSessionService
+public class UserSessionService : ISessionService
 {
     private static UserSessionService? _instance;
     public static UserSessionService Instance => _instance ??= new UserSessionService();
@@ -39,59 +41,107 @@ public class UserSessionService
     public UserSession? CurrentSession => _currentSession;
     public bool IsLoggedIn => _currentSession != null;
     public bool IsAuthenticated => !string.IsNullOrWhiteSpace(_token);
-    public string CurrentUserName => _currentSession?.DisplayName ?? "Guest";
-    public string CurrentUserInitials => GetInitials(_currentSession?.DisplayName ?? "G");
+    public string CurrentUserName => _currentSession?.DisplayName ?? "Unknown";
+    public string CurrentUserInitials => GetInitials(_currentSession?.DisplayName ?? "?");
     public string CurrentUserEmail => _currentSession?.Email ?? string.Empty;
-    public UserRole CurrentRole => _currentSession?.Role ?? UserRole.Viewer;
+    public UserRole CurrentRole => _currentSession?.Role ?? UserRole.Guest;
 
     #endregion
 
-    #region Authentication
+    #region ISessionService Implementation
 
     /// <summary>
-    /// Logs in a user with the given credentials.
-    /// For a desktop app, this creates a local session.
+    /// Sets the authentication token for the current session.
     /// </summary>
-    public async Task<bool> LoginAsync(string username, string password)
+    public void SetToken(string token)
     {
-        try
+        _token = token;
+    }
+
+    /// <summary>
+    /// Sets the current user information.
+    /// </summary>
+    public void SetUser(UserDto user)
+    {
+        if (_currentSession == null)
         {
-            // For demo purposes, accept any non-empty credentials
-            // In production, this would validate against a backend or local encrypted store
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-            {
-                NotificationService.Instance.ShowError("Username and password required");
-                return false;
-            }
-
-            // Simulate authentication delay
-            await Task.Delay(500);
-
-            // Create session
             _currentSession = new UserSession
             {
-                UserId = Guid.NewGuid().ToString(),
-                Username = username,
-                DisplayName = FormatDisplayName(username),
-                Email = $"{username.ToLower().Replace(" ", ".")}@company.com",
-                Role = DetermineRole(username),
+                UserId = user.Id.ToString(),
+                Username = user.Username,
+                DisplayName = user.FullName ?? FormatDisplayName(user.Username),
+                Email = user.Email,
+                Position = user.JobPosition,
+                Department = user.Department,
+                Role = ConvertUserRole(user.Role),
                 LoginTime = DateTime.Now,
                 LastActivity = DateTime.Now,
                 Preferences = new UserPreferences()
             };
-
-            await SaveSessionAsync();
-            OnSessionChanged?.Invoke(_currentSession);
-            NotificationService.Instance.ShowSuccess($"Welcome back, {_currentSession.DisplayName}!");
-            
-            return true;
         }
-        catch (Exception ex)
+        else
         {
-            ErrorHandlingService.Instance.HandleException(ex, "Login");
-            return false;
+            _currentSession.UserId = user.Id.ToString();
+            _currentSession.Username = user.Username;
+            _currentSession.DisplayName = user.FullName ?? FormatDisplayName(user.Username);
+            _currentSession.Email = user.Email;
+            _currentSession.Position = user.JobPosition;
+            _currentSession.Department = user.Department;
+            _currentSession.Role = ConvertUserRole(user.Role);
+            _currentSession.LastActivity = DateTime.Now;
         }
     }
+
+    /// <summary>
+    /// Gets the current authentication token.
+    /// </summary>
+    public string GetToken() => _token ?? string.Empty;
+
+    /// <summary>
+    /// Gets the current user information.
+    /// </summary>
+    public UserDto GetUser()
+    {
+        if (_currentSession == null)
+        {
+            return new UserDto();
+        }
+
+        return new UserDto
+        {
+            Id = Guid.TryParse(_currentSession.UserId, out var id) ? id : Guid.Empty,
+            Username = _currentSession.Username,
+            Email = _currentSession.Email,
+            FullName = _currentSession.DisplayName,
+            Role = ConvertUserRole(_currentSession.Role),
+            IsActive = true,
+            CreatedAt = DateTimeOffset.Now,
+            UpdatedAt = DateTimeOffset.Now,
+            JobPosition = _currentSession.Position,
+            Department = _currentSession.Department,
+            SeniorityLevel = null // Not stored in UserSession
+        };
+    }
+
+    /// <summary>
+    /// Clears the current session (logout).
+    /// </summary>
+    public void Clear()
+    {
+        _currentSession = null;
+        _token = null;
+        
+        if (File.Exists(_sessionFilePath))
+        {
+            File.Delete(_sessionFilePath);
+        }
+
+        OnLogout?.Invoke();
+    }
+
+    #endregion
+
+    #region Authentication
 
     /// <summary>
     /// Logs out the current user.
@@ -133,11 +183,6 @@ public class UserSessionService
         _token = string.IsNullOrWhiteSpace(token) ? null : token;
         OnSessionChanged?.Invoke(_currentSession);
     }
-
-    /// <summary>
-    /// Returns the current JWT token if available.
-    /// </summary>
-    public string? GetToken() => _token;
 
     /// <summary>
     /// Updates the last activity timestamp.
@@ -208,11 +253,10 @@ public class UserSessionService
         return _currentSession.Role switch
         {
             UserRole.Admin => true, // Admin has all permissions
-            UserRole.Manager => permission != Permission.ManageUsers && permission != Permission.SystemSettings,
-            UserRole.Analyst => permission is Permission.ViewDashboard or Permission.ViewAlerts 
+            UserRole.User => permission is Permission.ViewDashboard or Permission.ViewAlerts 
                                or Permission.ViewMetrics or Permission.ViewPredictions 
                                or Permission.UseAI or Permission.ExportData,
-            UserRole.Viewer => permission is Permission.ViewDashboard or Permission.ViewAlerts 
+            UserRole.Guest => permission is Permission.ViewDashboard or Permission.ViewAlerts 
                               or Permission.ViewMetrics,
             _ => false
         };
@@ -302,12 +346,30 @@ public class UserSessionService
 
     private static UserRole DetermineRole(string username)
     {
-        // For demo: determine role based on username
-        var lower = username.ToLower();
-        if (lower.Contains("admin")) return UserRole.Admin;
-        if (lower.Contains("manager")) return UserRole.Manager;
-        if (lower.Contains("analyst")) return UserRole.Analyst;
-        return UserRole.Viewer;
+        // Default to least-privileged role unless set from authenticated user data.
+        return UserRole.Guest;
+    }
+
+    private static UserRole ConvertUserRole(MIC.Core.Domain.Entities.UserRole domainRole)
+    {
+        return domainRole switch
+        {
+            MIC.Core.Domain.Entities.UserRole.Admin => UserRole.Admin,
+            MIC.Core.Domain.Entities.UserRole.User => UserRole.User,
+            MIC.Core.Domain.Entities.UserRole.Guest => UserRole.Guest,
+            _ => UserRole.Guest
+        };
+    }
+
+    private static MIC.Core.Domain.Entities.UserRole ConvertUserRole(UserRole localRole)
+    {
+        return localRole switch
+        {
+            UserRole.Admin => MIC.Core.Domain.Entities.UserRole.Admin,
+            UserRole.User => MIC.Core.Domain.Entities.UserRole.User,
+            UserRole.Guest => MIC.Core.Domain.Entities.UserRole.Guest,
+            _ => MIC.Core.Domain.Entities.UserRole.Guest
+        };
     }
 
     #endregion
@@ -340,10 +402,9 @@ public class UserPreferences
 
 public enum UserRole
 {
-    Viewer,
-    Analyst,
-    Manager,
-    Admin
+    Admin = 0,
+    User = 1,
+    Guest = 2
 }
 
 public enum Permission

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MIC.Core.Application.Common.Interfaces;
 using MIC.Core.Domain.Entities;
+using EmailAttachment = MIC.Core.Domain.Entities.EmailAttachment;
 using MIC.Infrastructure.Data.Persistence;
 
 namespace MIC.Infrastructure.Data.Services

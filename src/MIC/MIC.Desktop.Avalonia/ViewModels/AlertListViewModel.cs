@@ -229,7 +229,7 @@ public class AlertListViewModel : ViewModelBase
                 StatusMessage = "Deleting alert...";
             });
 
-            var command = new DeleteAlertCommand(alert.Id, "CurrentUser"); // TODO: Get actual user
+            var command = new DeleteAlertCommand(alert.Id, UserSessionService.Instance.CurrentUserName);
             var result = await _mediator.Send(command);
 
             if (result.IsError)
@@ -276,7 +276,7 @@ public class AlertListViewModel : ViewModelBase
             {
                 AlertId = alert.Id,
                 NewStatus = AlertStatus.Acknowledged,
-                UpdatedBy = "CurrentUser" // TODO: Get actual user
+                UpdatedBy = UserSessionService.Instance.CurrentUserName
             };
 
             var result = await _mediator.Send(command);

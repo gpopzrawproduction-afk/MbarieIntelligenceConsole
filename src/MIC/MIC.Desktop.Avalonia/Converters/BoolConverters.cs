@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
 
@@ -17,7 +18,6 @@ public static class BoolConverters
 
     /// <summary>
     /// Converts boolean to string class name for styling.
-    /// Usage: Converter={x:Static BoolConverters.ToClassName}, ConverterParameter='active-class|inactive-class'
     /// </summary>
     public static new readonly IValueConverter ToString = new BoolToStringConverter();
 
@@ -25,6 +25,16 @@ public static class BoolConverters
     /// Converts boolean to FontWeight. True = Normal (read), False = Bold (unread).
     /// </summary>
     public static readonly IValueConverter ToFontWeight = new BoolToFontWeightConverter();
+
+    /// <summary>
+    /// Converts boolean to refresh icon. True = ?? (pause), False = ?? (play).
+    /// </summary>
+    public static readonly IValueConverter ToRefreshIcon = new BoolToRefreshIconConverter();
+
+    /// <summary>
+    /// Converts boolean to refresh status color. True = Green, False = Gray.
+    /// </summary>
+    public static readonly IValueConverter ToRefreshColor = new BoolToRefreshColorConverter();
 }
 
 public class BoolToGreenConverter : IValueConverter
@@ -43,7 +53,13 @@ public class BoolToGreenConverter : IValueConverter
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        if (targetType == typeof(bool) && value is SolidColorBrush brush)
+        {
+            if (brush.Color == GreenBrush.Color) return true;
+            if (brush.Color == RedBrush.Color) return false;
+        }
+
+        return BindingOperations.DoNothing;
     }
 }
 
@@ -64,7 +80,17 @@ public class BoolToStringConverter : IValueConverter
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        if (targetType == typeof(bool) && value is string className && parameter is string classNames)
+        {
+            var parts = classNames.Split('|');
+            if (parts.Length == 2)
+            {
+                if (string.Equals(className, parts[0], StringComparison.Ordinal)) return true;
+                if (string.Equals(className, parts[1], StringComparison.Ordinal)) return false;
+            }
+        }
+
+        return BindingOperations.DoNothing;
     }
 }
 
@@ -82,6 +108,48 @@ public class BoolToFontWeightConverter : IValueConverter
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        if (targetType == typeof(bool) && value is FontWeight weight)
+        {
+            return weight == FontWeight.Normal;
+        }
+
+        return BindingOperations.DoNothing;
     }
 }
+
+public class BoolToRefreshIconConverter : IValueConverter
+{
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is bool enabled)
+        {
+            // If auto-refresh is enabled, show pause icon. If disabled, show play icon.
+            return enabled ? "??" : "??";
+        }
+        return "??";
+    }
+
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        return BindingOperations.DoNothing;
+    }
+}
+
+public class BoolToRefreshColorConverter : IValueConverter
+{
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is bool enabled)
+        {
+            // If auto-refresh is enabled, show green. If disabled, show gray.
+            return enabled ? Color.Parse("#10B981") : Color.Parse("#6B7280");
+        }
+        return Color.Parse("#6B7280");
+    }
+
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        return BindingOperations.DoNothing;
+    }
+}
+

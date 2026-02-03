@@ -20,7 +20,9 @@ public static class IdentityDependencyInjection
             });
 
         // Register services
-        services.AddScoped<IEmailOAuth2Service, EmailOAuth2Service>();
+        services.AddKeyedSingleton<IEmailOAuth2Service, GmailOAuthService>("Gmail");
+        services.AddKeyedSingleton<IEmailOAuth2Service, OutlookOAuthService>("Outlook");
+        services.AddScoped<IEmailOAuth2Service, EmailOAuth2RouterService>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddSingleton<IJwtTokenService>(provider =>
         {

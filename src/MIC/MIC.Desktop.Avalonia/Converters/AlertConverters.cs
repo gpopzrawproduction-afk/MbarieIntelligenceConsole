@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
 using MIC.Core.Domain.Entities;
@@ -24,7 +25,12 @@ public class AlertStatusToActiveConverter : IValueConverter
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        if (targetType == typeof(AlertStatus) && value is bool isActive)
+        {
+            return isActive ? AlertStatus.Active : AlertStatus.Resolved;
+        }
+
+        return BindingOperations.DoNothing;
     }
 }
 
@@ -66,7 +72,15 @@ public class AlertStatusToColorConverter : IValueConverter
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        if (targetType == typeof(AlertStatus) && value is SolidColorBrush brush)
+        {
+            if (brush.Color == ActiveColor.Color) return AlertStatus.Active;
+            if (brush.Color == AcknowledgedColor.Color) return AlertStatus.Acknowledged;
+            if (brush.Color == ResolvedColor.Color) return AlertStatus.Resolved;
+            if (brush.Color == EscalatedColor.Color) return AlertStatus.Escalated;
+        }
+
+        return BindingOperations.DoNothing;
     }
 }
 
@@ -100,6 +114,14 @@ public class AlertSeverityToColorConverter : IValueConverter
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        if (targetType == typeof(AlertSeverity) && value is SolidColorBrush brush)
+        {
+            if (brush.Color == InfoColor.Color) return AlertSeverity.Info;
+            if (brush.Color == WarningColor.Color) return AlertSeverity.Warning;
+            if (brush.Color == CriticalColor.Color) return AlertSeverity.Critical;
+            if (brush.Color == EmergencyColor.Color) return AlertSeverity.Emergency;
+        }
+
+        return BindingOperations.DoNothing;
     }
 }

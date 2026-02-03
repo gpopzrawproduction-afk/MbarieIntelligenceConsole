@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using Avalonia.Data;
 using Avalonia.Data.Converters;
 
 namespace MIC.Desktop.Avalonia.ViewModels;
@@ -25,6 +26,12 @@ public class ProgressToWidthConverter : IValueConverter
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        if (targetType == typeof(double) && value is double width)
+        {
+            var clampedWidth = Math.Max(0, Math.Min(MaxWidth, width));
+            return MaxWidth <= 0 ? 0d : Math.Round(clampedWidth / MaxWidth * 100.0, 2);
+        }
+
+        return BindingOperations.DoNothing;
     }
 }

@@ -1,5 +1,6 @@
 using MIC.Core.Domain.Entities;
 using MIC.Core.Application.Common.Interfaces;
+using EmailAttachment = MIC.Core.Domain.Entities.EmailAttachment;
 
 namespace MIC.Core.Intelligence
 {
@@ -125,8 +126,7 @@ namespace MIC.Core.Intelligence
 
             try
             {
-                // Simulate fetching emails from external provider
-                // In a real implementation, this would call the email provider's API
+                // Fetch emails from external provider (requires real integration)
                 var externalEmails = await FetchExternalEmailsAsync(emailAccount, folder, startDate, cancellationToken);
 
                 foreach (var externalEmail in externalEmails)
@@ -203,7 +203,7 @@ namespace MIC.Core.Intelligence
         }
 
         /// <summary>
-        /// Fetches emails from external provider (simulated)
+        /// Fetches emails from external provider.
         /// </summary>
         private async Task<List<ExternalEmail>> FetchExternalEmailsAsync(
             EmailAccount emailAccount, 
@@ -211,34 +211,12 @@ namespace MIC.Core.Intelligence
             DateTime startDate, 
             CancellationToken cancellationToken)
         {
-            // This would normally call the email provider's API
-            // For now, we'll simulate with sample data
-            var emails = new List<ExternalEmail>();
+            _ = emailAccount;
+            _ = folder;
+            _ = startDate;
+            _ = cancellationToken;
 
-            // Simulate different behavior for Inbox vs Sent
-            var emailCount = folder == EmailFolder.Inbox ? 50 : 30; // Typical ratio
-            
-            for (int i = 0; i < emailCount; i++)
-            {
-                var sentDate = startDate.AddDays(i % 90); // Spread over the time period
-                var receivedDate = sentDate.AddMinutes(i % 60); // Small difference between sent/received
-                
-                emails.Add(new ExternalEmail
-                {
-                    MessageId = $"msg-{Guid.NewGuid():N}",
-                    Subject = GenerateSubject(folder, i),
-                    FromAddress = folder == EmailFolder.Sent ? emailAccount.EmailAddress : $"sender{i}@example.com",
-                    FromName = folder == EmailFolder.Sent ? emailAccount.DisplayName ?? emailAccount.EmailAddress : $"Sender {i}",
-                    ToRecipients = folder == EmailFolder.Sent ? $"recipient{i}@example.com" : emailAccount.EmailAddress,
-                    SentDate = sentDate,
-                    ReceivedDate = receivedDate,
-                    BodyText = GenerateEmailBody(folder, i),
-                    BodyHtml = $"<p>{GenerateEmailBody(folder, i)}</p>",
-                    Attachments = GenerateAttachments(i, folder)
-                });
-            }
-
-            return await Task.FromResult(emails);
+            throw new NotSupportedException("External email provider integration is not configured. Connect a real provider before syncing.");
         }
 
         /// <summary>

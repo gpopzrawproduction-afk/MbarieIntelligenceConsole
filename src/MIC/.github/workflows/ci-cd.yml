@@ -1,0 +1,232 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '9.0.x'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: ./src/MIC
+
+      - name: Build solution
+        run: dotnet build --no-restore --configuration Release
+        working-directory: ./src/MIC
+
+      - name: Run unit tests
+        run: |
+          dotnet test MIC.Tests.Unit/MIC.Tests.Unit.csproj \
+            --no-build \
+            --configuration Release \
+            --verbosity normal \
+            --logger "trx;LogFileName=unit-test-results.trx" \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./TestResults
+        working-directory: ./src/MIC
+
+      - name: Upload unit test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unit-test-results
+          path: ./src/MIC/TestResults/*.trx
+
+      - name: Upload code coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: code-coverage
+          path: ./src/MIC/TestResults/**/coverage.cobertura.xml
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: build
+    
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_mic
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: ./src/MIC
+
+      - name: Build solution
+        run: dotnet build --no-restore --configuration Release
+        working-directory: ./src/MIC
+
+      - name: Run integration tests
+        run: |
+          dotnet test MIC.Tests.Integration/MIC.Tests.Integration.csproj \
+            --no-build \
+            --configuration Release \
+            --verbosity normal \
+            --logger "trx;LogFileName=integration-test-results.trx" \
+            --results-directory ./TestResults
+        working-directory: ./src/MIC
+        env:
+          ConnectionStrings__MicDatabase: "Host=localhost;Port=5432;Database=test_mic;Username=postgres;Password=postgres"
+
+      - name: Upload integration test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: integration-test-results
+          path: ./src/MIC/TestResults/*.trx
+
+  coverage-report:
+    name: Code Coverage Report
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install coverage tools
+        run: |
+          dotnet tool install -g dotnet-coverage
+          dotnet tool install -g dotnet-reportgenerator-globaltool
+
+      - name: Restore and build
+        run: |
+          dotnet restore
+          dotnet build --configuration Release
+        working-directory: ./src/MIC
+
+      - name: Collect coverage
+        run: |
+          dotnet-coverage collect \
+            -f cobertura \
+            -o coverage.cobertura.xml \
+            dotnet test --no-build --configuration Release
+        working-directory: ./src/MIC
+
+      - name: Generate coverage report
+        run: |
+          reportgenerator \
+            -reports:coverage.cobertura.xml \
+            -targetdir:coveragereport \
+            -reporttypes:Html
+        working-directory: ./src/MIC
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: ./src/MIC/coveragereport
+
+      - name: Check coverage threshold
+        run: |
+          # Extract coverage percentage and check against threshold
+          COVERAGE=$(dotnet-coverage report coverage.cobertura.xml -f text | grep "Line coverage" | grep -oP '\d+\.\d+')
+          echo "Line coverage: $COVERAGE%"
+          if (( $(echo "$COVERAGE < 60" | bc -l) )); then
+            echo "::error::Code coverage ($COVERAGE%) is below the 60% threshold"
+            exit 1
+          fi
+          echo "::notice::Code coverage ($COVERAGE%) meets the 60% threshold"
+        working-directory: ./src/MIC
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: ./src/MIC
+
+      - name: Run security audit
+        run: dotnet list package --vulnerable --include-transitive
+        working-directory: ./src/MIC
+        continue-on-error: true
+
+  publish:
+    name: Publish Artifacts
+    runs-on: ubuntu-latest
+    needs: [build, integration-tests]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: ./src/MIC
+
+      - name: Publish Desktop Application
+        run: |
+          dotnet publish MIC.Desktop.Avalonia/MIC.Desktop.Avalonia.csproj \
+            --configuration Release \
+            --output ./publish/desktop \
+            --self-contained false
+        working-directory: ./src/MIC
+
+      - name: Upload published artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-app
+          path: ./src/MIC/publish/desktop

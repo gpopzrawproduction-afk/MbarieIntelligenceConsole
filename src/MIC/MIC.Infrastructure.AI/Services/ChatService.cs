@@ -6,45 +6,32 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using MIC.Infrastructure.AI.Models;
+using MIC.Core.Application.Common.Interfaces;
 
 namespace MIC.Infrastructure.AI.Services;
 
 public class RealChatService : IChatService
 {
-    private readonly Kernel _kernel;
-    private readonly IChatCompletionService _chatCompletion;
+    private Kernel? _kernel;
+    private IChatCompletionService? _chatCompletion;
     private readonly ILogger<RealChatService> _logger;
     private readonly Dictionary<string, ChatHistory> _userHistories = new();
-    private readonly bool _isConfigured;
+    private bool _isConfigured;
+    private string? _currentApiKey;
+    private readonly IConfiguration _configuration;
+    private readonly ISecretProvider? _secretProvider;
+    private readonly object _configLock = new();
 
     public RealChatService(
         IConfiguration configuration,
-        ILogger<RealChatService> logger)
+        ILogger<RealChatService> logger,
+        ISecretProvider? secretProvider = null)
     {
         _logger = logger;
+        _configuration = configuration;
+        _secretProvider = secretProvider;
 
-        var apiKey = configuration["AI:OpenAI:ApiKey"] 
-                     ?? Environment.GetEnvironmentVariable("MIC_AI__OpenAI__ApiKey");
-
-        if (!string.IsNullOrEmpty(apiKey))
-        {
-            var kernelBuilder = Kernel.CreateBuilder();
-            
-            kernelBuilder.AddOpenAIChatCompletion(
-                modelId: configuration["AI:OpenAI:ModelId"] ?? "gpt-4-turbo-preview",
-                apiKey: apiKey);
-
-            _kernel = kernelBuilder.Build();
-            _chatCompletion = _kernel.GetRequiredService<IChatCompletionService>();
-            _isConfigured = true;
-
-            _logger.LogInformation("Chat service initialized with OpenAI");
-        }
-        else
-        {
-            _logger.LogWarning("OpenAI not configured - chat will use fallback responses");
-            _isConfigured = false;
-        }
+        TryConfigure();
     }
 
     public async Task<ChatCompletionResult> SendMessageAsync(
@@ -52,8 +39,14 @@ public class RealChatService : IChatService
         string? conversationId = null,
         CancellationToken cancellationToken = default)
     {
+        Console.WriteLine($"[RealChatService] Processing message: '{userMessage}'");
+        Console.WriteLine($"[RealChatService] Conversation ID: {conversationId}");
+        Console.WriteLine($"[RealChatService] Service configured: {_isConfigured}");
+        Console.WriteLine($"[RealChatService] Chat completion available: {_chatCompletion != null}");
+
         if (string.IsNullOrWhiteSpace(userMessage))
         {
+            Console.WriteLine($"[RealChatService] Empty message - returning error");
             return new ChatCompletionResult
             {
                 Success = false,
@@ -65,10 +58,16 @@ public class RealChatService : IChatService
 
         if (!_isConfigured || _chatCompletion == null)
         {
+            TryConfigure();
+        }
+
+        if (!_isConfigured || _chatCompletion == null)
+        {
+            Console.WriteLine("[RealChatService] AI not configured - refusing request");
             return new ChatCompletionResult
             {
                 Success = false,
-                Error = "AI chat is not configured. Please set up your OpenAI API key in settings.",
+                Error = "AI service not configured. Please set your OpenAI API key.",
                 Duration = TimeSpan.Zero
             };
         }
@@ -78,6 +77,7 @@ public class RealChatService : IChatService
             // Get or create chat history for user
             if (!_userHistories.ContainsKey(conversationId))
             {
+                Console.WriteLine($"[RealChatService] Creating new chat history for conversation {conversationId}");
                 var history = new ChatHistory();
                 history.AddSystemMessage(@"You are an AI assistant for the Mbarie Intelligence Console. 
 You help executives manage their business communications efficiently. 
@@ -94,6 +94,8 @@ Be professional, concise, and helpful.");
             var chatHistory = _userHistories[conversationId];
             chatHistory.AddUserMessage(userMessage);
 
+            Console.WriteLine($"[RealChatService] Calling OpenAI API with {chatHistory.Count} messages in history");
+            
             var response = await _chatCompletion.GetChatMessageContentAsync(
                 chatHistory,
                 new OpenAIPromptExecutionSettings
@@ -108,6 +110,7 @@ Be professional, concise, and helpful.");
             
             chatHistory.AddAssistantMessage(reply);
 
+            Console.WriteLine($"[RealChatService] API call successful, response length: {reply.Length}");
             _logger.LogInformation("Chat response generated for user {UserId}", conversationId);
 
             return new ChatCompletionResult
@@ -119,6 +122,7 @@ Be professional, concise, and helpful.");
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"[RealChatService] API call failed: {ex.Message}");
             _logger.LogError(ex, "Chat service failed");
             return new ChatCompletionResult
             {
@@ -140,7 +144,7 @@ Be professional, concise, and helpful.");
                 messages.Add(new ChatMessage
                 {
                     Role = MapSemanticKernelRole(msg.Role), // Convert from Semantic Kernel role to our role
-                    Content = msg.Content
+                    Content = msg.Content ?? string.Empty
                 });
             }
             return Task.FromResult(messages);
@@ -166,8 +170,15 @@ Be professional, concise, and helpful.");
 
     public async Task<bool> IsAvailableAsync(CancellationToken cancellationToken = default)
     {
-        if (!_isConfigured)
+        if (!_isConfigured || _chatCompletion == null)
+        {
+            TryConfigure();
+        }
+
+        if (!_isConfigured || _chatCompletion == null)
+        {
             return false;
+        }
 
         try
         {
@@ -201,5 +212,50 @@ Be professional, concise, and helpful.");
             "assistant" => ChatRole.Assistant,
             _ => ChatRole.User // Default fallback
         };
+    }
+
+    private bool TryConfigure()
+    {
+        lock (_configLock)
+        {
+            var apiKey = GetApiKey();
+            if (string.IsNullOrWhiteSpace(apiKey))
+            {
+                _isConfigured = false;
+                _kernel = null;
+                _chatCompletion = null;
+                _currentApiKey = null;
+                _logger.LogWarning("OpenAI not configured - chat is disabled until an API key is provided");
+                return false;
+            }
+
+            if (_isConfigured && string.Equals(apiKey, _currentApiKey, StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            var modelId = _configuration["AI:OpenAI:Model"]
+                          ?? _configuration["AI:OpenAI:ModelId"]
+                          ?? "gpt-4o";
+
+            var kernelBuilder = Kernel.CreateBuilder();
+            kernelBuilder.AddOpenAIChatCompletion(modelId: modelId, apiKey: apiKey);
+
+            _kernel = kernelBuilder.Build();
+            _chatCompletion = _kernel.GetRequiredService<IChatCompletionService>();
+            _isConfigured = true;
+            _currentApiKey = apiKey;
+
+            _logger.LogInformation("Chat service initialized with OpenAI");
+            return true;
+        }
+    }
+
+    private string? GetApiKey()
+    {
+        return _configuration["AI:OpenAI:ApiKey"]
+               ?? Environment.GetEnvironmentVariable("AI__OpenAI__ApiKey")
+               ?? Environment.GetEnvironmentVariable("MIC_AI__OpenAI__ApiKey")
+               ?? _secretProvider?.GetSecret("AI:OpenAI:ApiKey");
     }
 }

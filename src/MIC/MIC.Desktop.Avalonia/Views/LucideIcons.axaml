@@ -1,0 +1,10 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Lucide icon paths (examples) -->
+  <Geometry x:Key="mail_icon">M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10Zm-2.5-3.5-7.5 5-7.5-5m15 0v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7</Geometry>
+  <Geometry x:Key="bell_icon">M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9m-6 13a2 2 0 0 0 2-2H8a2 2 0 0 0 2 2Z</Geometry>
+  <Geometry x:Key="user_icon">M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z</Geometry>
+  <Geometry x:Key="trash_icon">M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m-6 0v14a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6m-6 0h6</Geometry>
+  <Geometry x:Key="archive_icon">M21 8V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v1m18 0v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8m18 0H3m6 4h6</Geometry>
+  <Geometry x:Key="flag_icon">M4 15V5a2 2 0 0 1 2-2h11l-1.5 4L20 9v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z</Geometry>
+  <Geometry x:Key="markread_icon">M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10Zm-2.5-3.5-7.5 5-7.5-5m15 0v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7</Geometry>
+</ResourceDictionary>
