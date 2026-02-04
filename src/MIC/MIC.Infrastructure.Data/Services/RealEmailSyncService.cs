@@ -14,6 +14,8 @@ namespace MIC.Infrastructure.Data.Services;
 
 public class RealEmailSyncService : IEmailSyncService
 {
+        // Added for historical sync method
+        private readonly IEmailRepository _emailRepositoryInternal;
     private readonly IEmailRepository _emailRepository;
     private readonly IEmailAccountRepository _emailAccountRepository;
     private readonly IEmailOAuth2Service _oauth2Service;

@@ -21,6 +21,8 @@ namespace MIC.Desktop.Avalonia.ViewModels;
 public class PredictionsViewModel : ViewModelBase
 {
     private readonly IMediator? _mediator;
+    private readonly MIC.Infrastructure.AI.Services.IPredictionService? _predictionService;
+    private CancellationTokenSource? _cts;
     private bool _isLoading;
     private string _selectedMetric = "Revenue";
     private int _forecastDays = 30;
@@ -30,6 +32,7 @@ public class PredictionsViewModel : ViewModelBase
     public PredictionsViewModel()
     {
         _mediator = Program.ServiceProvider?.GetService<IMediator>();
+        _predictionService = Program.ServiceProvider?.GetService<MIC.Infrastructure.AI.Services.IPredictionService>();
 
         // Commands
         GeneratePredictionCommand = ReactiveCommand.CreateFromTask(GeneratePredictionAsync);
@@ -142,6 +145,52 @@ public class PredictionsViewModel : ViewModelBase
             var predictionItems = new List<PredictionItem>();
             foreach (var name in metricNames.Take(4))
             {
+                // Try to use prediction service when available
+                if (_predictionService != null)
+                {
+                    try
+                    {
+                        var forecast = await _predictionService.GenerateForecastAsync(name, ForecastDays);
+                        var predictedValue = forecast.LastOrDefault()?.Value ?? 0.0;
+                        var currentValue = forecast.FirstOrDefault()?.Value ?? 0.0;
+                        var changePercent = currentValue == 0 ? 0 : (predictedValue - currentValue) / Math.Abs(currentValue) * 100;
+
+                        predictionItems.Add(new PredictionItem
+                        {
+                            MetricName = name,
+                            CurrentValue = currentValue,
+                            PredictedValue = predictedValue,
+                            ChangePercent = changePercent,
+                            Confidence = 0.85,
+                            Direction = changePercent >= 0 ? "Up" : "Down",
+                            TimeFrame = $"{ForecastDays} days"
+                        });
+
+                        // Also populate chart data from forecast
+                        await Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            ChartData.Clear();
+                            foreach (var p in forecast)
+                            {
+                                ChartData.Add(new PredictionDataPoint
+                                {
+                                    Date = p.Date,
+                                    Value = p.Value,
+                                    LowerBound = p.LowerBound,
+                                    UpperBound = p.UpperBound,
+                                    IsPrediction = true
+                                });
+                            }
+                        });
+
+                        continue;
+                    }
+                    catch
+                    {
+                        // fallback to mediator-based approach
+                    }
+                }
+
                 var trendResult = await _mediator.Send(new GetMetricTrendQuery
                 {
                     MetricName = name,

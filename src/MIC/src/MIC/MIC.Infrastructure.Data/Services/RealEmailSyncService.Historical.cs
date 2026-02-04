@@ -80,8 +80,9 @@ public partial class RealEmailSyncService
 
                     syncResult.TotalEmailsFound += uids.Count;
 
-                    // Download emails
-                    foreach (var uid in uids.Take(1000)) // Limit to prevent timeout
+                    // Download emails with progress and cancellation
+                    var batch = 0;
+                    foreach (var uid in uids)
                     {
                         if (cancellationToken.IsCancellationRequested) break;
                         var message = await inbox.GetMessageAsync(uid, cancellationToken);
@@ -110,6 +111,20 @@ public partial class RealEmailSyncService
 
                         await _emailRepository.AddAsync(email);
                         syncResult.EmailsSynced++;
+                        batch++;
+
+                        // Report progress every 25 emails
+                        if (batch % 25 == 0 && progress != null)
+                        {
+                            progress.Report(new MIC.Core.Application.Common.Interfaces.IEmailSyncService.SyncProgress
+                            {
+                                UserId = userId,
+                                AccountEmail = account.EmailAddress,
+                                TotalFound = uids.Count,
+                                Processed = syncResult.EmailsSynced,
+                                Message = $"Synced {syncResult.EmailsSynced} of {uids.Count} for {account.EmailAddress}"
+                            });
+                        }
                     }
 
                     // Sync Sent folder if enabled
