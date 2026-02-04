@@ -157,8 +157,9 @@
         
     <!-- WINDOW TITLE BAR WITH CONTROLS -->
     <Border Grid.Row="0" 
-            Background="#0D1117"
-            BorderBrush="#2000E5FF"
+            Classes="header-golden"
+            Background="{StaticResource BackgroundElevatedBrush}"
+            BorderBrush="{StaticResource BorderGoldSubtle}"
             BorderThickness="0,0,0,1">
         <Grid ColumnDefinitions="*,Auto">
             <!-- Window Title -->

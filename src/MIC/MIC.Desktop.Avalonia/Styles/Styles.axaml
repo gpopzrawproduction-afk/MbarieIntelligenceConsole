@@ -204,15 +204,54 @@
     </Style>
 
     <Style Selector="Button.nav-item-active">
-        <Setter Property="Background" Value="#2000E5FF" />
-        <Setter Property="Foreground" Value="#00E5FF" />
+        <Setter Property="Background" Value="{StaticResource PrimaryGoldLightBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="Padding" Value="16,12" />
         <Setter Property="CornerRadius" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="BorderThickness" Value="3,0,0,0" />
-        <Setter Property="BorderBrush" Value="#00E5FF" />
+        <Setter Property="BorderThickness" Value="4,0,0,0" />
+        <Setter Property="BorderBrush" Value="{StaticResource PrimaryGoldBrush}" />
+        <!-- BoxShadow not supported on Button in all Avalonia versions; visual depth via BorderThickness/Brush -->
+    </Style>
+
+    <!-- Header (top navigation) golden style -->
+    <Style Selector="Border.header-golden">
+        <Setter Property="Background" Value="{StaticResource BackgroundElevatedBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderGoldSubtle}" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <!-- BoxShadow not supported on Border in this Avalonia version; keep subtle border highlight -->
+        <Setter Property="Transitions">
+            <Transitions>
+                <BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.25" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="Border.header-golden:pointerover">
+        <Setter Property="BoxShadow" Value="0 12 48 0 #40FFB84D" />
+        <Setter Property="BorderBrush" Value="{StaticResource PrimaryGoldBrush}" />
+    </Style>
+
+    <!-- GOLD BADGE -->
+    <Style Selector="Border.badge-gold">
+        <Setter Property="Background" Value="#30FFB84D" />
+        <Setter Property="BorderBrush" Value="{StaticResource PrimaryGoldBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Padding" Value="8,4" />
+    </Style>
+
+    <!-- GOLD BUTTON -->
+    <Style Selector="Button.btn-gold-filled">
+        <Setter Property="Background" Value="{StaticResource PrimaryGoldBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Cursor" Value="Hand" />
     </Style>
 
     <!-- TEXT STYLES -->

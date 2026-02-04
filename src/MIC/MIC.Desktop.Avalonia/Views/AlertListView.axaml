@@ -51,12 +51,8 @@ Background="#0B0C10">
 
         <!-- Filter Bar -->
         <Border Grid.Row="1" 
-                Background="#14FFFFFF"
-                BorderBrush="#20FFFFFF"
-                BorderThickness="1"
-                CornerRadius="12"
-                Margin="32,24"
-                Padding="20">
+                Classes="glass-card"
+                Margin="32,24">
             <Grid ColumnDefinitions="*,Auto,Auto,Auto">
                 
                 <!-- Search Box -->
@@ -121,11 +117,11 @@ Background="#0B0C10">
 
                 <!-- Alert Count -->
                 <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="8" Margin="24,0,0,0">
-                    <Border Classes="badge-cyan">
+                    <Border Classes="badge-gold">
                         <TextBlock Text="{Binding Alerts.Count, StringFormat='{}{0} alerts'}"
                                    FontSize="11"
                                    FontWeight="SemiBold"
-                                   Foreground="#00E5FF" />
+                                   Foreground="{StaticResource PrimaryGoldBrush}" />
                     </Border>
                 </StackPanel>
             </Grid>
@@ -133,10 +129,7 @@ Background="#0B0C10">
 
         <!-- Alerts DataGrid -->
         <Border Grid.Row="2" 
-                Background="#14FFFFFF"
-                BorderBrush="#20FFFFFF"
-                BorderThickness="1"
-                CornerRadius="12"
+                Classes="glass-card"
                 Margin="32,0,32,24">
             <Grid>
                 <!-- Loading Overlay -->
@@ -173,7 +166,7 @@ Background="#0B0C10">
                     <DataGrid.Columns>
                         
                         <!-- Severity Column with Icon -->
-                        <DataGridTemplateColumn Header="SEVERITY" Width="100">
+                        <DataGridTemplateColumn Header="SEVERITY" Width="120">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Border Background="{Binding SeverityColor, StringFormat='{}{0}20'}"
@@ -231,15 +224,14 @@ Background="#0B0C10">
                                             Width="140" />
 
                         <!-- Actions Column -->
-                        <DataGridTemplateColumn Header="ACTIONS" Width="200">
+                        <DataGridTemplateColumn Header="ACTIONS" Width="220">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" 
                                                 Spacing="4"
                                                 Margin="4">
                                         <!-- View Details -->
-                                        <Button Background="#2000E5FF"
-                                                Foreground="#00E5FF"
+                                        <Button Classes="btn-gold-filled"
                                                 Padding="8,4"
                                                 CornerRadius="4"
                                                 ToolTip.Tip="View Details"
