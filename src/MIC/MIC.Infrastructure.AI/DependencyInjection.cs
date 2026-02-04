@@ -26,6 +26,8 @@ public static class DependencyInjection
         // Register REAL AI services
         services.AddSingleton<IEmailAnalysisService, RealEmailAnalysisService>();
         services.AddSingleton<IChatService, RealChatService>();
+        // Register prediction service
+        services.AddScoped<IPredictionService, PredictionService>();
         
         // Keep other existing registrations
         services.Configure<AISettings>(configuration.GetSection("AI"));
