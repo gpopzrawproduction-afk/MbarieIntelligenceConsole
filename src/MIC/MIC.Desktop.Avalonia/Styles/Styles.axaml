@@ -7,6 +7,143 @@
     
     <!-- Note: ColorPalette.axaml loaded in App.axaml as ResourceInclude -->
 
+    <!-- Local brushes for compatibility (map colors from ColorPalette) -->
+    <Styles.Resources>
+        <SolidColorBrush x:Key="BackgroundHoverBrush" Color="{StaticResource BackgroundHover}" />
+        <SolidColorBrush x:Key="BackgroundSelectedBrush" Color="{StaticResource BackgroundSelected}" />
+    </Styles.Resources>
+
+    <!-- ??????????????????????????????????????????????????? -->
+    <!-- PREMIUM CARD & COMPONENT STYLES (Golden Theme)         -->
+    <!-- Added as reusable selectors for premium UI elements   -->
+    <!-- ??????????????????????????????????????????????????? -->
+
+    <!-- Premium Card -->
+    <Style Selector="Border.premium-card">
+        <Setter Property="Background" Value="{StaticResource CardGradient}" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Padding" Value="24" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <!-- BoxShadow removed for compatibility with target Avalonia version -->
+    </Style>
+
+    <!-- Premium Glass Card (distinct from existing glass-card) -->
+    <Style Selector="Border.glass-card-premium">
+        <Setter Property="Background" Value="#1A1F2E80" />
+        <Setter Property="CornerRadius" Value="20" />
+        <Setter Property="Padding" Value="28" />
+        <Setter Property="BorderBrush" Value="#FFB84D40" />
+        <Setter Property="BorderThickness" Value="1" />
+        <!-- BoxShadow removed for compatibility -->
+    </Style>
+
+    <!-- Metric Card -->
+    <Style Selector="Border.metric-card">
+        <Setter Property="Background" Value="{StaticResource BackgroundElevatedBrush}" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="20" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderGoldSubtle}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="MinWidth" Value="200" />
+        <Setter Property="MinHeight" Value="120" />
+    </Style>
+
+    <!-- BUTTONS: Golden filled and outline -->
+    <Style Selector="Button.golden">
+        <Setter Property="Background" Value="{StaticResource GoldenGradient}" />
+        <Setter Property="Foreground" Value="#0A0A0F" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Padding" Value="20,12" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" />
+                <DoubleTransition Property="Opacity" Duration="0:0:0.2" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="Button.golden:pointerover">
+        <Setter Property="RenderTransform" Value="scale(1.05)" />
+        <Setter Property="Opacity" Value="0.9" />
+    </Style>
+
+    <Style Selector="Button.golden:pressed">
+        <Setter Property="RenderTransform" Value="scale(0.95)" />
+    </Style>
+
+    <Style Selector="Button.outline-golden">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource PrimaryGoldBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderGoldBrush}" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Padding" Value="20,12" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+
+    <Style Selector="Button.outline-golden:pointerover">
+        <Setter Property="Background" Value="#FFB84D20" />
+    </Style>
+
+    <!-- Navigation button -->
+    <Style Selector="Button.nav-button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="Padding" Value="16,12" />
+        <Setter Property="Margin" Value="0,2" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+
+    <Style Selector="Button.nav-button:pointerover">
+        <Setter Property="Background" Value="{StaticResource BackgroundHoverBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+    </Style>
+
+    <Style Selector="Button.nav-button:pressed">
+        <Setter Property="Background" Value="{StaticResource BackgroundSelectedBrush}" />
+    </Style>
+
+    <!-- TEXT STYLES -->
+    <Style Selector="TextBlock.title">
+        <Setter Property="FontSize" Value="32" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+    </Style>
+
+    <Style Selector="TextBlock.subtitle">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+        <Setter Property="Margin" Value="0,8,0,0" />
+    </Style>
+
+    <Style Selector="TextBlock.section-title">
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource PrimaryGoldBrush}" />
+    </Style>
+
+    <Style Selector="TextBlock.metric-value">
+        <Setter Property="FontSize" Value="36" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+    </Style>
+
+    <Style Selector="TextBlock.metric-label">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Foreground" Value="{StaticResource TextTertiaryBrush}" />
+        <Setter Property="Margin" Value="0,4,0,0" />
+    </Style>
+
     <!-- GLASS-MORPHIC CARD STYLES -->
     
     <Style Selector="Border.glass-card">
