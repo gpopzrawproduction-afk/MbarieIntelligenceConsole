@@ -341,6 +341,11 @@ public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         
         // Update time
         LastUpdateTime = DateTime.Now.ToString("HH:mm");
+        StatusMessage = "Ready";
+
+        // start a timer to update CurrentTime every second
+        Observable.Interval(TimeSpan.FromSeconds(1))
+            .Subscribe(_ => CurrentTime = DateTime.Now.ToString("HH:mm:ss"));
         
         // Load notifications
         LoadNotifications();
@@ -440,6 +445,25 @@ public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
     public string UserName => ResolveUserName();
     public string UserInitials => ResolveUserInitials();
     public string UserRole => ResolveUserRole();
+
+    // Expose session service for bindings that need direct session info
+    public ISessionService SessionService => _sessionService;
+
+    // Status message shown in header/status bar
+    private string _statusMessage = string.Empty;
+    public string StatusMessage
+    {
+        get => _statusMessage;
+        set => SetProperty(ref _statusMessage, value);
+    }
+
+    // Current time for status display (updated every second)
+    private string _currentTime = DateTime.Now.ToString("HH:mm:ss");
+    public string CurrentTime
+    {
+        get => _currentTime;
+        private set => SetProperty(ref _currentTime, value);
+    }
 
     public bool IsDashboardActive => CurrentViewName == "Dashboard";
     public bool IsAlertsActive => CurrentViewName == "Alerts";

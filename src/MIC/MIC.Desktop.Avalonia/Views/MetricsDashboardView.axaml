@@ -86,11 +86,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Background="#14FFFFFF"
-                                BorderBrush="#20FFFFFF"
-                                BorderThickness="1"
-                                CornerRadius="12"
-                                Padding="20"
+                        <Border Classes="metric-card"
                                 Width="220">
                             <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto">
                                 <!-- Title -->
@@ -163,11 +159,7 @@
             
             <!-- Revenue Trend Chart -->
             <Border Grid.Row="0" Grid.Column="0"
-                    Background="#14FFFFFF"
-                    BorderBrush="#20FFFFFF"
-                    BorderThickness="1"
-                    CornerRadius="12"
-                    Padding="20"
+                    Classes="glass-card-premium"
                     Margin="0,0,12,12">
                 <Grid RowDefinitions="Auto,*">
                     <StackPanel Grid.Row="0">
@@ -193,11 +185,7 @@
 
             <!-- Efficiency & Satisfaction Chart -->
             <Border Grid.Row="0" Grid.Column="1"
-                    Background="#14FFFFFF"
-                    BorderBrush="#20FFFFFF"
-                    BorderThickness="1"
-                    CornerRadius="12"
-                    Padding="20"
+                    Classes="glass-card-premium"
                     Margin="12,0,0,12">
                 <Grid RowDefinitions="Auto,*">
                     <StackPanel Grid.Row="0">
@@ -223,11 +211,7 @@
 
             <!-- Category Comparison -->
             <Border Grid.Row="1" Grid.Column="0"
-                    Background="#14FFFFFF"
-                    BorderBrush="#20FFFFFF"
-                    BorderThickness="1"
-                    CornerRadius="12"
-                    Padding="20"
+                    Classes="glass-card-premium"
                     Margin="0,12,12,0">
                 <Grid RowDefinitions="Auto,*">
                     <StackPanel Grid.Row="0">
@@ -252,11 +236,7 @@
 
             <!-- Performance Gauges -->
             <Border Grid.Row="1" Grid.Column="1"
-                    Background="#14FFFFFF"
-                    BorderBrush="#20FFFFFF"
-                    BorderThickness="1"
-                    CornerRadius="12"
-                    Padding="20"
+                    Classes="glass-card-premium"
                     Margin="12,12,0,0">
                 <Grid RowDefinitions="Auto,*">
                     <StackPanel Grid.Row="0">

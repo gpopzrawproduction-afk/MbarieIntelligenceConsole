@@ -36,6 +36,12 @@ public class UserSessionService : ISessionService
         LoadSession();
     }
 
+    /// <summary>
+    /// Convenience property for bindings in XAML to access the current user.
+    /// Returns an empty UserDto when no session is present.
+    /// </summary>
+    public UserDto CurrentUser => GetUser();
+
     #region Properties
 
     public UserSession? CurrentSession => _currentSession;

@@ -83,7 +83,7 @@
             <!-- Key Metrics Cards Row (Golden glassmorphic) -->
             <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="20">
                 <!-- Total Emails Card -->
-                <Border Classes="glass-card glass-card-gold" Padding="20">
+                <Border Classes="metric-card" Padding="20">
                     <StackPanel>
                         <Grid ColumnDefinitions="Auto,*" HorizontalAlignment="Left" Margin="0,0,0,12">
                             <Border Background="{StaticResource PrimaryGoldLightBrush}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0">
@@ -108,7 +108,7 @@
                 </Border>
 
                 <!-- Unread Emails Card -->
-                <Border Grid.Column="1" Classes="glass-card" Padding="20">
+                <Border Grid.Column="1" Classes="metric-card" Padding="20">
                     <StackPanel>
                         <Grid ColumnDefinitions="Auto,*" HorizontalAlignment="Left" Margin="0,0,0,12">
                             <Border Background="#FF6B00" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0">
@@ -134,7 +134,7 @@
                 </Border>
 
                 <!-- High Priority Items Card -->
-                <Border Grid.Column="2" Classes="glass-card" Padding="20">
+                <Border Grid.Column="2" Classes="metric-card" Padding="20">
                     <StackPanel>
                         <Grid ColumnDefinitions="Auto,*" HorizontalAlignment="Left" Margin="0,0,0,12">
                             <Border Background="#EF444433" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0">
@@ -160,7 +160,7 @@
                 </Border>
 
                 <!-- Requires Response Card -->
-                <Border Grid.Column="3" Classes="glass-card" Padding="20">
+                <Border Grid.Column="3" Classes="metric-card" Padding="20">
                     <StackPanel>
                         <Grid ColumnDefinitions="Auto,*" HorizontalAlignment="Left" Margin="0,0,0,12">
                             <Border Background="#3B82F633" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0">
@@ -189,7 +189,7 @@
             <!-- Recent Activity Section -->
             <Grid ColumnDefinitions="2*,3*" ColumnSpacing="20">
                 <!-- Recent Activity Panel -->
-                <Border Classes="DashboardPanel" Background="#1E293B" BorderBrush="#334155" BorderThickness="1" CornerRadius="12" Padding="20">
+                <Border Classes="glass-card-premium" Background="#1E293B" BorderBrush="#334155" BorderThickness="1" CornerRadius="12" Padding="20">
                     <StackPanel>
                         <TextBlock Text="Recent Activity" Classes="PanelHeader" FontSize="16" FontWeight="SemiBold" Foreground="#F8FAFC" Margin="0,0,0,16" />
                         
@@ -280,7 +280,7 @@
                 </Border>
 
                 <!-- AI Insights and Quick Actions Panel -->
-                <Border Grid.Column="1" Classes="DashboardPanel" Background="#1E293B" BorderBrush="#334155" BorderThickness="1" CornerRadius="12" Padding="20">
+                <Border Grid.Column="1" Classes="glass-card-premium" Background="#1E293B" BorderBrush="#334155" BorderThickness="1" CornerRadius="12" Padding="20">
                     <StackPanel Spacing="20">
                         <!-- AI Insights Summary -->
                         <StackPanel>
