@@ -13,22 +13,17 @@
                   HorizontalScrollBarVisibility="Disabled">
         <Grid Margin="24">
             <StackPanel Spacing="16">
-                <!-- Header -->
-                <TextBlock Text="Knowledge Base"
-                           FontSize="28"
-                           FontWeight="SemiBold"
-                           Foreground="#F8FAFC" />
-                
-                <TextBlock Text="Central hub for indexed insights from emails, attachments, and alerts"
-                           FontSize="13"
-                           Foreground="#CBD5E1" />
+                <!-- Page Header -->
+                <StackPanel Spacing="8" Margin="0,0,0,8">
+                    <TextBlock Text="KNOWLEDGE BASE"
+                               Classes="title"
+                               Foreground="{StaticResource PrimaryGoldBrush}" />
+                    <TextBlock Text="Central hub for indexed insights from emails, attachments, and alerts"
+                               Classes="subtitle" />
+                </StackPanel>
 
                 <!-- Main Content Card -->
-                <Border Background="#1E293B"
-                        CornerRadius="12"
-                        Padding="20"
-                        BorderBrush="#334155"
-                        BorderThickness="1">
+                <Border Classes="glass-card-premium" Padding="20">
                     <StackPanel Spacing="16">
                         
                         <!-- Upload Section -->
@@ -37,14 +32,12 @@
                                     Width="180"
                                     Height="36"
                                     Command="{Binding UploadDocumentsCommand}"
-                                    Background="#3B82F6"
-                                    Foreground="White"
-                                    CornerRadius="8"
+                                    Classes="golden"
                                     FontWeight="Medium" />
                             
                             <TextBlock Text="Up to 50 files, 150MB each"
                                        FontSize="12"
-                                       Foreground="#64748B"
+                                       Foreground="{StaticResource TextMutedBrush}"
                                        VerticalAlignment="Center" />
                         </StackPanel>
 
@@ -54,50 +47,49 @@
                                  Height="36"
                                  CornerRadius="8"
                                  FontSize="14"
-                                 Background="#0F172A"
-                                 Foreground="#F8FAFC"
-                                 BorderBrush="#334155"
+                                 Background="{StaticResource BackgroundDeepBrush}"
+                                 Foreground="{StaticResource TextPrimaryBrush}"
+                                 BorderBrush="{StaticResource BorderSubtleBrush}"
                                  BorderThickness="1" />
 
                         <!-- Success Message -->
-                        <Border Background="#064E3B"
+                        <Border Background="{StaticResource SuccessLightBrush}"
                                 CornerRadius="8"
                                 Padding="12"
-                                BorderBrush="#10B981"
+                                BorderBrush="{StaticResource SuccessBrush}"
                                 BorderThickness="1"
                                 IsVisible="{Binding !!SuccessMessage}">
                             <TextBlock Text="{Binding SuccessMessage}"
-                                       Foreground="#22C55E"
+                                       Foreground="{StaticResource SuccessBrush}"
                                        FontSize="13"
                                        TextWrapping="Wrap" />
                         </Border>
 
                         <!-- Error Message -->
-                        <Border Background="#450A0A"
+                        <Border Background="{StaticResource ErrorLightBrush}"
                                 CornerRadius="8"
                                 Padding="12"
-                                BorderBrush="#EF4444"
+                                BorderBrush="{StaticResource ErrorBrush}"
                                 BorderThickness="1"
                                 IsVisible="{Binding !!ErrorMessage}">
                             <TextBlock Text="{Binding ErrorMessage}"
-                                       Foreground="#EF4444"
+                                       Foreground="{StaticResource ErrorBrush}"
                                        FontSize="13"
                                        TextWrapping="Wrap" />
                         </Border>
 
                         <!-- Loading Indicator -->
-                        <Border Background="#1E293B"
-                                CornerRadius="8"
+                        <Border CornerRadius="8"
                                 Padding="16"
                                 IsVisible="{Binding IsLoading}">
                             <StackPanel Spacing="8" HorizontalAlignment="Center">
                                 <ProgressBar IsIndeterminate="True"
                                              Width="200"
                                              Height="4"
-                                             Foreground="#3B82F6" />
+                                             Foreground="{StaticResource PrimaryGoldBrush}" />
                                 <TextBlock Text="Uploading documents..."
                                            FontSize="13"
-                                           Foreground="#94A3B8"
+                                           Foreground="{StaticResource TextMutedBrush}"
                                            HorizontalAlignment="Center" />
                             </StackPanel>
                         </Border>
@@ -108,24 +100,21 @@
                             <ItemsControl ItemsSource="{Binding Entries}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="vm:KnowledgeEntryViewModel">
-                                        <Border Background="#0F172A"
-                                                CornerRadius="12"
+                                        <Border Classes="metric-card"
                                                 Padding="16"
-                                                Margin="0,0,0,12"
-                                                BorderBrush="#334155"
-                                                BorderThickness="1">
+                                                Margin="0,0,0,12">
                                             <StackPanel Spacing="8">
                                                 <!-- Title -->
                                                 <TextBlock Text="{Binding Title}"
                                                            FontSize="16"
                                                            FontWeight="SemiBold"
-                                                           Foreground="#F8FAFC"
+                                                           Foreground="{StaticResource TextPrimaryBrush}"
                                                            TextWrapping="Wrap" />
                                                 
                                                 <!-- Content Preview -->
                                                 <TextBlock Text="{Binding Content}"
                                                            FontSize="13"
-                                                           Foreground="#CBD5E1"
+                                                           Foreground="{StaticResource TextSecondaryBrush}"
                                                            TextWrapping="Wrap"
                                                            MaxLines="3"
                                                            TextTrimming="CharacterEllipsis" />
@@ -134,15 +123,15 @@
                                                 <StackPanel Orientation="Horizontal" Spacing="12">
                                                     <TextBlock Text="{Binding Tags}"
                                                                FontSize="12"
-                                                               Foreground="#38BDF8" />
+                                                               Foreground="{StaticResource PrimaryGoldBrush}" />
                                                     
                                                     <TextBlock Text="•"
                                                                FontSize="12"
-                                                               Foreground="#475569" />
+                                                               Foreground="{StaticResource TextMutedBrush}" />
                                                     
                                                     <TextBlock Text="{Binding CreatedAt, StringFormat='Created {0:MMM dd, yyyy HH:mm}'}"
                                                                FontSize="12"
-                                                               Foreground="#94A3B8" />
+                                                               Foreground="{StaticResource TextMutedBrush}" />
                                                 </StackPanel>
                                             </StackPanel>
                                         </Border>
@@ -152,8 +141,7 @@
                         </ScrollViewer>
 
                         <!-- Empty State -->
-                        <Border Background="#1E293B"
-                                CornerRadius="12"
+                        <Border CornerRadius="12"
                                 Padding="40"
                                 IsVisible="{Binding !Entries.Count}">
                             <StackPanel Spacing="12" HorizontalAlignment="Center">
@@ -164,12 +152,12 @@
                                 <TextBlock Text="No documents yet"
                                            FontSize="16"
                                            FontWeight="SemiBold"
-                                           Foreground="#F8FAFC"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
                                            HorizontalAlignment="Center" />
                                 
                                 <TextBlock Text="Upload documents to build your knowledge base"
                                            FontSize="13"
-                                           Foreground="#64748B"
+                                           Foreground="{StaticResource TextMutedBrush}"
                                            HorizontalAlignment="Center" />
                             </StackPanel>
                         </Border>

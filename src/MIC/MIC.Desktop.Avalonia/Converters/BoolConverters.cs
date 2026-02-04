@@ -37,6 +37,33 @@ public static class BoolConverters
     public static readonly IValueConverter ToRefreshColor = new BoolToRefreshColorConverter();
 }
 
+/// <summary>
+/// Converts an integer (count) to bool indicating whether value is zero.
+/// Useful for showing empty-state UI when collection count == 0.
+/// </summary>
+public class ZeroToBoolConverter : IValueConverter
+{
+    public static readonly IValueConverter Instance = new ZeroToBoolConverter();
+
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is int i)
+        {
+            return i == 0;
+        }
+        if (value is long l)
+        {
+            return l == 0L;
+        }
+        return false;
+    }
+
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        return BindingOperations.DoNothing;
+    }
+}
+
 public class BoolToGreenConverter : IValueConverter
 {
     private static readonly SolidColorBrush GreenBrush = new(Color.Parse("#43a047"));

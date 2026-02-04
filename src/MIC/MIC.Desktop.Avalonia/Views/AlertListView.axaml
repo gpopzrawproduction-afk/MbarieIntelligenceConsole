@@ -3,311 +3,160 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 xmlns:vm="using:MIC.Desktop.Avalonia.ViewModels"
+xmlns:conv="using:MIC.Desktop.Avalonia.Converters"
 xmlns:entities="using:MIC.Core.Domain.Entities"
 mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
 x:Class="MIC.Desktop.Avalonia.Views.AlertListView"
 x:DataType="vm:AlertListViewModel"
 Background="#0B0C10">
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <!-- Existing content moved here -->
-            <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="20">
+    <UserControl.Resources>
+        <conv:ZeroToBoolConverter x:Key="ZeroToBoolConverter" />
+    </UserControl.Resources>
 
-        <!-- Page Header -->
-        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="32,24,32,0">
-            <StackPanel Grid.Column="0">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="20">
+
+            <!-- Page Header Section -->
+            <!-- Header -->
+            <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,24">
                 <TextBlock Text="ALERT MANAGEMENT" 
-                           FontSize="32"
-                           FontWeight="Thin"
-                           Foreground="#FFFFFF"
-                           LetterSpacing="4" />
-                <TextBlock Text="Monitor, acknowledge, and resolve system alerts"
-                           FontSize="14"
-                           Foreground="#607D8B"
-                           Margin="0,8,0,0" />
+                           Classes="title"
+                           Foreground="{StaticResource PrimaryGoldBrush}"/>
+                <TextBlock Text="Monitor, acknowledge, and resolve system alerts" 
+                           Classes="subtitle"/>
             </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <Button Classes="btn-neon"
-                        Command="{Binding RefreshCommand}"
-                        ToolTip.Tip="Refresh alerts">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <PathIcon Width="16" Height="16"
-                                  Foreground="#00E5FF"
-                                  Data="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" />
-                        <TextBlock Text="REFRESH" FontSize="12" LetterSpacing="1" />
-                    </StackPanel>
-                </Button>
-                <Button Classes="btn-neon-filled"
-                        Command="{Binding CreateAlertCommand}">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <PathIcon Width="16" Height="16"
-                                  Foreground="#0B0C10"
-                                  Data="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
-                        <TextBlock Text="NEW ALERT" FontSize="12" FontWeight="Bold" LetterSpacing="1" />
-                    </StackPanel>
-                </Button>
-            </StackPanel>
-        </Grid>
 
-        <!-- Filter Bar -->
-        <Border Grid.Row="1" 
-                Classes="glass-card"
-                Margin="32,24">
-            <Grid ColumnDefinitions="*,Auto,Auto,Auto">
-                
-                <!-- Search Box -->
-                <Border Grid.Column="0"
-                        Background="#10FFFFFF"
-                        BorderBrush="#20FFFFFF"
-                        BorderThickness="1"
-                        CornerRadius="8"
-                        Padding="12,0"
-                        MaxWidth="400"
-                        HorizontalAlignment="Left">
-                    <Grid ColumnDefinitions="Auto,*">
-                        <PathIcon Grid.Column="0"
-                                  Width="16" Height="16"
-                                  Foreground="#607D8B"
-                                  Data="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"
-                                  Margin="0,0,12,0" />
-                        <TextBox Grid.Column="1"
-                                 Text="{Binding SearchText}"
-                                 Watermark="Search alerts by name, description, or source..."
-                                 Background="Transparent"
-                                 BorderThickness="0"
-                                 Foreground="#FFFFFF"
-                                 FontSize="13"
-                                 MinWidth="300" />
-                    </Grid>
-                </Border>
+            <!-- Action Bar -->
+            <Border Grid.Row="1" 
+                    Classes="glass-card-premium"
+                    Margin="0,0,0,16"
+                    Padding="16">
+                <Grid ColumnDefinitions="*,Auto,Auto">
+                    <TextBox Grid.Column="0"
+                             Watermark="Search alerts by name, description, or source..."
+                             Text="{Binding SearchText}"
+                             Background="{StaticResource BackgroundDeepBrush}"
+                             BorderBrush="{StaticResource BorderSubtleBrush}"
+                             BorderThickness="1"
+                             CornerRadius="8"
+                             Padding="12,8"
+                             FontSize="14"/>
+                    
+                    <Button Grid.Column="1"
+                            Content="?? REFRESH"
+                            Command="{Binding RefreshCommand}"
+                            Classes="outline-golden"
+                            Margin="12,0,0,0"/>
+                    
+                    <Button Grid.Column="2"
+                            Content="? NEW ALERT"
+                            Command="{Binding CreateAlertCommand}"
+                            Classes="golden"
+                            Margin="12,0,0,0"/>
+                </Grid>
+            </Border>
 
-                <!-- Severity Filter -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" Margin="24,0,0,0">
-                    <TextBlock Text="SEVERITY"
-                               FontSize="10"
-                               FontWeight="SemiBold"
-                               Foreground="#607D8B"
-                               LetterSpacing="1"
-                               VerticalAlignment="Center" />
-                    <ComboBox ItemsSource="{Binding SeverityOptions}"
-                              SelectedValue="{Binding SelectedSeverity}"
-                              SelectedValueBinding="{Binding Value}"
-                              DisplayMemberBinding="{Binding Display}"
-                              Background="#10FFFFFF"
-                              Foreground="#FFFFFF"
-                              MinWidth="120" />
-                </StackPanel>
+        <!-- Filter Bar removed: merged into action bar for premium layout -->
 
-                <!-- Status Filter -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" Margin="16,0,0,0">
-                    <TextBlock Text="STATUS"
-                               FontSize="10"
-                               FontWeight="SemiBold"
-                               Foreground="#607D8B"
-                               LetterSpacing="1"
-                               VerticalAlignment="Center" />
-                    <ComboBox ItemsSource="{Binding StatusOptions}"
-                              SelectedValue="{Binding SelectedStatus}"
-                              SelectedValueBinding="{Binding Value}"
-                              DisplayMemberBinding="{Binding Display}"
-                              Background="#10FFFFFF"
-                              Foreground="#FFFFFF"
-                              MinWidth="130" />
-                </StackPanel>
-
-                <!-- Alert Count -->
-                <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="8" Margin="24,0,0,0">
-                    <Border Classes="badge-gold">
-                        <TextBlock Text="{Binding Alerts.Count, StringFormat='{}{0} alerts'}"
-                                   FontSize="11"
-                                   FontWeight="SemiBold"
-                                   Foreground="{StaticResource PrimaryGoldBrush}" />
-                    </Border>
-                </StackPanel>
-            </Grid>
-        </Border>
-
-        <!-- Alerts DataGrid -->
-        <Border Grid.Row="2" 
-                Classes="glass-card"
-                Margin="32,0,32,24">
-            <Grid>
-                <!-- Loading Overlay -->
-                <Border Background="#80000000"
-                        CornerRadius="12"
-                        IsVisible="{Binding IsLoading}"
-                        ZIndex="100">
-                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <ProgressBar IsIndeterminate="True"
-                                     Width="200"
-                                     Foreground="#00E5FF" />
-                        <TextBlock Text="Loading..."
-                                   Foreground="#B0BEC5"
-                                   Margin="0,12,0,0"
-                                   HorizontalAlignment="Center" />
-                    </StackPanel>
-                </Border>
-
-                <!-- Data Grid -->
-                <DataGrid ItemsSource="{Binding Alerts}"
-                          SelectedItem="{Binding SelectedAlert}"
-                          AutoGenerateColumns="False"
-                          CanUserReorderColumns="True"
-                          CanUserResizeColumns="True"
-                          CanUserSortColumns="True"
-                          IsReadOnly="True"
-                          GridLinesVisibility="Horizontal"
-                          BorderThickness="0"
-                          Background="Transparent"
-                          RowBackground="#05FFFFFF"
-                          HeadersVisibility="Column"
-                          Margin="8">
-
-                    <DataGrid.Columns>
-                        
-                        <!-- Severity Column with Icon -->
-                        <DataGridTemplateColumn Header="SEVERITY" Width="120">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Border Background="{Binding SeverityColor, StringFormat='{}{0}20'}"
-                                            BorderBrush="{Binding SeverityColor}"
-                                            BorderThickness="1"
-                                            CornerRadius="6"
-                                            Padding="8,4"
-                                            HorizontalAlignment="Left"
-                                            Margin="8,4">
-                                        <TextBlock Text="{Binding SeverityDisplay}"
-                                                   Foreground="{Binding SeverityColor}"
-                                                   FontSize="11"
-                                                   FontWeight="Bold"
-                                                   LetterSpacing="1" />
-                                    </Border>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-
-                        <!-- Title Column -->
-                        <DataGridTextColumn Header="TITLE" 
-                                            Binding="{Binding AlertName}"
-                                            Width="*"
-                                            FontSize="13" />
-
-                        <!-- Source Column -->
-                        <DataGridTextColumn Header="SOURCE"
-                                            Binding="{Binding Source}"
-                                            Width="150" />
-
-                        <!-- Status Column -->
-                        <DataGridTemplateColumn Header="STATUS" Width="120">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Border Background="{Binding StatusColor, StringFormat='{}{0}20'}"
-                                            BorderBrush="{Binding StatusColor}"
-                                            BorderThickness="1"
-                                            CornerRadius="6"
-                                            Padding="8,4"
-                                            HorizontalAlignment="Left"
-                                            Margin="8,4">
-                                        <TextBlock Text="{Binding StatusDisplay}"
-                                                   Foreground="{Binding StatusColor}"
-                                                   FontSize="11"
-                                                   FontWeight="Bold"
-                                                   LetterSpacing="1" />
-                                    </Border>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-
-                        <!-- Triggered Date Column -->
-                        <DataGridTextColumn Header="TRIGGERED"
-                                            Binding="{Binding TriggeredAt, StringFormat='{}{0:MMM dd, HH:mm}'}"
-                                            Width="140" />
-
-                        <!-- Actions Column -->
-                        <DataGridTemplateColumn Header="ACTIONS" Width="220">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" 
-                                                Spacing="4"
-                                                Margin="4">
-                                        <!-- View Details -->
-                                        <Button Classes="btn-gold-filled"
-                                                Padding="8,4"
-                                                CornerRadius="4"
-                                                ToolTip.Tip="View Details"
-                                                Command="{Binding $parent[DataGrid].((vm:AlertListViewModel)DataContext).ViewDetailsCommand}"
-                                                CommandParameter="{Binding}">
-                                            <PathIcon Width="14" Height="14"
-                                                      Data="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z" />
-                                        </Button>
-                                        
-                                        <!-- Acknowledge (if Active) -->
-                                        <Button Background="#20FF6B00"
-                                                Foreground="#FF6B00"
-                                                Padding="8,4"
-                                                CornerRadius="4"
-                                                ToolTip.Tip="Acknowledge"
-                                                IsVisible="{Binding Status, Converter={x:Static vm:AlertStatusToActiveConverter.Instance}}"
-                                                Command="{Binding $parent[DataGrid].((vm:AlertListViewModel)DataContext).AcknowledgeAlertCommand}"
-                                                CommandParameter="{Binding}">
-                                            <PathIcon Width="14" Height="14"
-                                                      Data="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
-                                        </Button>
-                                        
-                                        <!-- Edit -->
-                                        <Button Background="#2039FF14"
-                                                Foreground="#39FF14"
-                                                Padding="8,4"
-                                                CornerRadius="4"
-                                                ToolTip.Tip="Edit"
-                                                Command="{Binding $parent[DataGrid].((vm:AlertListViewModel)DataContext).EditAlertCommand}"
-                                                CommandParameter="{Binding}">
-                                            <PathIcon Width="14" Height="14"
-                                                      Data="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" />
-                                        </Button>
-                                        
-                                        <!-- Delete -->
-                                        <Button Background="#20FF0055"
-                                                Foreground="#FF0055"
-                                                Padding="8,4"
-                                                CornerRadius="4"
-                                                ToolTip.Tip="Delete"
-                                                Command="{Binding $parent[DataGrid].((vm:AlertListViewModel)DataContext).DeleteAlertCommand}"
-                                                CommandParameter="{Binding}">
-                                            <PathIcon Width="14" Height="14"
-                                                      Data="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
-                                        </Button>
+            <!-- Alerts List -->
+            <ScrollViewer Grid.Row="2">
+                <ItemsControl ItemsSource="{Binding Alerts}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Classes="metric-card"
+                                    Margin="0,0,0,12"
+                                    Cursor="Hand">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    
+                                    <!-- Severity Indicator -->
+                                    <Border Grid.Column="0"
+                                            Width="4"
+                                            CornerRadius="2"
+                                            Margin="0,0,16,0"
+                                            Background="{Binding SeverityColor}" />
+                                    
+                                    <!-- Alert Content -->
+                                    <StackPanel Grid.Column="1" Spacing="8">
+                                        <TextBlock Text="{Binding AlertName}"
+                                                   FontSize="16"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                                        <TextBlock Text="{Binding Description}"
+                                                   FontSize="13"
+                                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                                   TextWrapping="Wrap"
+                                                   MaxLines="2"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                        <StackPanel Orientation="Horizontal" Spacing="12">
+                                            <TextBlock FontSize="12" Foreground="{StaticResource TextTertiaryBrush}">
+                                                <Run Text="???"/>
+                                                <Run Text="{Binding SeverityDisplay}"/>
+                                            </TextBlock>
+                                            <TextBlock Text="•" FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
+                                            <TextBlock FontSize="12" Foreground="{StaticResource TextTertiaryBrush}">
+                                                <Run Text="??"/>
+                                                <Run Text="{Binding CreatedAt, StringFormat='MMM dd, yyyy'}"/>
+                                            </TextBlock>
+                                        </StackPanel>
                                     </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
+                                    
+                                    <!-- Status Badge -->
+                                    <Border Grid.Column="2"
+                                            Background="{Binding StatusColor}"
+                                            CornerRadius="12"
+                                            Padding="12,6"
+                                            VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding StatusDisplay}"
+                                                   FontSize="11"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#FFFFFF"/>
+                                    </Border>
+                                    
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
 
-                    </DataGrid.Columns>
-                </DataGrid>
-            </Grid>
-        </Border>
+            <!-- Empty State -->
+            <Border Grid.Row="2"
+                    Classes="glass-card-premium"
+                    IsVisible="{Binding Alerts.Count, Converter={StaticResource ZeroToBoolConverter}}"
+                    Padding="60">
+                <StackPanel Spacing="16" HorizontalAlignment="Center">
+                    <TextBlock Text="??"
+                               FontSize="64"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="No alerts yet"
+                               Classes="section-title"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="Create your first alert to start monitoring"
+                               Classes="subtitle"
+                               HorizontalAlignment="Center"/>
+                    <Button Content="Create Alert"
+                            Command="{Binding CreateAlertCommand}"
+                            Classes="golden"
+                            HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
 
-        <!-- Status Bar -->
-        <Border Grid.Row="3"
-                Background="#0D1117"
-                BorderBrush="#15FFFFFF"
-                BorderThickness="0,1,0,0"
-                Padding="32,8">
-            <Grid ColumnDefinitions="*,Auto">
-                <TextBlock Grid.Column="0"
-                           Text="{Binding StatusMessage}"
-                           Foreground="#607D8B"
-                           FontSize="12"
-                           VerticalAlignment="Center" />
-                <TextBlock Grid.Column="1"
-                           Text="{Binding Alerts.Count, StringFormat='Total: {0} alert(s)'}"
-                           Foreground="#455A64"
-                           FontSize="12"
-                           VerticalAlignment="Center" />
-            </Grid>
-        </Border>
+            <!-- Footer Stats -->
+            <Border Grid.Row="3"
+                    Classes="glass-card-premium"
+                    Margin="0,16,0,0"
+                    Padding="16">
+                <TextBlock FontSize="13" Foreground="{StaticResource TextTertiaryBrush}">
+                    <Run Text="Loaded "/>
+                    <Run Text="{Binding Alerts.Count}" FontWeight="SemiBold" Foreground="{StaticResource PrimaryGoldBrush}"/>
+                    <Run Text=" alert(s) • Total: "/>
+                    <Run Text="{Binding Alerts.Count}" FontWeight="SemiBold" Foreground="{StaticResource PrimaryGoldBrush}"/>
+                    <Run Text=" alert(s)"/>
+                </TextBlock>
+            </Border>
 
-    </Grid>
-
+        </Grid>
     </ScrollViewer>
+
 </UserControl>

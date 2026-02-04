@@ -75,6 +75,14 @@
     
     <SolidColorBrush x:Key="BorderGoldBrush" Color="{StaticResource BorderGold}"/>
     <SolidColorBrush x:Key="BorderSubtleBrush" Color="{StaticResource BorderSubtle}"/>
+
+    <!-- Additional brushes used by premium styles -->
+    <SolidColorBrush x:Key="BorderGoldSubtleBrush" Color="{StaticResource BorderGoldSubtle}" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource Success}" />
+    <SolidColorBrush x:Key="SuccessLightBrush" Color="{StaticResource SuccessLight}" />
+    <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource Error}" />
+    <SolidColorBrush x:Key="ErrorLightBrush" Color="{StaticResource ErrorLight}" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMuted}" />
     
     <!-- ??????????????????????????????????????????????????? -->
     <!-- GRADIENT BRUSHES -->

@@ -152,7 +152,7 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="16" />
         <Setter Property="Padding" Value="20" />
-        <Setter Property="BoxShadow" Value="0 8 32 0 #20FFB84D" />
+        <!-- BoxShadow omitted for compatibility; use subtle border instead -->
         <Setter Property="Transitions">
             <Transitions>
                 <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" />
