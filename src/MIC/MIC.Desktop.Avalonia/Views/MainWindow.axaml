@@ -1,730 +1,258 @@
 <Window xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:vm="using:MIC.Desktop.Avalonia.ViewModels"
-    xmlns:views="using:MIC.Desktop.Avalonia.Views"
-    xmlns:controls="using:MIC.Desktop.Avalonia.Controls"
-    xmlns:converters="using:MIC.Desktop.Avalonia.Converters"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="900"
-    x:Class="MIC.Desktop.Avalonia.Views.MainWindow"
-    x:DataType="vm:MainWindowViewModel"
-    Icon="/Assets/avalonia-logo.ico"
-    Title="{Binding AppTitle}"
-    Width="1400" Height="900"
-        MinWidth="1200" MinHeight="800"
-    WindowStartupLocation="CenterScreen"
-    Background="#0B0C10"
-    ExtendClientAreaToDecorationsHint="False"
-    SystemDecorations="Full"
-    CanResize="True"
-    KeyDown="OnKeyDown">
-
-<Design.DataContext>
-    <vm:MainWindowViewModel/>
-</Design.DataContext>
-
-    <NativeMenu.Menu>
-        <NativeMenu>
-            <!-- LANGUAGE MENU -->
-            <NativeMenuItem Header="🌐 Language">
-                <NativeMenu>
-                    <NativeMenuItem Header="English" Command="{Binding SetLanguageEnglishCommand}"/>
-                    <NativeMenuItem Header="Français" Command="{Binding SetLanguageFrenchCommand}"/>
-                </NativeMenu>
-            </NativeMenuItem>
-            <!-- FILE MENU -->
-            <NativeMenuItem Header="{Binding MenuFile}">
-                <NativeMenu>
-                    <NativeMenuItem Header="_Profile / Account"
-                                   Command="{Binding NavigateToSettingsCommand}"/>
-                    <NativeMenuItemSeparator/>
-                    <NativeMenuItem Header="New _Chat" 
-                                   Command="{Binding NewChatCommand}" 
-                                   Gesture="Ctrl+N"/>
-                    <NativeMenuItem Header="New _Email" 
-                                   Command="{Binding NewEmailCommand}" 
-                                   Gesture="Ctrl+E"/>
-                    <NativeMenuItemSeparator/>
-                    <NativeMenuItem Header="Export _Metrics" 
-                                   Command="{Binding ExportMetricsCommand}" 
-                                   Gesture="Ctrl+Shift+M"/>
-                    <NativeMenuItem Header="Export _Predictions" 
-                                   Command="{Binding ExportPredictionsCommand}" 
-                                   Gesture="Ctrl+Shift+P"/>
-                    <NativeMenuItemSeparator/>
-                    <NativeMenuItem Header="_Settings" 
-                                   Command="{Binding NavigateToSettingsCommand}" 
-                                   Gesture="Ctrl+OemComma"/>
-                    <NativeMenuItemSeparator/>
-                    <NativeMenuItem Header="E_xit" 
-                                   Command="{Binding ExitCommand}" 
-                                   Gesture="Alt+F4"/>
-                </NativeMenu>
-            </NativeMenuItem>
-
-            <!-- EDIT MENU -->
-            <NativeMenuItem Header="_Edit">
-                <NativeMenu>
-                    <NativeMenuItem Header="Cu_t" 
-                                   Command="{Binding CutCommand}" 
-                                   Gesture="Ctrl+X"/>
-                    <NativeMenuItem Header="_Copy" 
-                                   Command="{Binding CopyCommand}" 
-                                   Gesture="Ctrl+C"/>
-                    <NativeMenuItem Header="_Paste" 
-                                   Command="{Binding PasteCommand}" 
-                                   Gesture="Ctrl+V"/>
-                    <NativeMenuItemSeparator/>
-                    <NativeMenuItem Header="Select _All" 
-                                   Command="{Binding SelectAllCommand}" 
-                                   Gesture="Ctrl+A"/>
-                    <NativeMenuItemSeparator/>
-                    <NativeMenuItem Header="_Find" 
-                                   Command="{Binding FindCommand}" 
-                                   Gesture="Ctrl+F"/>
-                </NativeMenu>
-            </NativeMenuItem>
-
-            <!-- VIEW MENU -->
-            <NativeMenuItem Header="_View">
-                <NativeMenu>
-                    <NativeMenuItem Header="_Theme">
-                        <NativeMenu>
-                            <NativeMenuItem Header="Light Mode" Command="{Binding SetLightThemeCommand}"/>
-                            <NativeMenuItem Header="Dark Mode" Command="{Binding SetDarkThemeCommand}"/>
-                            <NativeMenuItem Header="System Default" Command="{Binding SetSystemThemeCommand}"/>
-                        </NativeMenu>
-                    </NativeMenuItem>
-                    <NativeMenuItem Header="Customize _Shortcuts" Command="{Binding CustomizeShortcutsCommand}"/>
-                    <NativeMenuItemSeparator/>
-                    <NativeMenuItem Header="_Dashboard" 
-                                   Command="{Binding NavigateToDashboardCommand}" 
-                                   Gesture="Ctrl+D1"/>
-                    <NativeMenuItem Header="_Email" 
-                                   Command="{Binding NavigateToEmailCommand}" 
-                                   Gesture="Ctrl+D2"/>
-                    <NativeMenuItem Header="_Chat" 
-                                   Command="{Binding NavigateToChatCommand}" 
-                                   Gesture="Ctrl+D3"/>
-                    <NativeMenuItem Header="_Alerts" 
-                                   Command="{Binding NavigateToAlertsCommand}" 
-                                   Gesture="Ctrl+D4"/>
-                    <NativeMenuItem Header="_Metrics" 
-                                   Command="{Binding NavigateToMetricsCommand}" 
-                                   Gesture="Ctrl+D5"/>
-                    <NativeMenuItem Header="_Predictions" 
-                                   Command="{Binding NavigateToPredictionsCommand}" 
-                                   Gesture="Ctrl+D6"/>
-                    <NativeMenuItemSeparator/>
-                    <NativeMenuItem Header="_Refresh" 
-                                   Command="{Binding RefreshCommand}" 
-                                   Gesture="F5"/>
-                    <NativeMenuItemSeparator/>
-                    <NativeMenuItem Header="Toggle _Fullscreen" 
-                                   Command="{Binding ToggleFullscreenCommand}" 
-                                   Gesture="F11"/>
-                </NativeMenu>
-            </NativeMenuItem>
-
-            <!-- HELP MENU -->
-            <NativeMenuItem Header="_Help">
-                <NativeMenu>
-                    <NativeMenuItem Header="_Documentation" 
-                                   Command="{Binding ShowDocumentationCommand}" 
-                                   Gesture="F1"/>
-                    <NativeMenuItem Header="_Onboarding Tour" Command="{Binding ShowOnboardingTourCommand}"/>
-                    <NativeMenuItem Header="_Search Help" Command="{Binding ShowSearchHelpCommand}"/>
-                    <NativeMenuItem Header="_Keyboard Shortcuts" 
-                                   Command="{Binding ShowKeyboardShortcutsCommand}" 
-                                   Gesture="Ctrl+OemQuestion"/>
-                    <NativeMenuItemSeparator/>
-                    <NativeMenuItem Header="_About Mbarie Intelligence Console" 
-                                   Command="{Binding ShowAboutCommand}"/>
-                </NativeMenu>
-            </NativeMenuItem>
-        </NativeMenu>
-    </NativeMenu.Menu>
-
-<!-- Main Layout with Overlays -->
-<Panel>
-    <Panel.Resources>
-        <converters:BoolToNavItemClassConverter x:Key="BoolToNavItemClassConverter" />
-        <converters:BoolToPathIconColorConverter x:Key="BoolToPathIconColorConverter" />
-    </Panel.Resources>
-        
-<Grid RowDefinitions="40,36,60,*,36">
-        
-    <!-- WINDOW TITLE BAR WITH CONTROLS -->
-    <Border Grid.Row="0" 
-            Classes="header-golden"
-            Background="{StaticResource BackgroundElevatedBrush}"
-            BorderBrush="{StaticResource BorderGoldSubtle}"
-            BorderThickness="0,0,0,1">
-        <Grid ColumnDefinitions="*,Auto">
-            <!-- Window Title -->
-            <TextBlock Grid.Column="0" 
-                       Text="Mbarie Intelligence Console"
-                       Foreground="#607D8B"
-                       FontSize="12"
-                       VerticalAlignment="Center"
-                       Margin="20,0,0,0" />
-            
-            <!-- Window Controls -->
-            <StackPanel Grid.Column="1" 
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Right">
-                <Button Name="MinimizeButton"
-                        Classes="btn-ghost"
-                        Width="45" Height="30"
-                        Click="OnMinimizeClick">
-                    <TextBlock Text="─"
-                               FontSize="14"
-                               Foreground="#607D8B"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Center" />
-                </Button>
-                <Button Name="MaximizeButton"
-                        Classes="btn-ghost"
-                        Width="45" Height="30"
-                        Click="OnMaximizeClick">
-                    <TextBlock Text="□"
-                               FontSize="12"
-                               Foreground="#607D8B"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Center" />
-                </Button>
-                <Button Name="CloseButton"
-                        Classes="btn-danger"
-                        Width="45" Height="30"
-                        Click="OnCloseClick">
-                    <TextBlock Text="×"
-                               FontSize="16"
-                               FontWeight="Bold"
-                               Foreground="#FF0055"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Center" />
-                </Button>
-            </StackPanel>
-        </Grid>
-    </Border>
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="MIC.Desktop.Avalonia.Views.MainWindow"
+        xmlns:vm="using:MIC.Desktop.Avalonia.ViewModels"
+        Title="Mbarie Intelligence Console"
+        MinWidth="1400" MinHeight="900"
+        Width="1600" Height="1000"
+        Background="{StaticResource BackgroundGradient}"
+        FontFamily="Inter, SF Pro Display, Segoe UI, Segoe UI Variable Display"
+        Icon="/Assets/app-icon.ico"
+        x:DataType="vm:MainWindowViewModel">
     
-    <!-- MENU BAR -->
-    <Border Grid.Row="1"
-            Background="#0A0B0E"
-            BorderBrush="#15FFFFFF"
-            BorderThickness="0,0,0,1">
-        <Menu Background="Transparent" Margin="10,0" Foreground="#B0BEC5">
-            <MenuItem Header="🌐">
-                <MenuItem Header="English" Command="{Binding SetLanguageEnglishCommand}"/>
-                <MenuItem Header="Français" Command="{Binding SetLanguageFrenchCommand}"/>
-            </MenuItem>
-            <MenuItem Header="{Binding MenuFile}">
-                <MenuItem Header="New Chat" Command="{Binding NewChatCommand}" InputGesture="Ctrl+N"/>
-                <MenuItem Header="New Email" Command="{Binding NewEmailCommand}" InputGesture="Ctrl+E"/>
-                <Separator/>
-                <MenuItem Header="Settings" Command="{Binding NavigateToSettingsCommand}"/>
-                <Separator/>
-                <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
-            </MenuItem>
-            <MenuItem Header="{Binding MenuEdit}">
-                <MenuItem Header="Cut" Command="{Binding CutCommand}" InputGesture="Ctrl+X"/>
-                <MenuItem Header="Copy" Command="{Binding CopyCommand}" InputGesture="Ctrl+C"/>
-                <MenuItem Header="Paste" Command="{Binding PasteCommand}" InputGesture="Ctrl+V"/>
-                <Separator/>
-                <MenuItem Header="Find" Command="{Binding FindCommand}" InputGesture="Ctrl+F"/>
-            </MenuItem>
-            <MenuItem Header="{Binding MenuView}">
-                <MenuItem Header="Dashboard" Command="{Binding NavigateToDashboardCommand}"/>
-                <MenuItem Header="Email" Command="{Binding NavigateToEmailCommand}"/>
-                <MenuItem Header="AI Chat" Command="{Binding NavigateToChatCommand}"/>
-                <MenuItem Header="Alerts" Command="{Binding NavigateToAlertsCommand}"/>
-                <MenuItem Header="Metrics" Command="{Binding NavigateToMetricsCommand}"/>
-                <Separator/>
-                <MenuItem Header="Refresh" Command="{Binding RefreshCommand}" InputGesture="F5"/>
-            </MenuItem>
-            <MenuItem Header="{Binding MenuHelp}">
-                <MenuItem Header="Documentation" Command="{Binding ShowDocumentationCommand}"/>
-                <MenuItem Header="Keyboard Shortcuts" Command="{Binding ShowKeyboardShortcutsCommand}"/>
-                <Separator/>
-                <MenuItem Header="About" Command="{Binding ShowAboutCommand}"/>
-            </MenuItem>
-        </Menu>
-    </Border>
-    
-    <!-- TOP NAVIGATION BAR: Holographic Header -->
-        <Border Grid.Row="2" 
-                Background="#0D1117"
-                BorderBrush="#2000E5FF"
+    <!-- Main Grid Layout -->
+    <Grid RowDefinitions="Auto,*,Auto">
+        
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- TOP MENU BAR -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <Border Grid.Row="0" 
+                Background="#1A1520E6"
+                BorderBrush="{StaticResource BorderGoldBrush}"
                 BorderThickness="0,0,0,1">
-            <Grid ColumnDefinitions="Auto,*,Auto" Margin="20,0">
+            
+            <Grid Height="50" ColumnDefinitions="Auto,*,Auto" Margin="16,0">
                 
-                <!-- Left: Logo and Brand -->
+                <!-- Logo & Title -->
                 <StackPanel Grid.Column="0" 
                             Orientation="Horizontal" 
-                            Spacing="16"
+                            Spacing="12"
                             VerticalAlignment="Center">
-                    <!-- Holographic Logo -->
-                    <Border Width="42" Height="42"
-                            CornerRadius="10"
-                            BorderBrush="#00E5FF"
-                            BorderThickness="1"
-                            BoxShadow="0 0 20 0 #4000E5FF">
-                        <Border.Background>
-                            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-                                <GradientStop Color="#2000E5FF" Offset="0" />
-                                <GradientStop Color="#1000E5FF" Offset="1" />
-                            </LinearGradientBrush>
-                        </Border.Background>
-                        <TextBlock Text="M"
-                                   FontSize="22"
-                                   FontWeight="Thin"
-                                   Foreground="#00E5FF"
+                    <Border Width="36" Height="36"
+                            CornerRadius="8"
+                            Background="{StaticResource GoldenGradient}">
+                        <TextBlock Text="M" 
+                                   FontSize="20" 
+                                   FontWeight="Bold"
+                                   Foreground="#0A0A0F"
                                    HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
+                                   VerticalAlignment="Center"/>
                     </Border>
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="MBARIE"
-                                   FontSize="18"
-                                   FontWeight="Light"
-                                   Foreground="#FFFFFF"
-                                   LetterSpacing="6" />
-                        <TextBlock Text="Intelligence Console"
-                                   FontSize="10"
-                                   Foreground="#607D8B"
-                                   LetterSpacing="2"
-                                   Margin="0,-2,0,0" />
+                    <StackPanel Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Text="MBARIE" 
+                                   FontSize="16" 
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                        <TextBlock Text="Intelligence Console" 
+                                   FontSize="10" 
+                                   Foreground="{StaticResource TextTertiaryBrush}"/>
                     </StackPanel>
                 </StackPanel>
                 
-                <!-- Center: Search -->
+                <!-- Search Bar -->
                 <Border Grid.Column="1"
-                        Background="#10FFFFFF"
-                        BorderBrush="#20FFFFFF"
+                        Background="{StaticResource BackgroundDeepBrush}"
+                        BorderBrush="{StaticResource BorderSubtleBrush}"
                         BorderThickness="1"
-                        CornerRadius="24"
-                        Padding="16,0"
-                        Margin="80,0"
-                        MaxWidth="500"
-                        Height="40"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
-                    <Grid ColumnDefinitions="Auto,*">
-                        <PathIcon Grid.Column="0"
-                                  Width="16" Height="16"
-                                  Foreground="#607D8B"
-                                  Data="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"
-                                  Margin="0,0,12,0" />
-                        <TextBox Grid.Column="1"
-                                 Watermark="Search alerts, metrics, predictions..."
-                                 Background="Transparent"
-                                 BorderThickness="0"
-                                 Foreground="#FFFFFF"
-                                 FontSize="13"
-                                 VerticalAlignment="Center" />
-                    </Grid>
+                        CornerRadius="8"
+                        Padding="12,8"
+                        Margin="40,0"
+                        MaxWidth="600"
+                        HorizontalAlignment="Center">
+                    <TextBox Watermark="Search alerts, metrics, predictions..."
+                             Background="Transparent"
+                             BorderThickness="0"
+                             Foreground="{StaticResource TextSecondaryBrush}"
+                             FontSize="14"/>
                 </Border>
                 
-                <!-- Right: User Menu and Notifications -->
-                <StackPanel Grid.Column="2"
-                            Orientation="Horizontal"
-                            Spacing="12"
+                <!-- User Menu -->
+                <StackPanel Grid.Column="2" 
+                            Orientation="Horizontal" 
+                            Spacing="16"
                             VerticalAlignment="Center">
-                    
-                    <!-- Notifications -->
-                    <Button Background="Transparent"
-                            Padding="10"
-                            CornerRadius="12"
-                            Command="{Binding NotificationsCommand}">
-                        <Grid>
-                            <PathIcon Width="20" Height="20"
-                                      Foreground="#B0BEC5"
-                                      Data="M12,22A2,2 0 0,1 10,20H14A2,2 0 0,1 12,22M18,16V11C18,7.93 16.36,5.36 13.5,4.68V4A1.5,1.5 0 0,0 12,2.5A1.5,1.5 0 0,0 10.5,4V4.68C7.63,5.36 6,7.92 6,11V16L4,18V19H20V18L18,16Z" />
-                            <Border Background="#FF0055"
-                                    CornerRadius="8"
-                                    Width="18" Height="18"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Top"
-                                    Margin="0,-6,-6,0"
-                                    BoxShadow="0 0 8 0 #80FF0055"
-                                    IsVisible="{Binding UnreadNotificationCount}">
-                                <TextBlock Text="{Binding UnreadNotificationCount}"
-                                           FontSize="10"
-                                           FontWeight="Bold"
-                                           Foreground="White"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
-                            </Border>
-                        </Grid>
-                    </Button>
-                    
-                    <!-- User Avatar and Menu -->
-                    <Button Background="Transparent"
-                            Padding="6"
-                            CornerRadius="12">
-                        <Button.Flyout>
-                            <MenuFlyout>
-                                <MenuItem Header="Logout" Command="{Binding LogoutCommand}" />
-                                <MenuItem Header="Exit" Command="{Binding ExitCommand}" />
-                            </MenuFlyout>
-                        </Button.Flyout>
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <Border Width="36" Height="36"
-                                    CornerRadius="10"
-                                    BorderBrush="{StaticResource PrimaryGoldBrush}"
-                                    BorderThickness="1"
-                                    BoxShadow="0 0 12 0 #30FFB84D">
-                                <Border.Background>
-                                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-                                        <GradientStop Color="{StaticResource PrimaryGoldLight}" Offset="0" />
-                                        <GradientStop Color="{StaticResource PrimaryGold}" Offset="1" />
-                                    </LinearGradientBrush>
-                                </Border.Background>
-                                <TextBlock Text="{Binding UserInitials}"
-                                           FontSize="13"
-                                           FontWeight="Medium"
-                                           Foreground="{StaticResource TextPrimaryBrush}"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
-                            </Border>
-                            <StackPanel Spacing="0" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding UserName}"
+                    <Button Content="🔔" 
+                            FontSize="18"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="8"/>
+                    <Border Background="{StaticResource BackgroundElevatedBrush}"
+                            CornerRadius="20"
+                            Padding="8,4,12,4"
+                            BorderBrush="{StaticResource BorderGoldBrush}"
+                            BorderThickness="1">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Border Width="28" Height="28"
+                                    CornerRadius="14"
+                                    Background="{StaticResource GoldenGradient}">
+                                <TextBlock Text="{Binding UserInitials, FallbackValue='TU'}"
                                            FontSize="12"
-                                           Foreground="{StaticResource TextPrimaryBrush}" />
-                                <TextBlock Text="{Binding UserRole}"
-                                           FontSize="10"
-                                           Foreground="{StaticResource TextTertiary}" />
-                            </StackPanel>
-                            <PathIcon Width="12" Height="12"
-                                      Foreground="{StaticResource TextTertiary}"
-                                      Data="M7,10L12,15L17,10H7Z" />
+                                           FontWeight="SemiBold"
+                                           Foreground="#0A0A0F"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="{Binding UserName, FallbackValue='Test User'}"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       FontSize="13"
+                                       VerticalAlignment="Center"/>
                         </StackPanel>
-                    </Button>
+                    </Border>
                 </StackPanel>
                 
             </Grid>
+            
+            <!-- Native Menu -->
+            <NativeMenu.Menu>
+                <NativeMenu>
+                    <NativeMenuItem Header="File">
+                        <NativeMenu>
+                            <NativeMenuItem Header="New Chat" Gesture="Ctrl+N" Command="{Binding NewChatCommand}"/>
+                            <NativeMenuItem Header="New Email" Gesture="Ctrl+E" Command="{Binding NewEmailCommand}"/>
+                            <NativeMenuItemSeparator/>
+                            <NativeMenuItem Header="Export Metrics" Command="{Binding ExportMetricsCommand}"/>
+                            <NativeMenuItem Header="Export Predictions" Command="{Binding ExportPredictionsCommand}"/>
+                            <NativeMenuItemSeparator/>
+                            <NativeMenuItem Header="Settings" Gesture="Ctrl+Comma" Command="{Binding NavigateToSettingsCommand}"/>
+                            <NativeMenuItemSeparator/>
+                            <NativeMenuItem Header="Exit" Gesture="Alt+F4" Command="{Binding ExitCommand}"/>
+                        </NativeMenu>
+                    </NativeMenuItem>
+                    <NativeMenuItem Header="Edit">
+                        <NativeMenu>
+                            <NativeMenuItem Header="Cut" Gesture="Ctrl+X" Command="{Binding CutCommand}"/>
+                            <NativeMenuItem Header="Copy" Gesture="Ctrl+C" Command="{Binding CopyCommand}"/>
+                            <NativeMenuItem Header="Paste" Gesture="Ctrl+V" Command="{Binding PasteCommand}"/>
+                            <NativeMenuItem Header="Select All" Gesture="Ctrl+A" Command="{Binding SelectAllCommand}"/>
+                            <NativeMenuItemSeparator/>
+                            <NativeMenuItem Header="Find" Gesture="Ctrl+F" Command="{Binding FindCommand}"/>
+                        </NativeMenu>
+                    </NativeMenuItem>
+                    <NativeMenuItem Header="View">
+                        <NativeMenu>
+                            <NativeMenuItem Header="Dashboard" Gesture="Ctrl+1" Command="{Binding NavigateToDashboardCommand}"/>
+                            <NativeMenuItem Header="Email" Gesture="Ctrl+2" Command="{Binding NavigateToEmailCommand}"/>
+                            <NativeMenuItem Header="Chat" Gesture="Ctrl+3" Command="{Binding NavigateToChatCommand}"/>
+                            <NativeMenuItem Header="Alerts" Gesture="Ctrl+4" Command="{Binding NavigateToAlertsCommand}"/>
+                            <NativeMenuItem Header="Metrics" Gesture="Ctrl+5" Command="{Binding NavigateToMetricsCommand}"/>
+                            <NativeMenuItem Header="Predictions" Gesture="Ctrl+6" Command="{Binding NavigateToPredictionsCommand}"/>
+                            <NativeMenuItem Header="Knowledge Base" Gesture="Ctrl+7" Command="{Binding NavigateToKnowledgeBaseCommand}"/>
+                            <NativeMenuItemSeparator/>
+                            <NativeMenuItem Header="Refresh" Gesture="F5" Command="{Binding RefreshCommand}"/>
+                            <NativeMenuItem Header="Fullscreen" Gesture="F11" Command="{Binding ToggleFullscreenCommand}"/>
+                        </NativeMenu>
+                    </NativeMenuItem>
+                    <NativeMenuItem Header="Help">
+                        <NativeMenu>
+                            <NativeMenuItem Header="Documentation" Command="{Binding ShowDocumentationCommand}"/>
+                            <NativeMenuItem Header="Keyboard Shortcuts" Gesture="Ctrl+/" Command="{Binding ShowKeyboardShortcutsCommand}"/>
+                            <NativeMenuItem Header="Check for Updates" Command="{Binding CheckForUpdatesCommand}"/>
+                            <NativeMenuItemSeparator/>
+                            <NativeMenuItem Header="About" Command="{Binding ShowAboutCommand}"/>
+                        </NativeMenu>
+                    </NativeMenuItem>
+                </NativeMenu>
+            </NativeMenu.Menu>
+            
         </Border>
         
+        <!-- ═══════════════════════════════════════════════════ -->
         <!-- MAIN CONTENT AREA -->
-        <Grid Grid.Row="3" ColumnDefinitions="260,*">
+        <!-- ═══════════════════════════════════════════════════ -->
+        <Grid Grid.Row="1" ColumnDefinitions="280,*">
             
-            <!-- Left Sidebar Navigation -->
+            <!-- SIDEBAR NAVIGATION -->
             <Border Grid.Column="0"
-                    Background="#0D1117"
-                    BorderBrush="#15FFFFFF"
+                    Background="#1A1520F0"
+                    BorderBrush="#FFB84D20"
                     BorderThickness="0,0,1,0">
-                <ScrollViewer VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Disabled">
-                <StackPanel>
-                    
-                    <!-- Navigation Menu -->
-                    <TextBlock Text="NAVIGATION"
-                               FontSize="10"
-                               FontWeight="SemiBold"
-                               Foreground="#455A64"
-                               Margin="20,24,20,16"
-                               LetterSpacing="2" />
-                    
-                    <!-- Dashboard -->
-                    <Button Classes="nav-item"
-                            Command="{Binding NavigateToDashboardCommand}"
-                            HorizontalAlignment="Stretch">
-                        <StackPanel Orientation="Horizontal" Spacing="14">
-                            <PathIcon Width="20" Height="20"
-                                      Foreground="{Binding IsDashboardActive, Converter={StaticResource BoolToPathIconColorConverter}}"
-                                      Data="M13,3V9H21V3M13,21H21V11H13M3,21H11V15H3M3,13H11V3H3V13Z" />
-                            <TextBlock Text="Dashboard" 
-                                       VerticalAlignment="Center"
-                                       FontWeight="Medium" />
-                        </StackPanel>
-                    </Button>
-                    
-                    <!-- Alerts -->
-                    <Button Classes="nav-item"
-                            Command="{Binding NavigateToAlertsCommand}"
-                            HorizontalAlignment="Stretch">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14">
-                                <PathIcon Width="20" Height="20"
-                                          Foreground="{Binding IsAlertsActive, Converter={StaticResource BoolToPathIconColorConverter}}"
-                                          Data="M13,14H11V10H13M13,18H11V16H13M1,21H23L12,2L1,21Z" />
-                                <TextBlock Text="Alerts" VerticalAlignment="Center" />
-                            </StackPanel>
-                            <Border Grid.Column="1"
-                                    Background="#20FF0055"
-                                    BorderBrush="#FF0055"
-                                    BorderThickness="1"
-                                    CornerRadius="10"
-                                    Padding="8,3"
-                                    VerticalAlignment="Center">
-                                <TextBlock Text="12"
-                                           FontSize="11"
-                                           FontWeight="Bold"
-                                           Foreground="#FF0055" />
-                            </Border>
-                        </Grid>
-                    </Button>
-                    
-                    <!-- Metrics -->
-                    <Button Classes="nav-item"
-                            Command="{Binding NavigateToMetricsCommand}"
-                            HorizontalAlignment="Stretch">
-                        <StackPanel Orientation="Horizontal" Spacing="14">
-                            <PathIcon Width="20" Height="20"
-                                      Foreground="{Binding IsMetricsActive, Converter={StaticResource BoolToPathIconColorConverter}}"
-                                      Data="M22,21H2V3H4V19H6V10H10V19H12V6H16V19H18V14H22V21Z" />
-                            <TextBlock Text="Metrics" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    
-                    <!-- Predictions -->
-                    <Button Classes="nav-item"
-                            Command="{Binding NavigateToPredictionsCommand}"
-                            HorizontalAlignment="Stretch">
-                        <StackPanel Orientation="Horizontal" Spacing="14">
-                            <PathIcon Width="20" Height="20"
-                                      Foreground="{Binding IsPredictionsActive, Converter={StaticResource BoolToPathIconColorConverter}}"
-                                      Data="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z" />
-                            <TextBlock Text="Predictions" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-
-                    <!-- Knowledge Base -->
-                    <Button Classes="nav-item"
-                            Command="{Binding NavigateToKnowledgeBaseCommand}"
-                            HorizontalAlignment="Stretch">
-                        <StackPanel Orientation="Horizontal" Spacing="14">
-                            <PathIcon Width="20" Height="20"
-                                      Foreground="{Binding IsKnowledgeBaseActive, Converter={StaticResource BoolToPathIconColorConverter}}"
-                                      Data="M4,6V20H20V6H4M12,2L2,6V8H22V6L12,2Z" />
-                            <TextBlock Text="Knowledge Base" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    
-                    <!-- AI Assistant (disabled for build fix)
-                    <Button Classes="nav-item"
-                            Command="{Binding NavigateToAIChatCommand}"
-                            HorizontalAlignment="Stretch">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14">
-                                <PathIcon Width="20" Height="20"
-                                          Foreground="{Binding IsAIChatActive, Converter={StaticResource BoolToPathIconColorConverter}, ConverterParameter='ai'}"
-                                          Data="M12,2A2,2 0 0,1 14,4C14,4.74 13.6,5.39 13,5.73V7H14A7,7 0 0,1 21,14H22A1,1 0 0,1 23,15V18A1,1 0 0,1 22,19H21V20A2,2 0 0,1 19,22H5A2,2 0 0,1 3,20V19H2A1,1 0 0,1 1,18V15A1,1 0 0,1 2,14H3A7,7 0 0,1 10,7H11V5.73C10.4,5.39 10,4.74 10,4A2,2 0 0,1 12,2M7.5,13A2.5,2.5 0 0,0 5,15.5A2.5,2.5 0 0,0 7.5,18A2.5,2.5 0 0,0 10,15.5A2.5,2.5 0 0,0 7.5,13M16.5,13A2.5,2.5 0 0,0 14,15.5A2.5,2.5 0 0,0 16.5,18A2.5,2.5 0 0,0 19,15.5A2.5,2.5 0 0,0 16.5,13Z" />
-                                <TextBlock Text="AI Assistant" VerticalAlignment="Center" />
-                            </StackPanel>
-                            <Border Grid.Column="1"
-                                    Background="#20BF40FF"
-                                    BorderBrush="#BF40FF"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
-                                    Padding="6,2"
-                                    VerticalAlignment="Center">
-                                <TextBlock Text="AI"
-                                           FontSize="9"
-                                           FontWeight="Bold"
-                                           Foreground="{Binding IsAIChatActive, Converter={StaticResource BoolToPathIconColorConverter}, ConverterParameter='ai'}" />
-                            </Border>
-                        </Grid>
-                    </Button>
-                    -->
-                    
-                    <!-- Email Intelligence -->
-                    <Button Classes="nav-item"
-                            Command="{Binding NavigateToEmailCommand}"
-                            HorizontalAlignment="Stretch">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14">
-                                <PathIcon Width="20" Height="20"
-                                          Foreground="{Binding IsEmailActive, Converter={StaticResource BoolToPathIconColorConverter}, ConverterParameter='email'}"
-                                          Data="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z" />
-                                <TextBlock Text="Email" VerticalAlignment="Center" />
-                            </StackPanel>
-                            <Border Grid.Column="1"
-                                    Background="#2000E5FF"
-                                    BorderBrush="#00E5FF"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
-                                    Padding="6,2"
-                                    VerticalAlignment="Center">
-                                <TextBlock Text="NEW"
-                                           FontSize="9"
-                                           FontWeight="Bold"
-                                           Foreground="{Binding IsEmailActive, Converter={StaticResource BoolToPathIconColorConverter}, ConverterParameter='email'}" />
-                            </Border>
-                        </Grid>
-                    </Button>
-                    
-                    <!-- AI Chat -->
-                    <Button Classes="nav-item"
-                            Command="{Binding NavigateToChatCommand}"
-                            HorizontalAlignment="Stretch">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14">
-                                <PathIcon Width="20" Height="20"
-                                          Foreground="{Binding IsAIChatActive, Converter={StaticResource BoolToPathIconColorConverter}}"
-                                          Data="M12,3C17.5,3 22,6.58 22,11C22,15.42 17.5,19 12,19C10.76,19 9.57,18.82 8.47,18.5C5.55,21 2,21 2,21C4.33,18.67 4.7,17.1 4.75,16.5C3.05,15.07 2,13.13 2,11C2,6.58 6.5,3 12,3Z" />
-                                <TextBlock Text="AI Chat" VerticalAlignment="Center" />
-                            </StackPanel>
-                            <Border Grid.Column="1"
-                                    Background="#20BF40FF"
-                                    BorderBrush="#BF40FF"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
-                                    Padding="6,2"
-                                    VerticalAlignment="Center">
-                                <TextBlock Text="AI"
-                                           FontSize="9"
-                                           FontWeight="Bold"
-                                           Foreground="#BF40FF" />
-                            </Border>
-                        </Grid>
-                    </Button>
-                    
-                    <!-- Divider -->
-                    <Border Height="1" 
-                            Background="#15FFFFFF" 
-                            Margin="20,24" />
-                    
-                    
-                    <TextBlock Text="SYSTEM"
-                               FontSize="10"
-                               FontWeight="SemiBold"
-                               Foreground="#455A64"
-                               Margin="20,0,20,16"
-                               LetterSpacing="2" />
-                    
-                    <!-- Settings -->
-                    <Button Classes="nav-item"
-                            Command="{Binding NavigateToSettingsCommand}"
-                            HorizontalAlignment="Stretch">
-                        <StackPanel Orientation="Horizontal" Spacing="14">
-                            <PathIcon Width="20" Height="20"
-                                      Foreground="{Binding IsSettingsActive, Converter={StaticResource BoolToPathIconColorConverter}}"
-                                      Data="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
-                            <TextBlock Text="Settings" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    
-                </StackPanel>
+                <ScrollViewer>
+                    <StackPanel Margin="16" Spacing="8">
+                        
+                        <!-- Navigation Header -->
+                        <TextBlock Text="NAVIGATION" 
+                                   FontSize="11" 
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextTertiaryBrush}"
+                                   Margin="8,16,0,8"/>
+                        
+                        <!-- Navigation Buttons -->
+                        <Button Content="📊 Dashboard" 
+                                Command="{Binding NavigateToDashboardCommand}"
+                                Classes="nav-button"/>
+                        <Button Content="📧 Email" 
+                                Command="{Binding NavigateToEmailCommand}"
+                                Classes="nav-button"/>
+                        <Button Content="💬 AI Chat" 
+                                Command="{Binding NavigateToChatCommand}"
+                                Classes="nav-button"/>
+                        <Button Content="🔔 Alerts" 
+                                Command="{Binding NavigateToAlertsCommand}"
+                                Classes="nav-button"/>
+                        <Button Content="📈 Metrics" 
+                                Command="{Binding NavigateToMetricsCommand}"
+                                Classes="nav-button"/>
+                        <Button Content="🔮 Predictions" 
+                                Command="{Binding NavigateToPredictionsCommand}"
+                                Classes="nav-button"/>
+                        <Button Content="📚 Knowledge Base" 
+                                Command="{Binding NavigateToKnowledgeBaseCommand}"
+                                Classes="nav-button"/>
+                        
+                        <!-- System Section -->
+                        <TextBlock Text="SYSTEM" 
+                                   FontSize="11" 
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextTertiaryBrush}"
+                                   Margin="8,24,0,8"/>
+                        
+                        <Button Content="⚙️ Settings" 
+                                Command="{Binding NavigateToSettingsCommand}"
+                                Classes="nav-button"/>
+                        
+                    </StackPanel>
                 </ScrollViewer>
             </Border>
             
-            <!-- Main Content Area -->
-            <Border Grid.Column="1"
-                    Background="#0B0C10">
-                <ContentControl Content="{Binding CurrentView}">
-                <ContentControl.DataTemplates>
-                <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
-                    <views:DashboardView />
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type vm:AlertListViewModel}">
-                    <views:AlertListView />
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type vm:EmailInboxViewModel}">
-                    <views:EmailInboxView />
-                </DataTemplate>
-                        <DataTemplate DataType="{x:Type vm:MetricsDashboardViewModel}">
-                            <views:MetricsDashboardView />
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type vm:ChatViewModel}">
-                            <views:ChatView />
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type vm:PredictionsViewModel}">
-                            <views:PredictionsView />
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
-                            <views:SettingsView />
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type vm:EmailInboxViewModel}">
-                            <views:EmailInboxView />
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type vm:KnowledgeBaseViewModel}">
-                            <views:KnowledgeBaseView />
-                        </DataTemplate>
-                </ContentControl.DataTemplates>
-                </ContentControl>
+            <!-- MAIN CONTENT -->
+            <Border Grid.Column="1" Padding="32">
+                <ContentControl Content="{Binding CurrentView}"/>
             </Border>
             
         </Grid>
         
-        <!-- ???????????????????????????????????????????????????????????????????????
-             STATUS BAR - Holographic Footer
-             ??????????????????????????????????????????????????????????????????????? -->
-        <Border Grid.Row="4"
-                Background="#0D1117"
-                BorderBrush="#15FFFFFF"
-                BorderThickness="0,1,0,0">
-            <Grid ColumnDefinitions="*,Auto,Auto" Margin="20,0">
-                
-                <!-- Left: Current View -->
-                <StackPanel Grid.Column="0" 
-                            Orientation="Horizontal" 
-                            Spacing="12"
-                            VerticalAlignment="Center">
-                    <TextBlock Text="●"
-                               Foreground="#00E5FF"
-                               FontSize="10" />
-                    <TextBlock Text="{Binding CurrentViewName}"
-                               Foreground="#607D8B"
-                               FontSize="11"
-                               FontWeight="Medium"
-                               LetterSpacing="1" />
-                </StackPanel>
-                
-                <!-- Center: Connection Status -->
-                <StackPanel Grid.Column="1"
-                            Orientation="Horizontal"
-                            Spacing="10"
-                            VerticalAlignment="Center"
-                            Margin="0,0,32,0">
-                    <Ellipse Width="8" Height="8"
-                             Fill="#39FF14" />
-                    <TextBlock Text="{Binding ConnectionStatus}"
-                               Foreground="#607D8B"
-                               FontSize="11"
-                               LetterSpacing="1" />
-                </StackPanel>
-                
-                <!-- Center: Keyboard Shortcut Hint -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- STATUS BAR -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <Border Grid.Row="2"
+                Background="#1A1520E6"
+                BorderBrush="{StaticResource BorderGoldBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="16,8">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0" 
+                           Text="{Binding CurrentViewName, FallbackValue='Ready'}"
+                           Foreground="{StaticResource TextTertiaryBrush}"
+                           FontSize="12"
+                           VerticalAlignment="Center"/>
                 <StackPanel Grid.Column="1" 
                             Orientation="Horizontal" 
-                            Spacing="4"
-                            VerticalAlignment="Center"
-                            Margin="20,0"
-                            Opacity="0.6">
-                    <Border Background="#15FFFFFF" CornerRadius="3" Padding="4,2">
-                        <TextBlock Text="Ctrl+K" FontSize="9" Foreground="#607D8B" FontFamily="Consolas" />
-                    </Border>
-                    <TextBlock Text="Command Palette" FontSize="10" Foreground="#455A64" VerticalAlignment="Center" />
+                            Spacing="16">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <Ellipse Width="8" Height="8" Fill="#10B981"/>
+                        <TextBlock Text="Connected" 
+                                   Foreground="{StaticResource TextTertiaryBrush}"
+                                   FontSize="12"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <TextBlock Text="{Binding LastUpdateTime, FallbackValue='00:00'}" 
+                               Foreground="{StaticResource TextTertiaryBrush}"
+                               FontSize="12"
+                               VerticalAlignment="Center"/>
                 </StackPanel>
-                
-                <!-- Right: Last Update Time -->
-                <TextBlock Grid.Column="2"
-                           Text="{Binding LastUpdateTime, StringFormat='SYNC: {0}'}"
-                           Foreground="#455A64"
-                           FontSize="11"
-                           LetterSpacing="1"
-                           VerticalAlignment="Center" />
-                
             </Grid>
         </Border>
         
     </Grid>
     
-    <!-- ???????????????????????????????????????????????????????????????????????
-         OVERLAY LAYER - Toast Notifications
-         ??????????????????????????????????????????????????????????????????????? -->
-    <controls:ToastContainer HorizontalAlignment="Right"
-                             VerticalAlignment="Top"
-                             Margin="24,80,24,0"
-                             Width="380" />
-    
-    <!-- ???????????????????????????????????????????????????????????????????????
-         OVERLAY LAYER - Command Palette (Ctrl+K)
-         ??????????????????????????????????????????????????????????????????????? -->
-    <controls:CommandPalette x:Name="CommandPaletteControl"
-                             DataContext="{Binding CommandPalette}" />
-    
-    </Panel>
-
 </Window>
