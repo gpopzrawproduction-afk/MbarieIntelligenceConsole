@@ -10,12 +10,12 @@
     <!-- GLASS-MORPHIC CARD STYLES -->
     
     <Style Selector="Border.glass-card">
-        <Setter Property="Background" Value="#14FFFFFF" />
-        <Setter Property="BorderBrush" Value="#30FFFFFF" />
+        <Setter Property="Background" Value="{StaticResource CardGradient}" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderGoldSubtle}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="16" />
         <Setter Property="Padding" Value="20" />
-        <Setter Property="BoxShadow" Value="0 8 32 0 #2000E5FF" />
+        <Setter Property="BoxShadow" Value="0 8 32 0 #20FFB84D" />
         <Setter Property="Transitions">
             <Transitions>
                 <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" />
@@ -26,17 +26,17 @@
 
     <Style Selector="Border.glass-card:pointerover">
         <Setter Property="RenderTransform" Value="translateY(-4px)" />
-        <Setter Property="BoxShadow" Value="0 12 40 0 #4000E5FF" />
-        <Setter Property="BorderBrush" Value="#5000E5FF" />
+        <Setter Property="BoxShadow" Value="0 12 40 0 #40FFB84D" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderGoldBrush}" />
     </Style>
 
-    <Style Selector="Border.glass-card-cyan">
-        <Setter Property="Background" Value="#1500E5FF" />
-        <Setter Property="BorderBrush" Value="#4000E5FF" />
+    <Style Selector="Border.glass-card-gold">
+        <Setter Property="Background" Value="#20FFB84D" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderGoldBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="16" />
         <Setter Property="Padding" Value="20" />
-        <Setter Property="BoxShadow" Value="0 8 32 0 #3000E5FF" />
+        <Setter Property="BoxShadow" Value="0 8 32 0 #30FFB84D" />
         <Setter Property="Transitions">
             <Transitions>
                 <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" />
@@ -45,19 +45,19 @@
         </Setter>
     </Style>
 
-    <Style Selector="Border.glass-card-cyan:pointerover">
+    <Style Selector="Border.glass-card-gold:pointerover">
         <Setter Property="RenderTransform" Value="translateY(-4px)" />
-        <Setter Property="BoxShadow" Value="0 16 48 0 #5000E5FF" />
-        <Setter Property="BorderBrush" Value="#8000E5FF" />
+        <Setter Property="BoxShadow" Value="0 16 48 0 #50FFB84D" />
+        <Setter Property="BorderBrush" Value="{StaticResource PrimaryGoldDarkBrush}" />
     </Style>
 
-    <Style Selector="Border.glass-card-magenta">
-        <Setter Property="Background" Value="#15FF0055" />
-        <Setter Property="BorderBrush" Value="#40FF0055" />
+    <Style Selector="Border.glass-card-accent">
+        <Setter Property="Background" Value="#15{StaticResource PrimaryGold}" />
+        <Setter Property="BorderBrush" Value="{StaticResource PrimaryGoldLightBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="16" />
         <Setter Property="Padding" Value="20" />
-        <Setter Property="BoxShadow" Value="0 8 32 0 #30FF0055" />
+        <Setter Property="BoxShadow" Value="0 8 32 0 #30FFB84D" />
         <Setter Property="Transitions">
             <Transitions>
                 <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" />
@@ -66,10 +66,10 @@
         </Setter>
     </Style>
 
-    <Style Selector="Border.glass-card-magenta:pointerover">
+    <Style Selector="Border.glass-card-accent:pointerover">
         <Setter Property="RenderTransform" Value="translateY(-4px)" />
-        <Setter Property="BoxShadow" Value="0 16 48 0 #50FF0055" />
-        <Setter Property="BorderBrush" Value="#80FF0055" />
+        <Setter Property="BoxShadow" Value="0 16 48 0 #50FFB84D" />
+        <Setter Property="BorderBrush" Value="{StaticResource PrimaryGoldBrush}" />
     </Style>
 
     <Style Selector="Border.glass-card-lime">

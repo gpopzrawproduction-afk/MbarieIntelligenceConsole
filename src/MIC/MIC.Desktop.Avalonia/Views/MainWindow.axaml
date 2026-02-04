@@ -358,44 +358,44 @@
                     </Button>
                     
                     <!-- User Avatar and Menu -->
-                        <Button Background="Transparent"
-                                Padding="6"
-                                CornerRadius="12">
-                            <Button.Flyout>
-                                <MenuFlyout>
-                                    <MenuItem Header="Logout" Command="{Binding LogoutCommand}" />
-                                    <MenuItem Header="Exit" Command="{Binding ExitCommand}" />
-                                </MenuFlyout>
-                            </Button.Flyout>
+                    <Button Background="Transparent"
+                            Padding="6"
+                            CornerRadius="12">
+                        <Button.Flyout>
+                            <MenuFlyout>
+                                <MenuItem Header="Logout" Command="{Binding LogoutCommand}" />
+                                <MenuItem Header="Exit" Command="{Binding ExitCommand}" />
+                            </MenuFlyout>
+                        </Button.Flyout>
                         <StackPanel Orientation="Horizontal" Spacing="10">
                             <Border Width="36" Height="36"
                                     CornerRadius="10"
-                                    BorderBrush="#00E5FF"
+                                    BorderBrush="{StaticResource PrimaryGoldBrush}"
                                     BorderThickness="1"
-                                    BoxShadow="0 0 12 0 #3000E5FF">
+                                    BoxShadow="0 0 12 0 #30FFB84D">
                                 <Border.Background>
                                     <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-                                        <GradientStop Color="#2000E5FF" Offset="0" />
-                                        <GradientStop Color="#10BF40FF" Offset="1" />
+                                        <GradientStop Color="{StaticResource PrimaryGoldLight}" Offset="0" />
+                                        <GradientStop Color="{StaticResource PrimaryGold}" Offset="1" />
                                     </LinearGradientBrush>
                                 </Border.Background>
                                 <TextBlock Text="{Binding UserInitials}"
                                            FontSize="13"
                                            FontWeight="Medium"
-                                           Foreground="#00E5FF"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center" />
                             </Border>
                             <StackPanel Spacing="0" VerticalAlignment="Center">
                                 <TextBlock Text="{Binding UserName}"
                                            FontSize="12"
-                                           Foreground="#FFFFFF" />
+                                           Foreground="{StaticResource TextPrimaryBrush}" />
                                 <TextBlock Text="{Binding UserRole}"
                                            FontSize="10"
-                                           Foreground="#607D8B" />
+                                           Foreground="{StaticResource TextTertiary}" />
                             </StackPanel>
                             <PathIcon Width="12" Height="12"
-                                      Foreground="#607D8B"
+                                      Foreground="{StaticResource TextTertiary}"
                                       Data="M7,10L12,15L17,10H7Z" />
                         </StackPanel>
                     </Button>
