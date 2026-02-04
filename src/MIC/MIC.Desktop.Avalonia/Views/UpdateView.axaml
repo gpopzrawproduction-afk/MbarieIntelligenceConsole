@@ -1,0 +1,188 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MIC.Desktop.Avalonia.ViewModels"
+             mc:Ignorable="d"
+             x:Class="MIC.Desktop.Avalonia.Views.UpdateView"
+             x:DataType="vm:UpdateViewModel"
+             Background="#0F172A">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="24">
+            <StackPanel Spacing="16">
+                <!-- Page Header -->
+                <StackPanel Spacing="8" Margin="0,0,0,8">
+                    <TextBlock Text="SOFTWARE UPDATES"
+                               Classes="title"
+                               Foreground="{StaticResource PrimaryGoldBrush}" />
+                    <TextBlock Text="Keep your application up to date with the latest features and security improvements"
+                               Classes="subtitle" />
+                </StackPanel>
+
+                <!-- Current Version Info -->
+                <Border Classes="glass-card-premium" Padding="20">
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="Current Version"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}" />
+
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <TextBlock Text="{Binding CurrentVersion}"
+                                       FontSize="24"
+                                       FontWeight="Bold"
+                                       Foreground="{StaticResource PrimaryGoldBrush}" />
+
+                            <Button Content="Check for Updates"
+                                    Command="{Binding CheckForUpdatesCommand}"
+                                    IsEnabled="{Binding !IsCheckingForUpdates}"
+                                    Classes="golden"
+                                    Width="140"
+                                    Height="32" />
+                        </StackPanel>
+
+                        <!-- Loading Indicator -->
+                        <Border CornerRadius="8"
+                                Padding="12"
+                                IsVisible="{Binding IsCheckingForUpdates}"
+                                Background="{StaticResource BackgroundDeepBrush}">
+                            <StackPanel Spacing="8" HorizontalAlignment="Center" Orientation="Horizontal">
+                                <ProgressBar IsIndeterminate="True"
+                                             Width="20"
+                                             Height="20" />
+                                <TextBlock Text="Checking for updates..."
+                                           FontSize="13"
+                                           Foreground="{StaticResource TextMutedBrush}" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- Update Available Card -->
+                <Border Classes="glass-card-premium"
+                        Padding="20"
+                        IsVisible="{Binding UpdateAvailable}">
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="Update Available!"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource SuccessBrush}" />
+
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <TextBlock Text="Latest Version:"
+                                       FontSize="14"
+                                       Foreground="{StaticResource TextSecondaryBrush}" />
+                            <TextBlock Text="{Binding LatestVersion}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource PrimaryGoldBrush}" />
+                        </StackPanel>
+
+                        <!-- Required Update Warning -->
+                        <Border Background="{StaticResource ErrorLightBrush}"
+                                CornerRadius="6"
+                                Padding="10"
+                                IsVisible="{Binding IsUpdateRequired}">
+                            <TextBlock Text="⚠️ This is a required update for security or critical bug fixes"
+                                       Foreground="{StaticResource ErrorBrush}"
+                                       FontSize="13"
+                                       TextWrapping="Wrap" />
+                        </Border>
+
+                        <!-- Release Notes -->
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="What's New:"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" />
+
+                            <Border Background="{StaticResource BackgroundDeepBrush}"
+                                    CornerRadius="6"
+                                    Padding="12">
+                                <TextBlock Text="{Binding ReleaseNotes}"
+                                           FontSize="13"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           TextWrapping="Wrap" />
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Download Progress -->
+                        <Border CornerRadius="8"
+                                Padding="12"
+                                IsVisible="{Binding IsDownloading}"
+                                Background="{StaticResource BackgroundDeepBrush}">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Downloading update..."
+                                           FontSize="13"
+                                           Foreground="{StaticResource TextPrimaryBrush}" />
+
+                                <ProgressBar Value="{Binding DownloadProgress}"
+                                             Height="6"
+                                             Foreground="{StaticResource PrimaryGoldBrush}" />
+
+                                <TextBlock Text="{Binding DownloadProgress, StringFormat='Progress: {0:F1}%'}"
+                                           FontSize="12"
+                                           Foreground="{StaticResource TextMutedBrush}"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Action Buttons -->
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Button Content="Download &amp; Install"
+                                    Command="{Binding DownloadUpdateCommand}"
+                                    IsEnabled="{Binding !IsDownloading}"
+                                    Classes="golden"
+                                    Width="160"
+                                    Height="36" />
+
+                            <Button Content="Skip This Update"
+                                    Command="{Binding SkipUpdateCommand}"
+                                    IsVisible="{Binding !IsUpdateRequired}"
+                                    Classes="secondary"
+                                    Width="140"
+                                    Height="36" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Status Message -->
+                <Border CornerRadius="8"
+                        Padding="12"
+                        IsVisible="{Binding !!StatusMessage}"
+                        Background="{Binding UpdateAvailable, Converter={StaticResource BoolToBrushConverter}, ConverterParameter=SuccessLightBrush|BackgroundDeepBrush}">
+                    <TextBlock Text="{Binding StatusMessage}"
+                               FontSize="13"
+                               Foreground="{Binding UpdateAvailable, Converter={StaticResource BoolToBrushConverter}, ConverterParameter=SuccessBrush|TextPrimaryBrush}"
+                               TextWrapping="Wrap" />
+                </Border>
+
+                <!-- No Updates Available -->
+                <Border Classes="glass-card-premium"
+                        Padding="40"
+                        IsVisible="{Binding !UpdateAvailable}">
+                    <StackPanel Spacing="12" HorizontalAlignment="Center">
+                        <TextBlock Text="✅"
+                                   FontSize="48"
+                                   HorizontalAlignment="Center" />
+
+                        <TextBlock Text="You're up to date!"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   HorizontalAlignment="Center" />
+
+                        <TextBlock Text="You have the latest version of MIC installed"
+                                   FontSize="13"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+
+</UserControl>

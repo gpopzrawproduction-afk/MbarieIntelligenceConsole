@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -18,6 +18,7 @@ using MIC.Desktop.Avalonia.Views;
 using MIC.Desktop.Avalonia.Views.Dialogs;
 using ReactiveUI;
 using Serilog;
+using RxUnit = System.Reactive.Unit;
 
 namespace MIC.Desktop.Avalonia.ViewModels;
 
@@ -247,9 +248,9 @@ public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
                 CurrentView = new KnowledgeBaseView
                 {
                     DataContext = new KnowledgeBaseViewModel(
-                        _serviceProvider.GetRequiredService<IKnowledgeBaseService>(),
-                        _sessionService,
                         _serviceProvider.GetRequiredService<IMediator>(),
+                        _sessionService,
+                        _serviceProvider.GetRequiredService<IKnowledgeBaseService>(),
                         _serviceProvider.GetRequiredService<Microsoft.Extensions.Logging.ILogger<KnowledgeBaseViewModel>>())
                 };
                 CurrentViewName = "Knowledge Base";
@@ -260,6 +261,21 @@ public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
                 _logger.Error(ex, "Failed to navigate to Knowledge Base");
             }
         }, canExecute);
+
+        NavigateToUpdatesCommand = ReactiveCommand.Create(() =>
+        {
+            try
+            {
+                CurrentView = new UpdateView { DataContext = _serviceProvider.GetRequiredService<UpdateViewModel>() };
+                CurrentViewName = "Updates";
+                _logger.Information("Navigated to Updates");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Failed to navigate to Updates");
+            }
+        }, canExecute);
+
         NewChatCommand = ReactiveCommand.CreateFromTask(async () =>
         {
             try
@@ -284,7 +300,7 @@ public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
                 NavigateTo("Email");
                 if (CurrentView is EmailInboxViewModel email)
                 {
-                    email.ComposeCommand.Execute().Subscribe();
+                    email.ComposeCommand.Execute(RxUnit.Default);
                 }
                 _logger.Information("New email initiated");
             }
@@ -301,7 +317,7 @@ public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
                 NavigateTo("Metrics");
                 if (CurrentView is MetricsDashboardViewModel metrics)
                 {
-                    metrics.ExportCommand.Execute().Subscribe();
+                    metrics.ExportCommand.Execute(RxUnit.Default);
                 }
                 _logger.Information("Metrics export initiated");
             }
@@ -318,7 +334,7 @@ public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
                 NavigateTo("Predictions");
                 if (CurrentView is PredictionsViewModel predictions)
                 {
-                    predictions.ExportCommand.Execute().Subscribe();
+                    predictions.ExportPredictionsCommand.Execute(RxUnit.Default);
                 }
                 _logger.Information("Predictions export initiated");
             }
@@ -470,6 +486,7 @@ public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
     public bool IsMetricsActive => CurrentViewName == "Metrics";
     public bool IsPredictionsActive => CurrentViewName == "Predictions";
     public bool IsKnowledgeBaseActive => CurrentViewName == "Knowledge Base";
+    public bool IsUpdatesActive => CurrentViewName == "Updates";
     public bool IsAIChatActive => CurrentViewName == "AI Chat";
     public bool IsSettingsActive => CurrentViewName == "Settings";
     public bool IsEmailActive => CurrentViewName == "Email";
@@ -518,6 +535,7 @@ public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
     public ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit> NavigateToPredictionsCommand { get; }
     public ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit> NavigateToSettingsCommand { get; }
     public ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit> NavigateToKnowledgeBaseCommand { get; }
+    public ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit> NavigateToUpdatesCommand { get; }
     public ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit> OpenCommandPaletteCommand { get; private set; }
     public ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit> UserMenuCommand { get; private set; }
     public ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit> NotificationsCommand { get; private set; }
@@ -659,7 +677,7 @@ public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         NavigateTo("AI Chat");
         if (CurrentView is ChatViewModel chat)
         {
-            chat.ClearChatCommand.Execute().Subscribe();
+            chat.ClearChatCommand.Execute(RxUnit.Default);
         }
 
         return Task.CompletedTask;
@@ -670,7 +688,7 @@ public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         NavigateTo("Email");
         if (CurrentView is EmailInboxViewModel email)
         {
-            email.ComposeCommand.Execute().Subscribe();
+            email.ComposeCommand.Execute(RxUnit.Default);
         }
     }
 
@@ -679,7 +697,7 @@ public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         NavigateTo("Metrics");
         if (CurrentView is MetricsDashboardViewModel metrics)
         {
-            metrics.ExportCommand.Execute().Subscribe();
+            metrics.ExportCommand.Execute(RxUnit.Default);
         }
     }
 
@@ -688,7 +706,7 @@ public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         NavigateTo("Predictions");
         if (CurrentView is PredictionsViewModel predictions)
         {
-            predictions.ExportCommand.Execute().Subscribe();
+            predictions.ExportPredictionsCommand.Execute(RxUnit.Default);
         }
     }
 
@@ -697,22 +715,22 @@ public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         switch (CurrentView)
         {
             case DashboardViewModel dashboard:
-                dashboard.RefreshCommand.Execute().Subscribe();
+                dashboard.RefreshCommand.Execute(RxUnit.Default);
                 break;
             case AlertListViewModel alerts:
-                alerts.RefreshCommand.Execute().Subscribe();
+                alerts.RefreshCommand.Execute(RxUnit.Default);
                 break;
             case MetricsDashboardViewModel metrics:
-                metrics.RefreshCommand.Execute().Subscribe();
+                metrics.RefreshCommand.Execute(RxUnit.Default);
                 break;
             case PredictionsViewModel predictions:
-                predictions.RefreshCommand.Execute().Subscribe();
+                predictions.RefreshCommand.Execute(RxUnit.Default);
                 break;
             case EmailInboxViewModel email:
-                email.RefreshCommand.Execute().Subscribe();
+                email.RefreshCommand.Execute(RxUnit.Default);
                 break;
             case ChatViewModel chat:
-                chat.ClearChatCommand.Execute().Subscribe();
+                chat.ClearChatCommand.Execute(RxUnit.Default);
                 break;
         }
     }
@@ -907,9 +925,9 @@ public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         var knowledgeBaseService = serviceProvider.GetRequiredService<IKnowledgeBaseService>();
 
         var viewModel = new KnowledgeBaseViewModel(
-            knowledgeBaseService,
-            _sessionService,
             serviceProvider.GetRequiredService<IMediator>(),
+            _sessionService,
+            knowledgeBaseService,
             serviceProvider.GetRequiredService<Microsoft.Extensions.Logging.ILogger<KnowledgeBaseViewModel>>());
 
         return new KnowledgeBaseView

@@ -3,6 +3,8 @@ using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Threading.Tasks;
 using MIC.Core.Application.Common.Interfaces;
+using System.IO;
+using System.Collections.Generic;
 
 namespace MIC.Core.Application.KnowledgeBase.Commands.UploadDocument
 {
@@ -25,27 +27,54 @@ namespace MIC.Core.Application.KnowledgeBase.Commands.UploadDocument
             {
                 _logger.LogInformation("Uploading document {FileName} for user {UserId}", request.FileName, request.UserId);
 
+                // Extract text content from the file
+                string extractedContent = ExtractTextContent(request.Content, request.ContentType, request.FileName);
+
                 var entry = new KnowledgeEntry
                 {
-                    UserId = request.UserId,
                     Title = request.FileName,
-                    Content = $"Uploaded document ({request.FileSize} bytes)",
+                    Content = extractedContent.Length > 500 ? extractedContent.Substring(0, 500) + "..." : extractedContent,
+                    FullContent = extractedContent,
                     SourceType = "Document",
-                    Tags = new System.Collections.Generic.List<string> { "upload" },
-                    CreatedAt = System.DateTime.UtcNow,
-                    UpdatedAt = System.DateTime.UtcNow
+                    SourceId = Guid.NewGuid(), // Document doesn't have a source ID yet
+                    UserId = request.UserId,
+                    Tags = new List<string> { "document", "upload", Path.GetExtension(request.FileName).TrimStart('.') },
+                    FilePath = request.FileName,
+                    FileSize = request.FileSize,
+                    ContentType = request.ContentType
                 };
 
-                await _knowledgeBaseService.CreateEntryAsync(entry);
+                await _knowledgeBaseService.CreateEntryAsync(entry, cancellationToken);
 
                 _logger.LogInformation("Document {FileName} uploaded successfully for user {UserId}", request.FileName, request.UserId);
 
                 return Result.Success();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error uploading document {FileName} for user {UserId}", request.FileName, request.UserId);
                 return Result.Failure($"Upload failed: {ex.Message}");
+            }
+        }
+
+        private string ExtractTextContent(byte[] content, string contentType, string fileName)
+        {
+            try
+            {
+                var extension = Path.GetExtension(fileName).ToLowerInvariant();
+
+                // For text files, try to extract text
+                if (extension is ".txt" or ".md" or ".csv")
+                {
+                    return System.Text.Encoding.UTF8.GetString(content);
+                }
+
+                // For other files, return a placeholder
+                return $"Document uploaded: {fileName} ({contentType}, {content.Length} bytes)";
+            }
+            catch
+            {
+                return $"Document uploaded: {fileName} ({contentType}, {content.Length} bytes)";
             }
         }
     }

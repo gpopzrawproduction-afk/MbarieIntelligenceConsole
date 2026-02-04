@@ -369,7 +369,7 @@
                                 CanUserResize="False">
             <DataGridTemplateColumn.CellTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding AttachmentCount}"
+                    <TextBlock Text="{Binding Attachments.Count}"
                                Foreground="#38BDF8"
                                FontWeight="Medium"
                                FontSize="12"
@@ -459,6 +459,44 @@
 
                     <!-- AI Intelligence Panel -->
                     <StackPanel IsVisible="{Binding SelectedEmail, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        
+                        <!-- Email Content Header -->
+                        <Border Background="#15FFFFFF"
+                                CornerRadius="8"
+                                Padding="16"
+                                Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="{Binding SelectedEmail.Subject}"
+                                           FontSize="16"
+                                           FontWeight="SemiBold"
+                                           Foreground="#F8FAFC"
+                                           TextWrapping="Wrap"
+                                           Margin="0,0,0,8" />
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" 
+                                               Text="{Binding SelectedEmail.SenderDisplay}"
+                                               Foreground="#00E5FF"
+                                               FontSize="14" />
+                                    <TextBlock Grid.Column="1" 
+                                               Text="{Binding SelectedEmail.TimeAgo}"
+                                               Foreground="#94A3B8"
+                                               FontSize="12" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Email Body -->
+                        <Border Background="#10FFFFFF"
+                                CornerRadius="8"
+                                Padding="16"
+                                Margin="0,0,0,16">
+                            <ScrollViewer MaxHeight="300">
+                                <TextBlock Text="{Binding SelectedEmail.BodyText}"
+                                           FontSize="13"
+                                           Foreground="#B0BEC5"
+                                           TextWrapping="Wrap" />
+                            </ScrollViewer>
+                        </Border>
                         
                         <TextBlock Text="AI INTELLIGENCE"
                                    FontSize="10"

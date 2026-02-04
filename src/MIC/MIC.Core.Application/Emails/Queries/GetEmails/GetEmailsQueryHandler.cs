@@ -29,6 +29,40 @@ public class GetEmailsQueryHandler : IRequestHandler<GetEmailsQuery, ErrorOr<IRe
             request.Take,
             cancellationToken);
 
+        // Apply additional filtering
+        if (request.Category.HasValue)
+        {
+            emails = emails.Where(e => e.AICategory == request.Category.Value).ToList();
+        }
+
+        if (request.Priority.HasValue)
+        {
+            emails = emails.Where(e => e.AIPriority == request.Priority.Value).ToList();
+        }
+
+        if (request.IsFlagged.HasValue)
+        {
+            emails = emails.Where(e => e.IsFlagged == request.IsFlagged.Value).ToList();
+        }
+
+        if (request.RequiresResponse.HasValue)
+        {
+            emails = emails.Where(e => e.RequiresResponse == request.RequiresResponse.Value).ToList();
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+        {
+            var searchText = request.SearchText.ToLowerInvariant();
+            emails = emails.Where(e =>
+                e.Subject.ToLowerInvariant().Contains(searchText) ||
+                e.FromName.ToLowerInvariant().Contains(searchText) ||
+                e.FromAddress.ToLowerInvariant().Contains(searchText) ||
+                e.BodyPreview?.ToLowerInvariant().Contains(searchText) == true ||
+                e.AISummary?.ToLowerInvariant().Contains(searchText) == true ||
+                e.ExtractedKeywords.Any(k => k.ToLowerInvariant().Contains(searchText))
+            ).ToList();
+        }
+
         // Map to DTOs
         var dtos = emails.Select(e => new EmailDto
         {

@@ -1,4 +1,5 @@
 using MIC.Core.Domain.Entities;
+using MIC.Core.Domain.Abstractions;
 
 namespace MIC.Core.Application.Common.Interfaces
 {
@@ -68,17 +69,30 @@ namespace MIC.Core.Application.Common.Interfaces
     /// <summary>
     /// Represents an entry in the knowledge base
     /// </summary>
-    public class KnowledgeEntry
+    public class KnowledgeEntry : BaseEntity
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
         public Guid UserId { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
+        public string FullContent { get; set; } = string.Empty;
         public string SourceType { get; set; } = string.Empty; // Email, Attachment, etc.
         public Guid SourceId { get; set; } // ID of the source entity
         public List<string> Tags { get; set; } = new();
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        public string? AISummary { get; set; }
         public double RelevanceScore { get; set; } = 0.0;
+        public DateTime? LastAccessed { get; set; }
+        public string? FilePath { get; set; }
+        public long? FileSize { get; set; }
+        public string? ContentType { get; set; }
+
+        public void UpdateAccessTime()
+        {
+            LastAccessed = DateTime.UtcNow;
+        }
+
+        public void UpdateRelevanceScore(double score)
+        {
+            RelevanceScore = score;
+        }
     }
 }

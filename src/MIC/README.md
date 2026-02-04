@@ -94,8 +94,20 @@ dotnet test --collect:"XPlat Code Coverage"
 ### AI Capabilities
 - **Email Analysis**: Priority detection, sentiment analysis, action item extraction
 - **Chat Assistant**: Context-aware conversations with business data
-- **Predictive Analytics**: Trend analysis and anomaly detection
+- **Predictive Analytics**: AI-powered trend analysis, anomaly detection, and future forecasting
+- **Knowledge Base**: Document indexing and semantic search across uploaded files
 - **Automated Summarization**: Brief summaries of emails and reports
+- **Real-time Predictions**: Live forecasting of email trends, alert patterns, and system metrics
+
+### Predictions & Forecasting
+The MIC application now includes advanced AI-powered predictive analytics:
+
+- **Email Trend Forecasting**: Predict future email volumes and patterns using historical data
+- **Alert Pattern Analysis**: Identify emerging alert trends and potential issues before they occur
+- **Metric Anomaly Detection**: Automatically detect unusual patterns in system metrics
+- **Time Horizon Control**: Configure prediction timeframes (hours, days, weeks)
+- **Confidence Scoring**: Each prediction includes confidence levels and reasoning
+- **Real-time Updates**: Predictions refresh automatically as new data becomes available
 
 ## Configuration
 

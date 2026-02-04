@@ -11,9 +11,10 @@ namespace MIC.Infrastructure.Data.Services;
 
 public partial class RealEmailSyncService
 {
-    public async Task<SyncResult> SyncHistoricalEmailsAsync(
+    public async Task<MIC.Core.Application.Common.Interfaces.IEmailSyncService.HistoricalSyncResult> SyncHistoricalEmailsAsync(
         Guid userId,
         MIC.Core.Domain.Settings.EmailSyncSettings settings,
+        IProgress<MIC.Core.Application.Common.Interfaces.IEmailSyncService.SyncProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
         try
@@ -21,10 +22,11 @@ public partial class RealEmailSyncService
             _logger.LogInformation("Starting historical email sync for user {UserId}, {Months} months",
                 userId, settings.HistoryMonths);
 
-            var syncResult = new SyncResult
+            var syncResult = new MIC.Core.Application.Common.Interfaces.IEmailSyncService.HistoricalSyncResult
             {
                 StartTime = DateTimeOffset.UtcNow,
-                UserId = userId
+                UserId = userId,
+                Status = MIC.Core.Application.Common.Interfaces.IEmailSyncService.SyncStatus.NotStarted
             };
 
             // Get user's email accounts
@@ -33,7 +35,8 @@ public partial class RealEmailSyncService
             if (accounts == null || !accounts.Any())
             {
                 _logger.LogWarning("No email accounts configured for user {UserId}", userId);
-                syncResult.Status = SyncStatus.NoAccountsConfigured;
+                syncResult.Status = MIC.Core.Application.Common.Interfaces.IEmailSyncService.SyncStatus.NoAccountsConfigured;
+                syncResult.EndTime = DateTimeOffset.UtcNow;
                 return syncResult;
             }
 

@@ -8,11 +8,13 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using MIC.Core.Application.Common.Interfaces;
 using ReactiveUI;
+using System.Reactive.Linq;
 using MIC.Core.Application.KnowledgeBase.Commands.UploadDocument;
 
 namespace MIC.Desktop.Avalonia.ViewModels;
@@ -22,7 +24,75 @@ namespace MIC.Desktop.Avalonia.ViewModels;
 /// </summary>
 public class KnowledgeBaseViewModel : ViewModelBase
 {
+    private readonly IMediator _mediator;
+    private readonly ISessionService _sessionService;
+    private readonly IKnowledgeBaseService _knowledgeBaseService;
+    private readonly ILogger<KnowledgeBaseViewModel> _logger;
+
+    public KnowledgeBaseViewModel(
+        IMediator mediator,
+        ISessionService sessionService,
+        IKnowledgeBaseService knowledgeBaseService,
+        ILogger<KnowledgeBaseViewModel> logger)
+    {
+        _mediator = mediator;
+        _sessionService = sessionService;
+        _knowledgeBaseService = knowledgeBaseService;
+        _logger = logger;
+
+        UploadDocumentsCommand = ReactiveCommand.CreateFromTask(UploadDocumentAsync);
+        LoadEntriesCommand = ReactiveCommand.CreateFromTask(LoadDocumentsAsync);
+        SearchCommand = ReactiveCommand.CreateFromTask<string>(PerformSearchAsync);
+
+        // Set up reactive search with debouncing
+        this.WhenAnyValue(x => x.SearchText)
+            .Throttle(TimeSpan.FromMilliseconds(500))
+            .Where(searchText => !string.IsNullOrWhiteSpace(searchText))
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(async searchText =>
+            {
+                await PerformSearchAsync(searchText);
+            });
+    }
+
     public ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit> UploadDocumentsCommand { get; }
+    public ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit> LoadEntriesCommand { get; }
+    public ReactiveCommand<string, System.Reactive.Unit> SearchCommand { get; }
+
+    private ObservableCollection<KnowledgeEntryViewModel> _entries = new();
+    public ObservableCollection<KnowledgeEntryViewModel> Entries
+    {
+        get => _entries;
+        set => this.RaiseAndSetIfChanged(ref _entries, value);
+    }
+
+    private string _searchText = string.Empty;
+    public string SearchText
+    {
+        get => _searchText;
+        set => this.RaiseAndSetIfChanged(ref _searchText, value);
+    }
+
+    private bool _isLoading;
+    public bool IsLoading
+    {
+        get => _isLoading;
+        set => this.RaiseAndSetIfChanged(ref _isLoading, value);
+    }
+
+    private string _successMessage = string.Empty;
+    public string SuccessMessage
+    {
+        get => _successMessage;
+        set => this.RaiseAndSetIfChanged(ref _successMessage, value);
+    }
+
+    private string _errorMessage = string.Empty;
+    public string ErrorMessage
+    {
+        get => _errorMessage;
+        set => this.RaiseAndSetIfChanged(ref _errorMessage, value);
+    }
 
     private async Task UploadDocumentAsync()
     {
@@ -191,62 +261,6 @@ public class KnowledgeBaseViewModel : ViewModelBase
 
     private const int _maxFiles = 50;
     private const long _maxFileSizeBytes = 150 * 1024 * 1024; // 150MB
-    private string _successMessage = string.Empty;
-    private string _errorMessage = string.Empty;
-
-    public string SuccessMessage
-    {
-        get => _successMessage;
-        set => this.RaiseAndSetIfChanged(ref _successMessage, value);
-    }
-
-    public string ErrorMessage
-    {
-        get => _errorMessage;
-        set => this.RaiseAndSetIfChanged(ref _errorMessage, value);
-    }
-
-    private readonly IKnowledgeBaseService _knowledgeBaseService;
-    private readonly ISessionService _sessionService;
-    private readonly IMediator _mediator;
-    private readonly ILogger<KnowledgeBaseViewModel> _logger;
-    private bool _isLoading;
-    private string _searchText = string.Empty;
-    private ObservableCollection<KnowledgeEntryViewModel> _entries = new();
-
-    public KnowledgeBaseViewModel(
-        IKnowledgeBaseService knowledgeBaseService,
-        ISessionService sessionService,
-        IMediator mediator,
-        ILogger<KnowledgeBaseViewModel> logger)
-    {
-        _knowledgeBaseService = knowledgeBaseService ?? throw new ArgumentNullException(nameof(knowledgeBaseService));
-        _sessionService = sessionService ?? throw new ArgumentNullException(nameof(sessionService));
-        _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-        Entries = new ObservableCollection<KnowledgeEntryViewModel>();
-
-        UploadDocumentsCommand = ReactiveCommand.CreateFromTask(UploadDocumentAsync);
-    }
-
-    public bool IsLoading
-    {
-        get => _isLoading;
-        private set => this.RaiseAndSetIfChanged(ref _isLoading, value);
-    }
-
-    public string SearchText
-    {
-        get => _searchText;
-        set => this.RaiseAndSetIfChanged(ref _searchText, value);
-    }
-
-    public ObservableCollection<KnowledgeEntryViewModel> Entries
-    {
-        get => _entries;
-        private set => this.RaiseAndSetIfChanged(ref _entries, value);
-    }
 
     public async Task LoadDocumentsAsync()
     {
@@ -286,10 +300,44 @@ public class KnowledgeBaseViewModel : ViewModelBase
         }
     }
 
-    public async Task LoadEntriesAsync()
+    public async Task PerformSearchAsync(string searchText)
     {
-        await LoadDocumentsAsync();
+        try
+        {
+            IsLoading = true;
+            var user = _sessionService.GetUser();
+            if (user.Id == Guid.Empty)
+            {
+                Entries.Clear();
+                return;
+            }
+
+            var results = await _knowledgeBaseService.SearchAsync(searchText, user.Id);
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Entries.Clear();
+                foreach (var entry in results)
+                {
+                    Entries.Add(new KnowledgeEntryViewModel
+                    {
+                        Title = entry.Title,
+                        Content = entry.Content,
+                        Tags = string.Join(", ", entry.Tags),
+                        CreatedAt = entry.CreatedAt
+                    });
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to search knowledge base documents: {SearchText}", searchText);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
+
 }
 
 public class KnowledgeEntryViewModel : ViewModelBase

@@ -23,30 +23,25 @@ namespace MIC.Infrastructure.Data.Services
         /// </summary>
         public async Task IndexAttachmentAsync(EmailAttachment attachment, CancellationToken cancellationToken = default)
         {
-            // Create knowledge entry from attachment
-            var knowledgeEntry = new KnowledgeEntry
-            {
-                UserId = attachment.EmailMessageId, // This needs to be corrected to get the actual user ID
-                Title = attachment.FileName,
-                Content = attachment.ExtractedText ?? string.Empty,
-                SourceType = "EmailAttachment",
-                SourceId = attachment.Id,
-                Tags = new List<string> { "attachment", attachment.Type.ToString(), "email-content" },
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                RelevanceScore = 0.8 // Default relevance for attachments
-            };
-
             // Get the email message to retrieve the actual user ID
             var emailMessage = await _dbContext.EmailMessages
                 .Where(em => em.Attachments.Any(a => a.Id == attachment.Id))
                 .Select(em => new { em.UserId })
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (emailMessage != null)
+            if (emailMessage == null) return;
+
+            // Create knowledge entry from attachment
+            var knowledgeEntry = new KnowledgeEntry
             {
-                knowledgeEntry.UserId = emailMessage.UserId;
-            }
+                Title = attachment.FileName,
+                Content = attachment.ExtractedText ?? string.Empty,
+                FullContent = attachment.ExtractedText ?? string.Empty,
+                SourceType = "EmailAttachment",
+                SourceId = attachment.Id,
+                UserId = emailMessage.UserId,
+                Tags = new List<string> { "attachment", attachment.Type.ToString(), "email-content" }
+            };
 
             // Add to knowledge base
             await _dbContext.KnowledgeEntries.AddAsync(knowledgeEntry, cancellationToken);
@@ -58,40 +53,40 @@ namespace MIC.Infrastructure.Data.Services
         /// </summary>
         public async Task IndexEmailAsync(EmailMessage emailMessage, CancellationToken cancellationToken = default)
         {
-            // Create knowledge entry from email
-            var knowledgeEntry = new KnowledgeEntry
-            {
-                UserId = emailMessage.UserId,
-                Title = emailMessage.Subject,
-                Content = emailMessage.BodyText,
-                SourceType = "EmailMessage",
-                SourceId = emailMessage.Id,
-                Tags = new List<string>(),
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                RelevanceScore = 0.7 // Default relevance for emails
-            };
+            var tags = new List<string>();
 
             // Add AI-derived tags
             if (emailMessage.AICategory != EmailCategory.General)
             {
-                knowledgeEntry.Tags.Add(emailMessage.AICategory.ToString().ToLower());
+                tags.Add(emailMessage.AICategory.ToString().ToLower());
             }
 
             if (emailMessage.AIPriority != EmailPriority.Normal)
             {
-                knowledgeEntry.Tags.Add(emailMessage.AIPriority.ToString().ToLower());
+                tags.Add(emailMessage.AIPriority.ToString().ToLower());
             }
 
             if (emailMessage.ContainsActionItems)
             {
-                knowledgeEntry.Tags.Add("action-items");
+                tags.Add("action-items");
             }
 
             if (emailMessage.RequiresResponse)
             {
-                knowledgeEntry.Tags.Add("requires-response");
+                tags.Add("requires-response");
             }
+
+            // Create knowledge entry from email
+            var knowledgeEntry = new KnowledgeEntry
+            {
+                Title = emailMessage.Subject,
+                Content = emailMessage.BodyPreview ?? emailMessage.BodyText,
+                FullContent = emailMessage.BodyText,
+                SourceType = "EmailMessage",
+                SourceId = emailMessage.Id,
+                UserId = emailMessage.UserId,
+                Tags = tags
+            };
 
             // Add to knowledge base
             await _dbContext.KnowledgeEntries.AddAsync(knowledgeEntry, cancellationToken);
@@ -143,13 +138,8 @@ namespace MIC.Infrastructure.Data.Services
         /// </summary>
         public async Task<KnowledgeEntry> CreateEntryAsync(KnowledgeEntry entry, CancellationToken cancellationToken = default)
         {
-            entry.Id = Guid.NewGuid();
-            entry.CreatedAt = DateTime.UtcNow;
-            entry.UpdatedAt = DateTime.UtcNow;
-
             await _dbContext.KnowledgeEntries.AddAsync(entry, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
-
             return entry;
         }
 
@@ -166,7 +156,7 @@ namespace MIC.Infrastructure.Data.Services
                 existingEntry.Title = updatedEntry.Title;
                 existingEntry.Content = updatedEntry.Content;
                 existingEntry.Tags = updatedEntry.Tags;
-                existingEntry.UpdatedAt = DateTime.UtcNow;
+                existingEntry.MarkAsModified(null); // Set modification timestamp
 
                 _dbContext.KnowledgeEntries.Update(existingEntry);
                 await _dbContext.SaveChangesAsync(cancellationToken);

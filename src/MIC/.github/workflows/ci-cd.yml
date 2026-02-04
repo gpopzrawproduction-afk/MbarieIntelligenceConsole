@@ -203,7 +203,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build, integration-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -230,3 +230,60 @@ jobs:
         with:
           name: desktop-app
           path: ./src/MIC/publish/desktop
+
+  package-msix:
+    name: Package MSIX
+    runs-on: windows-latest
+    needs: [publish]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Download published artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: desktop-app
+          path: ./publish/desktop
+
+      - name: Create MSIX Package
+        run: |
+          # Create mapping file for MSIX packaging
+          @"
+          [Files]
+          "MIC.Desktop.Avalonia.exe" "MIC.Desktop.Avalonia.exe"
+          "MIC.Desktop.Avalonia.dll" "MIC.Desktop.Avalonia.dll"
+          "MIC.Desktop.Avalonia.runtimeconfig.json" "MIC.Desktop.Avalonia.runtimeconfig.json"
+          "*.dll" "*.dll"
+          "*.json" "*.json"
+          "*.config" "*.config"
+          @"
+          | Out-File -FilePath "mapping.txt" -Encoding UTF8
+
+          # Package into MSIX
+          MakeAppx pack /m MIC.Desktop.Avalonia/Package.appxmanifest /f mapping.txt /p MIC.Desktop.Avalonia.msix /o
+        working-directory: ./src/MIC
+
+      - name: Sign MSIX Package
+        run: |
+          # Create self-signed certificate for testing (replace with real cert in production)
+          $cert = New-SelfSignedCertificate -Type CodeSigningCert -Subject "CN=Mbarie Services Ltd" -KeyUsage DigitalSignature -KeyLength 2048 -CertStoreLocation "Cert:\CurrentUser\My"
+          $certPath = "cert.pfx"
+          $password = ConvertTo-SecureString -String "password123" -Force -AsPlainText
+          Export-PfxCertificate -Cert $cert -FilePath $certPath -Password $password
+
+          # Sign the package
+          signtool sign /fd SHA256 /a /f $certPath /p "password123" MIC.Desktop.Avalonia.msix
+        working-directory: ./src/MIC
+
+      - name: Upload MSIX Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: msix-package
+          path: ./src/MIC/MIC.Desktop.Avalonia.msix

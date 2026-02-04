@@ -1,0 +1,386 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Unit = System.Reactive.Unit;
+using System.Threading;
+using System.Threading.Tasks;
+using Avalonia.Threading;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+using ReactiveUI;
+using MIC.Core.Application.Metrics.Common;
+using MIC.Core.Application.Metrics.Queries.GetMetrics;
+using MIC.Core.Application.Metrics.Queries.GetMetricTrend;
+using MIC.Desktop.Avalonia.Services;
+
+namespace MIC.Desktop.Avalonia.ViewModels;
+
+/// <summary>
+/// ViewModel for AI-powered predictions and forecasting.
+/// </summary>
+public class PredictionsViewModel : ViewModelBase
+{
+    private readonly IMediator? _mediator;
+    private readonly MIC.Infrastructure.AI.Services.IPredictionService? _predictionService;
+    private bool _isLoading;
+    private string _selectedMetric = "Revenue";
+    private int _forecastDays = 30;
+    private double _confidenceLevel = 0.95;
+    private string _predictionSummary = string.Empty;
+
+    public PredictionsViewModel()
+    {
+        _mediator = Program.ServiceProvider?.GetService<IMediator>();
+        _predictionService = Program.ServiceProvider?.GetService<MIC.Infrastructure.AI.Services.IPredictionService>();
+
+        // Commands
+        GeneratePredictionCommand = ReactiveCommand.CreateFromTask(GeneratePredictionAsync);
+        RefreshCommand = ReactiveCommand.CreateFromTask(RefreshAsync);
+        ExportCommand = ReactiveCommand.CreateFromTask(ExportPredictionsAsync);
+
+        // Load initial data
+        _ = LoadPredictionsAsync();
+    }
+
+    #region Properties
+
+    public bool IsLoading
+    {
+        get => _isLoading;
+        set => this.RaiseAndSetIfChanged(ref _isLoading, value);
+    }
+
+    public string SelectedMetric
+    {
+        get => _selectedMetric;
+        set => this.RaiseAndSetIfChanged(ref _selectedMetric, value);
+    }
+
+    public int ForecastDays
+    {
+        get => _forecastDays;
+        set => this.RaiseAndSetIfChanged(ref _forecastDays, value);
+    }
+
+    public double ConfidenceLevel
+    {
+        get => _confidenceLevel;
+        set => this.RaiseAndSetIfChanged(ref _confidenceLevel, value);
+    }
+
+    public string PredictionSummary
+    {
+        get => _predictionSummary;
+        set => this.RaiseAndSetIfChanged(ref _predictionSummary, value);
+    }
+
+    public ObservableCollection<string> AvailableMetrics { get; } = new();
+
+    public ObservableCollection<PredictionItem> Predictions { get; } = new();
+    public ObservableCollection<PredictionDataPoint> ChartData { get; } = new();
+
+    #endregion
+
+    #region Commands
+
+    public ReactiveCommand<Unit, Unit> GeneratePredictionCommand { get; }
+    public ReactiveCommand<Unit, Unit> RefreshCommand { get; }
+    public ReactiveCommand<Unit, Unit> ExportCommand { get; }
+
+    #endregion
+
+    #region Methods
+
+    private async Task LoadPredictionsAsync()
+    {
+        await Dispatcher.UIThread.InvokeAsync(() => IsLoading = true);
+
+        try
+        {
+            if (_mediator == null)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    Predictions.Clear();
+                    ChartData.Clear();
+                    AvailableMetrics.Clear();
+                    PredictionSummary = "Prediction service is not available.";
+                });
+                return;
+            }
+
+            var metricsResult = await _mediator.Send(new GetMetricsQuery { LatestOnly = true, Take = 50 });
+            if (metricsResult.IsError || metricsResult.Value.Count == 0)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    Predictions.Clear();
+                    ChartData.Clear();
+                    AvailableMetrics.Clear();
+                    PredictionSummary = "No metrics available for predictions.";
+                });
+                return;
+            }
+
+            var metricNames = metricsResult.Value
+                .Select(m => m.MetricName)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                AvailableMetrics.Clear();
+                foreach (var name in metricNames)
+                {
+                    AvailableMetrics.Add(name);
+                }
+
+                if (!AvailableMetrics.Any(m => string.Equals(m, SelectedMetric, StringComparison.OrdinalIgnoreCase)))
+                {
+                    SelectedMetric = AvailableMetrics.FirstOrDefault() ?? SelectedMetric;
+                }
+            });
+
+            var predictionItems = new List<PredictionItem>();
+            foreach (var name in metricNames.Take(4))
+            {
+                // Try to use prediction service when available
+                if (_predictionService != null)
+                {
+                    try
+                    {
+                        var forecast = await _predictionService.GenerateForecastAsync(name, ForecastDays);
+                        var predictedValue = forecast.LastOrDefault()?.Value ?? 0.0;
+                        var currentValue = forecast.FirstOrDefault()?.Value ?? 0.0;
+                        var changePercentForecast = currentValue == 0 ? 0 : (predictedValue - currentValue) / Math.Abs(currentValue) * 100;
+
+                        predictionItems.Add(new PredictionItem
+                        {
+                            MetricName = name,
+                            CurrentValue = currentValue,
+                            PredictedValue = predictedValue,
+                            ChangePercent = changePercentForecast,
+                            Confidence = 0.85,
+                            Direction = changePercentForecast >= 0 ? "Up" : "Down",
+                            TimeFrame = $"{ForecastDays} days"
+                        });
+
+                        // Also populate chart data from forecast
+                        await Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            ChartData.Clear();
+                            foreach (var p in forecast)
+                            {
+                                ChartData.Add(new PredictionDataPoint
+                                {
+                                    Date = p.Date,
+                                    Value = p.Value,
+                                    LowerBound = p.LowerBound,
+                                    UpperBound = p.UpperBound,
+                                    IsPrediction = true
+                                });
+                            }
+                        });
+
+                        continue;
+                    }
+                    catch
+                    {
+                        // fallback to mediator-based approach
+                    }
+                }
+
+                var trendResult = await _mediator.Send(new GetMetricTrendQuery
+                {
+                    MetricName = name,
+                    Days = 30,
+                    IncludePredictions = false
+                });
+
+                if (trendResult.IsError)
+                {
+                    continue;
+                }
+
+                var trend = trendResult.Value;
+                var predicted = CalculateProjectedValue(trend, ForecastDays);
+                var changePercent = trend.CurrentValue == 0
+                    ? 0
+                    : (predicted - trend.CurrentValue) / trend.CurrentValue * 100;
+
+                predictionItems.Add(new PredictionItem
+                {
+                    MetricName = trend.MetricName,
+                    CurrentValue = trend.CurrentValue,
+                    PredictedValue = predicted,
+                    ChangePercent = changePercent,
+                    Confidence = Math.Clamp(ConfidenceLevel, 0.0, 1.0),
+                    Direction = changePercent >= 0 ? "Up" : "Down",
+                    TimeFrame = $"{ForecastDays} days"
+                });
+            }
+
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Predictions.Clear();
+                foreach (var prediction in predictionItems)
+                {
+                    Predictions.Add(prediction);
+                }
+            });
+
+            await GenerateChartDataAsync();
+
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                PredictionSummary = Predictions.Count == 0
+                    ? "No prediction data available."
+                    : $"Predictions generated from {Predictions.Count} metric(s) using recent historical data.";
+            });
+        }
+        finally
+        {
+            await Dispatcher.UIThread.InvokeAsync(() => IsLoading = false);
+        }
+    }
+
+    private async Task GenerateChartDataAsync()
+    {
+        if (_mediator == null)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() => ChartData.Clear());
+            return;
+        }
+
+        var trendResult = await _mediator.Send(new GetMetricTrendQuery
+        {
+            MetricName = SelectedMetric,
+            Days = 30,
+            IncludePredictions = false
+        });
+
+        if (trendResult.IsError)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() => ChartData.Clear());
+            return;
+        }
+
+        var trend = trendResult.Value;
+        var chartDataPoints = new List<PredictionDataPoint>();
+
+        foreach (var point in trend.DataPoints)
+        {
+            chartDataPoints.Add(new PredictionDataPoint
+            {
+                Date = point.Timestamp,
+                Value = point.Value,
+                IsPrediction = false
+            });
+        }
+
+        var lastDate = trend.DataPoints.LastOrDefault()?.Timestamp ?? DateTime.UtcNow;
+        var lastValue = trend.CurrentValue;
+        var deltaPerStep = trend.TrendSlope * trend.AverageValue;
+        var confidence = Math.Clamp(ConfidenceLevel, 0.0, 1.0);
+        var uncertainty = 1 - confidence;
+
+        for (int i = 1; i <= ForecastDays; i++)
+        {
+            var projected = lastValue + (deltaPerStep * i);
+            var lower = projected * (1 - uncertainty);
+            var upper = projected * (1 + uncertainty);
+
+            chartDataPoints.Add(new PredictionDataPoint
+            {
+                Date = lastDate.AddDays(i),
+                Value = projected,
+                LowerBound = lower,
+                UpperBound = upper,
+                IsPrediction = true
+            });
+        }
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            ChartData.Clear();
+            foreach (var point in chartDataPoints)
+            {
+                ChartData.Add(point);
+            }
+        });
+    }
+
+    private async Task GeneratePredictionAsync()
+    {
+        await LoadPredictionsAsync();
+    }
+
+    private async Task RefreshAsync()
+    {
+        await LoadPredictionsAsync();
+    }
+
+    private async Task ExportPredictionsAsync()
+    {
+        if (Predictions.Count == 0)
+        {
+            PredictionSummary = "No predictions to export.";
+            return;
+        }
+
+        var rows = Predictions.Select(p => new PredictionExportRow(
+            p.MetricName,
+            p.CurrentValue,
+            p.PredictedValue,
+            p.ChangePercent,
+            p.Confidence,
+            p.Direction,
+            p.TimeFrame));
+
+        var filepath = await ExportService.Instance.ExportPredictionsToPdfAsync(rows);
+        ExportService.Instance.OpenFile(filepath);
+        PredictionSummary = $"Predictions exported to {filepath}";
+    }
+
+    private static double CalculateProjectedValue(MetricTrendDto trend, int forecastDays)
+    {
+        var deltaPerStep = trend.TrendSlope * trend.AverageValue;
+        return trend.CurrentValue + (deltaPerStep * forecastDays);
+    }
+
+    #endregion
+}
+
+public class PredictionItem
+{
+    public string MetricName { get; set; } = string.Empty;
+    public double CurrentValue { get; set; }
+    public double PredictedValue { get; set; }
+    public double ChangePercent { get; set; }
+    public double Confidence { get; set; }
+    public string Direction { get; set; } = "Up";
+    public string TimeFrame { get; set; } = "30 days";
+
+    public string FormattedCurrent => CurrentValue >= 1000 
+        ? $"${CurrentValue:N0}" 
+        : $"{CurrentValue:F1}%";
+    public string FormattedPredicted => PredictedValue >= 1000 
+        ? $"${PredictedValue:N0}" 
+        : $"{PredictedValue:F1}%";
+    public string FormattedChange => ChangePercent >= 0 
+        ? $"+{ChangePercent:F1}%" 
+        : $"{ChangePercent:F1}%";
+    public string FormattedConfidence => $"{Confidence * 100:F0}%";
+    public bool IsPositive => (Direction == "Up" && ChangePercent > 0) || 
+                              (Direction == "Down" && ChangePercent < 0 && MetricName.Contains("Churn"));
+}
+
+public class PredictionDataPoint
+{
+    public DateTime Date { get; set; }
+    public double Value { get; set; }
+    public double? LowerBound { get; set; }
+    public double? UpperBound { get; set; }
+    public bool IsPrediction { get; set; }
+}

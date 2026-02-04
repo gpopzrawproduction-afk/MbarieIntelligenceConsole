@@ -137,6 +137,7 @@
                             <NativeMenuItem Header="Metrics" Gesture="Ctrl+5" Command="{Binding NavigateToMetricsCommand}"/>
                             <NativeMenuItem Header="Predictions" Gesture="Ctrl+6" Command="{Binding NavigateToPredictionsCommand}"/>
                             <NativeMenuItem Header="Knowledge Base" Gesture="Ctrl+7" Command="{Binding NavigateToKnowledgeBaseCommand}"/>
+                            <NativeMenuItem Header="Updates" Gesture="Ctrl+8" Command="{Binding NavigateToUpdatesCommand}"/>
                             <NativeMenuItemSeparator/>
                             <NativeMenuItem Header="Refresh" Gesture="F5" Command="{Binding RefreshCommand}"/>
                             <NativeMenuItem Header="Fullscreen" Gesture="F11" Command="{Binding ToggleFullscreenCommand}"/>
@@ -197,6 +198,9 @@
                                 Classes="nav-button"/>
                         <Button Content="📚 Knowledge Base" 
                                 Command="{Binding NavigateToKnowledgeBaseCommand}"
+                                Classes="nav-button"/>
+                        <Button Content="⬆️ Updates" 
+                                Command="{Binding NavigateToUpdatesCommand}"
                                 Classes="nav-button"/>
                         
                         <!-- System Section -->

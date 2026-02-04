@@ -6,6 +6,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Win32;
 using MIC.Core.Application;
 using MIC.Core.Application.Common.Interfaces;
+using MIC.Core.Intelligence.Predictions;
 using MIC.Desktop.Avalonia.ViewModels;
 using MIC.Desktop.Avalonia.Services;
 using MIC.Infrastructure.AI;
@@ -161,6 +162,17 @@ namespace MIC.Desktop.Avalonia
         // Register NavigationService
         services.AddSingleton<INavigationService, NavigationService>();
 
+        // Register UpdateService
+        services.AddHttpClient<UpdateService>();
+        services.AddSingleton<UpdateService>();
+
+        // Register Predictive Analytics Service
+        services.AddTransient<IPredictiveAnalyticsService, PredictiveAnalyticsService>();
+
+        // Initialize Application Insights
+        var appInsightsKey = configuration["ApplicationInsights:InstrumentationKey"];
+        MIC.Infrastructure.Monitoring.Telemetry.InitializeApplicationInsights(appInsightsKey);
+
         services.AddSingleton<MainWindowViewModel>();
         services.AddSingleton<LoginViewModel>();
         
@@ -177,6 +189,7 @@ namespace MIC.Desktop.Avalonia
         services.AddTransient<UserProfileViewModel>();
         services.AddTransient<CommandPaletteViewModel>();
         services.AddTransient<AddEmailAccountViewModel>(); // Added for email account setup
+        services.AddTransient<UpdateViewModel>(); // Added for application updates
 
         // Add logging
         services.AddLogging(builder =>

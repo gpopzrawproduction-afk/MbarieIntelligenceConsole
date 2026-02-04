@@ -60,28 +60,66 @@
 # Or create Windows Service (see Method 3)
 ```
 
-### Method 2: Installer Package
+### Method 2: MSIX Package (Windows Store/Enterprise)
 
-#### Using Inno Setup Installer
-1. Download `Setup-MIC.exe` from releases
-2. Run installer with administrative privileges
-3. Follow installation wizard
-4. Configure settings in `C:\Program Files\MbarieIntelligenceConsole\appsettings.Production.json`
-
-#### Installer Features
-- Automatic desktop shortcut creation
-- Start menu entry
-- Windows Service installation (optional)
-- Automatic updates (future)
-
-### Method 3: Windows Service
-
-#### Create Windows Service
-1. Install as a Windows Service using NSSM (Non-Sucking Service Manager):
-   ```bash
-   # Download NSSM from https://nssm.cc
-   nssm install MbarieIntelligenceConsole "C:\Program Files\MbarieIntelligenceConsole\MIC.Desktop.Avalonia.exe"
+#### MSIX Package Installation
+1. Download `MIC.Desktop.Avalonia.msix` from releases
+2. Double-click the MSIX file or use PowerShell:
+   ```powershell
+   Add-AppxPackage -Path .\MIC.Desktop.Avalonia.msix
    ```
+
+#### MSIX Features
+- **Secure Installation**: Isolated application container
+- **Automatic Updates**: Built-in update mechanism via Microsoft Store
+- **Enterprise Deployment**: Can be deployed via Microsoft Intune or SCCM
+- **App Identity**: Unique application identity for security policies
+
+#### MSIX Package Signing
+For production deployment, sign the MSIX package:
+```bash
+# Using Azure SignTool (recommended)
+azuresigntool sign -kvu "https://your-keyvault.vault.azure.net" -kvi your-key-id -tr "http://timestamp.digicert.com" -td sha256 MIC.Desktop.Avalonia.msix
+
+# Using self-signed certificate (development only)
+signtool sign /fd SHA256 /a /f cert.pfx /p password MIC.Desktop.Avalonia.msix
+```
+
+### Method 3: Auto-Updates (Standalone)
+
+### Method 3: Auto-Updates (Standalone)
+
+#### Automatic Update Configuration
+The application includes built-in automatic update functionality:
+
+1. **Update Check**: Application checks for updates on startup and periodically
+2. **Download & Install**: Updates are downloaded and installed automatically
+3. **User Notification**: Users are notified of available updates
+4. **Rollback Support**: Failed updates can be rolled back
+
+#### Update Settings
+Configure update behavior in `appsettings.Production.json`:
+```json
+{
+  "Updates": {
+    "Enabled": true,
+    "CheckIntervalMinutes": 60,
+    "DownloadPath": "./updates",
+    "AutoInstall": true,
+    "RequireAdminForInstall": false
+  }
+}
+```
+
+#### Manual Update Check
+Users can manually check for updates from the application menu or use the command line:
+```bash
+# Check for updates
+MIC.Desktop.Avalonia.exe --check-updates
+
+# Force update installation
+MIC.Desktop.Avalonia.exe --update
+```
 
 2. Configure service:
    ```bash
@@ -294,10 +332,11 @@ copy mic_prod.db mic_prod_backup_$(date +%Y%m%d).db
 
 ### Update Procedure
 
+#### For Standalone Executable
 1. **Backup Current Installation**
    ```bash
-   # Stop service
-   net stop MbarieIntelligenceConsole
+   # Stop application
+   taskkill /IM MIC.Desktop.Avalonia.exe /F
    
    # Backup database
    pg_dump -h localhost -U mic micdb > backup_pre_update_$(date +%Y%m%d).sql
@@ -324,10 +363,24 @@ copy mic_prod.db mic_prod_backup_$(date +%Y%m%d).db
    dotnet ef database update --project .\MIC.Infrastructure.Data
    ```
 
-5. **Restart Service**
+5. **Restart Application**
    ```bash
-   net start MbarieIntelligenceConsole
+   .\MIC.Desktop.Avalonia.exe
    ```
+
+#### For MSIX Package Updates
+MSIX packages update automatically through the Microsoft Store or enterprise deployment tools. For manual updates:
+
+```bash
+# Remove old version
+Remove-AppxPackage -Package MIC.Desktop.Avalonia
+
+# Install new version
+Add-AppxPackage -Path .\MIC.Desktop.Avalonia_v2.0.0.msix
+```
+
+#### For Auto-Update Enabled Installations
+No manual intervention required. The application handles updates automatically.
 
 ## Troubleshooting
 

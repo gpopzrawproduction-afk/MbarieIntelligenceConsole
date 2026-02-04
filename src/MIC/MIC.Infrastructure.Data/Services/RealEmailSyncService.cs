@@ -12,7 +12,7 @@ using MIC.Infrastructure.AI.Services;
 
 namespace MIC.Infrastructure.Data.Services;
 
-public class RealEmailSyncService : IEmailSyncService
+public partial class RealEmailSyncService : IEmailSyncService
 {
         // Added for historical sync method
         private readonly IEmailRepository _emailRepositoryInternal;
@@ -37,6 +37,80 @@ public class RealEmailSyncService : IEmailSyncService
         _analysisService = analysisService; // ADD THIS
         _logger = logger;
         _configuration = configuration;
+    }
+
+    // Implement historical sync required by interface. This aggregates per-account SyncAccountAsync results
+    // and reports progress via the provided IProgress instance.
+    public async Task<MIC.Core.Application.Common.Interfaces.IEmailSyncService.HistoricalSyncResult> SyncHistoricalEmailsAsync(
+        Guid userId,
+        MIC.Core.Domain.Settings.EmailSyncSettings settings,
+        IProgress<MIC.Core.Application.Common.Interfaces.IEmailSyncService.SyncProgress>? progress = null,
+        CancellationToken cancellationToken = default)
+    {
+        var result = new MIC.Core.Application.Common.Interfaces.IEmailSyncService.HistoricalSyncResult
+        {
+            UserId = userId,
+            StartTime = DateTimeOffset.UtcNow,
+            Status = MIC.Core.Application.Common.Interfaces.IEmailSyncService.SyncStatus.NotStarted
+        };
+
+        try
+        {
+            var accounts = await _emailAccountRepository.GetByUserIdAsync(userId, cancellationToken);
+            if (accounts == null || accounts.Count == 0)
+            {
+                result.Status = MIC.Core.Application.Common.Interfaces.IEmailSyncService.SyncStatus.NoAccountsConfigured;
+                result.EndTime = DateTimeOffset.UtcNow;
+                return result;
+            }
+
+            result.Status = MIC.Core.Application.Common.Interfaces.IEmailSyncService.SyncStatus.InProgress;
+
+            foreach (var account in accounts)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    result.Status = MIC.Core.Application.Common.Interfaces.IEmailSyncService.SyncStatus.Failed;
+                    break;
+                }
+
+                // Report starting account
+                progress?.Report(new MIC.Core.Application.Common.Interfaces.IEmailSyncService.SyncProgress
+                {
+                    UserId = userId,
+                    AccountEmail = account.EmailAddress,
+                    TotalFound = 0,
+                    Processed = 0,
+                    Message = $"Starting sync for {account.EmailAddress}"
+                });
+
+                var r = await SyncAccountAsync(account, cancellationToken);
+
+                result.TotalEmailsFound += r.TotalEmailsChecked;
+                result.EmailsSynced += r.NewEmailsCount;
+
+                progress?.Report(new MIC.Core.Application.Common.Interfaces.IEmailSyncService.SyncProgress
+                {
+                    UserId = userId,
+                    AccountEmail = account.EmailAddress,
+                    TotalFound = r.TotalEmailsChecked,
+                    Processed = r.NewEmailsCount,
+                    Message = $"Completed sync for {account.EmailAddress}: {r.NewEmailsCount} new of {r.TotalEmailsChecked} checked"
+                });
+            }
+
+            result.Status = MIC.Core.Application.Common.Interfaces.IEmailSyncService.SyncStatus.Completed;
+            result.EndTime = DateTimeOffset.UtcNow;
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Historical sync failed for user {UserId}", userId);
+            result.Status = MIC.Core.Application.Common.Interfaces.IEmailSyncService.SyncStatus.Failed;
+            result.Errors.Add(ex.Message);
+            result.EndTime = DateTimeOffset.UtcNow;
+            return result;
+        }
     }
 
     public async Task<EmailSyncResult> SyncAccountAsync(

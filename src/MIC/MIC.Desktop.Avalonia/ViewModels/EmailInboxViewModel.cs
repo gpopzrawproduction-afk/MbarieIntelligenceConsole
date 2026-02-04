@@ -150,13 +150,13 @@ public class EmailInboxViewModel : ViewModelBase
 
     public CategoryOption? SelectedCategory
     {
-        get => _selectedCategoryOption;
+        get => _selectedCategoryOption ?? Categories.FirstOrDefault(c => c.Category == null);
         set => this.RaiseAndSetIfChanged(ref _selectedCategoryOption, value);
     }
 
     public PriorityOption? SelectedPriority
     {
-        get => _selectedPriorityOption;
+        get => _selectedPriorityOption ?? Priorities.FirstOrDefault(p => p.Priority == null);
         set => this.RaiseAndSetIfChanged(ref _selectedPriorityOption, value);
     }
 
