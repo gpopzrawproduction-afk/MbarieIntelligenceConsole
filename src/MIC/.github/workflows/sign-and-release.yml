@@ -1,0 +1,61 @@
+name: Build, Test, Package and Sign MSIX
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-and-sign:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore
+        run: dotnet restore MIC.slnx
+
+      - name: Build
+        run: dotnet build MIC.slnx -c Release --no-restore
+
+      - name: Unit tests + Coverage
+        run: dotnet test MIC.Tests.Unit/MIC.Tests.Unit.csproj -c Release --collect:"XPlat Code Coverage" --results-directory .\TestResults\unit
+
+      - name: Publish App
+        run: dotnet publish MIC.Desktop.Avalonia/MIC.Desktop.Avalonia.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -p:PublishReadyToRun=true -o .\artifacts\win-x64
+
+      - name: Pack MSIX (stage assets and create package)
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\create-fresh-msix.ps1
+
+      - name: Decode signing PFX (from GitHub Secret `MSIX_SIGNING_PFX` - base64)
+        env:
+          PFX_B64: ${{ secrets.MSIX_SIGNING_PFX }}
+        run: |
+          if (-not $env:PFX_B64) { Write-Error 'MSIX_SIGNING_PFX secret is missing'; exit 1 }
+          [System.Convert]::FromBase64String($env:PFX_B64) | Set-Content -Encoding Byte -Path micdev.pfx
+
+      - name: Sign MSIX
+        env:
+          PFX_PASS: ${{ secrets.MSIX_SIGNING_PFX_PASSWORD }}
+        run: |
+          if (-not (Test-Path .\artifacts\MbarieIntelligenceConsole.msix)) { Write-Error 'MSIX not found'; exit 1 }
+          signtool sign /f micdev.pfx /p $env:PFX_PASS /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 .\artifacts\MbarieIntelligenceConsole.msix
+
+      - name: Verify signature
+        run: signtool verify /pa /v .\artifacts\MbarieIntelligenceConsole.msix
+
+      - name: Create Release and upload artifacts
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          files: |
+            artifacts/MbarieIntelligenceConsole.msix
+            artifacts/MbarieIntelligenceConsole-v1.0.0-RC1-win-x64.zip
