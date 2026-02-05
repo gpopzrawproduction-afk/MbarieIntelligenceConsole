@@ -1,0 +1,59 @@
+## Repository-level .gitignore for MbarieIntelligenceConsole
+## Focus: security, build outputs, and local dev artifacts
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+
+# Build outputs
+/bin/
+/obj/
+/Published/
+/publish/
+/Release/
+/out/
+
+# Artifacts and installer outputs
+/artifacts/
+/msix_staging/
+*.msix
+MbarieIntelligenceConsole.msix
+
+# Test results
+/TestResults/
+*.trx
+
+# Local env/config
+.env
+.env.*
+!.env.example
+appsettings.*.local.json
+secrets.json
+appsettings.*.json
+
+# Security - Never commit private keys or certs
+*.pfx
+*.p12
+*.key
+*.pem
+*.der
+*.cer
+artifacts/*.pfx
+artifacts/*.p12
+artifacts/*.pem
+artifacts/*.cer
+artifacts/micdev.pfx
+
+# Logs and temporary files
+*.log
+tmp/
+temp/
+stdout.txt
+stderr.txt
+
+# IDEs
+.vscode/
+.idea/
