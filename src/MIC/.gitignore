@@ -83,3 +83,17 @@ artifacts/*.pfx
 *.pfx
 artifacts/*.pfx
 
+
+# Security - Never commit private keys or certs
+*.pfx
+*.p12
+*.key
+artifacts/*.pfx
+artifacts/*.p12
+artifacts/micdev.pfx
+# Sensitive configuration
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+secrets.json
+
