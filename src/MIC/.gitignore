@@ -78,3 +78,8 @@ artifacts/micdev.pfx
 *.pfx
 artifacts/*.pfx
 
+
+# Security - Never commit private keys
+*.pfx
+artifacts/*.pfx
+
