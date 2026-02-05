@@ -73,3 +73,8 @@ stderr_run.txt
 **/.vs/CopilotSnapshots/
 *.pfx
 artifacts/micdev.pfx
+
+# Security - Never commit private keys
+*.pfx
+artifacts/*.pfx
+
