@@ -1,0 +1,23 @@
+name: Runner Smoke Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Print runner info
+        run: |
+          echo "Runner: $RUNNER_NAME"
+          echo "OS: $RUNNER_OS"
+          systeminfo | Select-String "OS Name","OS Version" -SimpleMatch || echo 'systeminfo unavailable'
+
+      - name: .NET SDK version
+        run: dotnet --version
+
+      - name: Echo success
+        run: echo "smoke test completed"
